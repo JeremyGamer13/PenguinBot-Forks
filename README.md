@@ -1,5 +1,5 @@
-# gronk
-this is literally just a fork of PenguinBot-Public but i deleted a bunch of stuff & added some small things
+# PenguinBot-Forks
+these are literally just forks of PenguinBot-Public for my own use on random stuff
 
 # PenguinBot-Public
 A stripped-down public version of PenguinBot.
@@ -30,49 +30,3 @@ The code found in this repository is licensed under the MIT license.
 Please let us know if this is incorrect or invalid.
 
 The `assets` folder is **NOT** under this license. Content in there may be licensed under, literally anything.
-
-# Setup
-**Please CLONE this repository properly with Git, do not download it as a ZIP.**
-If you do not do this, many commands relating to managing the GitHub repository will cause undefined behavior.
-
-1. Install Node.js, preferably v18 or v20. **Newer versions of Node may not be compatible out of the box with Canvas or other modules yet.**
-2. Install FFMPEG. Easiest way to check if it's setup properly is to run `ffmpeg` in a terminal with no arguments.
-3. Install Git
-4. Create a `cache`, `databases`, `temp`, and `memes` folder in the root folder for PenguinBot.
-5. Download the `assets` folder in the link found in the Notes section, and put it in the root folder for PenguinBot.
-6. Install all of the node modules with `npm ci` or `npm i`
-    - If you have `nvm` installed to switch between Node installations, you may need to rebuild canvas when switching versions by using `npm rebuild canvas`
-7. Duplicate `.env.template` and rename it to `.env`, then fill any of the information you can.
-    - Certain keys are used only when the bot is ran with `npm run test`, notably the `TEST_TOKEN`.
-8. Run the bot with `npm run test` for development and `npm start` or `node permrun.js` for production.
-    - If you want to run the bot once in development, use `node src/index.js test`. This is not recommended for production as the bot can be restarted via commands.
-    - When the bot is online, you can use the `restart` command in Discord to restart the bot.
-
-Check the Notes section for details on customizing PenguinBot to your liking.
-
-# Basic Commands Template
-```js
-const OptionType = require('../util/optiontype');
-
-class Command {
-    constructor() {
-        this.name = "base";
-        this.description = "Description";
-        this.attributes = {
-            unlisted: true,
-            permission: 3
-        };
-    }
-
-    invoke(message) {
-
-    }
-}
-
-module.exports = Command;
-```
-
-# Signoffs
-Have a good life! Don't ever think you can't do something, you always can when you're programming something.
-
-- MubiLop | 08/02/2024
