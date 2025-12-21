@@ -1,4 +1,4 @@
-const Database = require('./easy-json-database');
+const Database = require('sync-json-database');
 const DisabledInteractionsDB = new Database('./databases/disabled-interactions.json');
 
 const tryCatch = require('./try-catch');
@@ -21,7 +21,7 @@ class CommandUtility {
     }
 
     static getPermissionLevel(message) {
-        if (message.author.id === env.get("OWNER")) return 4;
+        if (message.author.id === env.get("OWNER")) return 4; // owner
         if (message.member._roles.some(v => configuration.permissions.permission3.includes(v))) return 3; // developers
         if (message.member._roles.some(v => configuration.permissions.permission2.includes(v))) return 2; // mods
         if (message.member._roles.some(v => configuration.permissions.permission1.includes(v))) return 1; // bot dev
@@ -232,7 +232,7 @@ class CommandUtility {
                 return true;
             }
         }
-        if (Array.isArray(command.attributes.lockedToChannels)) {
+        if (Array.isArray(command.attributes.lockedToChannels) && this.getPermissionLevel(message) < 3) {
             // check which channel we are in
             const lockedChannels = command.attributes.lockedToChannels;
             const canBeUsed = lockedChannels.includes(message.channel.id);
