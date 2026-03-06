@@ -16,12 +16,7 @@ This bot was originally built to be a Private Bot for PenguinMod's Discord Serve
 You can edit most of these Discord-specific features in the `src/config.js` file. More complicated checks may be present in the `src/util/utility.js` file or `src/events/client` folder.
 Most other things will just be command-specific checks or custom emojis being used.
 
-The bot uses many assets that cannot be released inside of this repo.
-
-You can find them here:
-https://drive.google.com/file/d/1TwvCSmPvxthxB1taJ4c-1wrxhgVhLEl1/view?usp=sharing
-
-Note that **fonts are not included** in this download.
+The bot uses many assets that are not under the MIT license. They are unlicensed.
 
 For the most part, you need a good understanding of JavaScript and JSON to make commands or do anything meaningful with the code of this bot.
 
