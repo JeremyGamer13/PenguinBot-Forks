@@ -1,6 +1,10 @@
 # Jeremy Stream Bot
 this is literally just a fork of PenguinBot-Public but i deleted a bunch of stuff & added some small things
 
+# Related Repos
+[jg_node_api_public](https://github.com/JeremyGamer13/jg_node_api_public)
+[jg_node_utils](https://github.com/JeremyGamer13/jg_node_utils)
+
 # PenguinBot-Public
 A stripped-down public version of PenguinBot.
 Certain features or commands may be missing from this repository.
