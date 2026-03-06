@@ -1,4 +1,5 @@
 const configuration = require("../../config");
+const evalEnvironment = require("../../util/eval-environment");
 
 class Command {
     constructor(client) {
@@ -36,7 +37,14 @@ class Command {
             console.log(`${message.author.username}:`);
             console.log(command);
             console.log('\n');
-            result = eval(command);
+
+            const evalFunc = evalEnvironment.bind(this);
+            result = evalFunc(command, {
+                message,
+                args,
+                util,
+                command,
+            });
         } catch (err) {
             result = String(err);
             failed = true;
