@@ -1,3 +1,6 @@
+# Jeremy Stream Bot
+this is literally just a fork of PenguinBot-Public but i deleted a bunch of stuff & added some small things
+
 # PenguinBot-Public
 A stripped-down public version of PenguinBot.
 Certain features or commands may be missing from this repository.
