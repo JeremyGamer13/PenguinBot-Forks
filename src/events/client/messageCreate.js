@@ -1,14 +1,14 @@
 const discord = require("discord.js");
 const CommandUtility = require("../../util/utility.js");
 
-const handleInviteBlock = require('../../util/inviteblock.js');
-const handlePingMessage = require('../../util/pingmessage.js');
 const handleBotAutoResponse = require('../../resources/responses/index.js');
 const configuration = require("../../config");
 const env = require("../../util/env-util");
 
 const isInTestMode = process.argv[2] === 'test';
 const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
+
+const SantaList = require("../../util/santa-list.js");
 
 class BotEvent {
     constructor(client) {
@@ -38,84 +38,73 @@ class BotEvent {
             message.channel.id === configuration.channels.spam
             || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
         ) return;
-    
-        // handle invites
-        if (!isTestingInPublic && CommandUtility.containsInvite(message.content, {
-            includeShorteners: true
-        })) {
-            handleInviteBlock(message, client, CommandUtility);
-        }
 
         CommandUtility.state = state;
+
+        // JG: Random thihngs
+        // Santa list!!!!!!
+        const checkMsg = message.content.toLowerCase().trim().replace(/[^a-z0-9]/g, "");
+        const checkStarters = ["iwish", "iwant", "willi", "santaiwish", "santaiwant", "santawilli"];
+        const checkMoreAreYouDumbs = ["iwishfor", "williget", "santaiwishfor", "santawilliget"];
+        if (false && message.channel.id === "1444881035719606373" && checkStarters.some(starter => checkMsg.startsWith(starter))) {
+            if (message.attachments.size > 0) return message.reply("no attachments gng");
+            if (checkStarters.includes(checkMsg) || checkMoreAreYouDumbs.includes(checkMsg)) return message.reply("are you dumb");
+            // if (SantaList.has(message.author.id)) return message.reply("your fate has been decided");
+            if (state.santaListProcessing) return message.reply({
+                content: "we are waiting for SANTA be PATIENT....",
+                files: ["./assets/randomImages/wait.png"]
+            });
+            // if (state.santaListLastAddedTo > Date.now() - 3000) return;
+
+            // random shit
+            if (Math.random() * 100 < 0.067) message.reply("hahaha you got the 0.067% chance hahaha SIX SEEVEEN 😛👅👅");
+            // if (Math.random() * 100 < 0.1) message.reply("ts aint happening gng 😭✌️");
+            if (Math.random() * 100 < 0.1) message.reply("Fuck you twin 🦃 🦃🗣️🗣️🎉");
+            // if (Math.random() * 100 < 0.1) message.reply("Something will happen on the 1st of December. He awaits. Shut your curtains, lock your doors, don't look. He hungers. You've been warned");
+
+            // ok lets actually generate now gng
+            state.santaListProcessing = true;
+            try {
+                // GRINCH
+                if (Math.random() < 0.125) {
+                    // see what THE GRINCH thinks of their wish, if its a "nice" wish then the grinch likes how evil they are
+                    const response = await SantaList.grinchReflectsOn(message.content.trim());
+                    if (response.status === "unsafe") return;
+                    // post then inform the user
+                    await SantaList.postValueStolen(message.author, {
+                        nice: response.status === "nice",
+                        grinchResponse: response.reflection
+                    });
+                    message.react("⚠️");
+                } else {
+                    // // check if they have been naughty this year
+                    const additionalPrompt = SantaList.makeAdditionalPrompt(message);
+                    // see what santa thinks of their wish, if its naughty wish then they are on naughty list
+                    const response = await SantaList.santaReflectsOn(message.content.trim(), additionalPrompt);
+                    if (response.status === "unsafe") return;
+                    // save response & post then inform the user
+                    const value = SantaList.saveValue(message.author.id, response.status === "nice", response.reflection);
+                    await SantaList.postValue(message.author, value);
+
+                    message.react("📃");
+                    state.santaListLastAddedTo = Date.now();
+                }
+            } catch (error) {
+                console.warn("Failed stanta list", error);
+                message.reply("you killed santa what the fuck");
+            } finally {
+                state.santaListProcessing = false;
+            }
+            return;
+        }
+        // ENMD OF ranodm stuff
     
         // handle the case where they are not using a cmd but we can still do stuff
         if (!message.content.startsWith(prefix)) {
-            // try ping message
-            const canHandlePingMsg = !message.system && message.guild && message.mentions && message.mentions.members;
-            if (canHandlePingMsg && !isTestingInPublic) {
-                let replyingUser = null;
-                if (message.reference && message.reference.messageId) {
-                    let replyMessage;
-                    try {
-                        replyMessage = await message.channel.messages.fetch(message.reference.messageId);
-                    } catch {
-                        replyMessage = null;
-                    }
-                    if (replyMessage) {
-                        replyingUser = replyMessage.author.id;
-                    }
-                }
-                // if we are in a dm then it doesnt matter & we must actually have mentions stuff
-                const didReturnVal = await handlePingMessage(message, replyingUser);
-                if (didReturnVal === true) return; // dont check for auto response
-            }
-    
             // check for stuff we can reply to in a helpful way
             if (env.getBool('RESPOND_TO_KEYWORDS') && !isTestingInPublic) {
                 handleBotAutoResponse(message);
             }
-
-            // TODO: Add config for this feature + config to make it block the message if its bypassed
-            if (!isTestingInPublic && CommandUtility.getPermissionLevel(message) < 2) {
-                const automodReportChannel = client.channels.cache.get(configuration.channels.automod);
-
-                // third arg makes it return null on safe and the blcoked word on unsafe
-                const messageChecked = message.content;
-                const originalAgainstRules = CommandUtility.automodAllows(messageChecked, false, true);
-                const actuallyAgainstRules = CommandUtility.automodAllows(messageChecked, true, true);
-                if (automodReportChannel && (!originalAgainstRules && actuallyAgainstRules)) {
-                    // automod was bypassed for this message
-                    const embed = new discord.MessageEmbed();
-                    embed.setTitle("AutoMod Bypassed");
-                    embed.setAuthor({
-                        name: message.author.displayName || message.author.username,
-                        iconURL: message.author.avatarURL({ format: "png" }),
-                    });
-                    embed.setDescription(messageChecked);
-                    embed.addFields([
-                        {
-                            name: "Keyword",
-                            value: actuallyAgainstRules
-                        },
-                        {
-                            name: "Jump to Message",
-                            value: `https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`,
-                        }
-                    ]);
-                    embed.setColor(0xff9900);
-                    embed.setFooter({ text: "Bypassed messages are not blocked in the case of a false-alert." });
-                    automodReportChannel.send({
-                        embeds: [embed],
-                        allowedMentions: {
-                            parse: [],
-                            users: [],
-                            roles: [],
-                            repliedUser: false
-                        }
-                    });
-                }
-            }
-    
             return;
         }
     
@@ -124,15 +113,6 @@ class BotEvent {
         const split = message.content.split(' ');
         split[0] = split[0].replace(prefix, '');
         if (!(split[0] in state.commands)) {
-            message.reply({
-                content: `Command not found. Did you mean something else?\nUse \`${prefix}help\` to see a list of commands.`,
-                allowedMentions: {
-                    parse: [],
-                    users: [],
-                    roles: [],
-                    repliedUser: true
-                }
-            });
             return;
         }
     

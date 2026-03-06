@@ -7,7 +7,7 @@ class Command {
         this.description = "Reload a command in the bot. Only works for commands without any local dependencies (\"require\"s from a file path).";
         this.attributes = {
             unlisted: true,
-            permission: 1,
+            permission: 4,
         };
 
         this.client = client;
@@ -15,7 +15,6 @@ class Command {
 
     async invoke(message, args, util) {
         const commands = util.request('commands');
-        const slash = util.request('slash');
 
         const shouldntRestart = util.request('preventRuntimeChanges');
         if (shouldntRestart) {
@@ -62,12 +61,6 @@ class Command {
 
             // Register command and aliases in state.commands map
             commands[command.name] = command;
-            slash[command.name] = command.convertSlashCommand || (() => false);
-
-            if (command.slash) {
-                command.slash.name = command.name;
-                command.slash.description = command.slashdescription || command.description;
-            }
 
             if (Array.isArray(command.alias)) {
                 for (const alias of command.alias) {

@@ -13,7 +13,7 @@ class Command {
 
     reject(message) {
         message.reply({
-            content: '<:haha:1124199185021927528>'
+            content: 'You need a permission level of 6 or 7 to run this command, yours is currently 0.'
         });
     }
 

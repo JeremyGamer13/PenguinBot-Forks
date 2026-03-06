@@ -18,7 +18,7 @@ class Command {
 
     async invoke(message) {
         const embed = new discord.MessageEmbed();
-        embed.setColor("#00c3ff");
+        embed.setColor("#ff8800");
         embed.setTitle('Uptime');
 
         const uptime = FormatTime.formatTime(this.client.uptime);

@@ -8,24 +8,10 @@ class Command {
         this.attributes = {
             unlisted: true,
             admin: false,
-        };
-        this.slash = {
-            options: [{
-                type: OptionType.STRING,
-                name: 'command',
-                required: false,
-                description: 'Command to get help for. (optional)'
-            }]
+            lockedToCommands: true,
         };
 
         this.client = client;
-    }
-
-    convertSlashCommand(interaction, util) {
-        const text = `${interaction.options.getString('command') || ''}`;
-        interaction.author = interaction.member.user;
-        const args = text.split(' ');
-        return [interaction, text ? args : [], util, true];
     }
 
     async handleSendingList(message, embed, commands, util, args) {
@@ -81,7 +67,7 @@ class Command {
         const setDesc = (page) => {
             const commands = text.slice(page * commandOnOnePage, (page + 1) * commandOnOnePage);
             embed.setDescription(commands.join('\n'));
-            embed.setFooter({ text: `Page ${page + 1} - ${maxPages} | ${text.length} commands | Developed by MubiLop & PenguinMod` });
+            embed.setFooter({ text: `Page ${page + 1} - ${maxPages} | ${text.length} commands` });
         };
         let page = 0;
         setDesc(page);
@@ -130,7 +116,7 @@ class Command {
         const commands = util.request('commands');
         const embed = new discord.MessageEmbed();
         const files = [];
-        embed.setColor("#00c3ff");
+        embed.setColor("#ff8800");
 
         // explain a command?
         if (args.length > 0 && args[0] !== 'all') {
@@ -167,10 +153,6 @@ class Command {
                     text += "\n\n**Usage:**\n";
                     for (const example of command.example) {
                         text += `\`\`${example.text}\`\``;
-                        if (example.image) {
-                            files.push(`assets/examples/${example.image}`);
-                            text += ` *[image ${files.length}]*`;
-                        }
                         text += '\n';
                     }
                 }

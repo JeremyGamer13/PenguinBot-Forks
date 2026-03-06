@@ -39,8 +39,13 @@ const state = {
     slash: {},
     prefix,
     isInTestMode,
-    panelForcedDisabled: false,
-    preventRuntimeChanges: env.getBool('PREVENT_UPDATES')
+    panelForcedDisabled: true,
+    preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
+
+    // JG: Random thihngs
+    nodeApiStuff: false,
+    santaListProcessing: false,
+    santaListLastAddedTo: 0,
 };
 CommandUtility.state = state;
 

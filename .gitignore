@@ -18,6 +18,11 @@ src/util/aprilfools.js
 ## commands & command modules
 src/util/freearttranslator.js
 src/util/gamejam-themegen.js
+src/util/ai-unsafe.js
+src/util/santa-naughty.js
+src/util/santa-additional-prompt.js
+src/resources/santa-prompt.js
+src/resources/grinch-prompt.js
 src/resources/basic_automod.js
 src/commands/gameidea.js
 src/commands/textmodifier/joyous.js

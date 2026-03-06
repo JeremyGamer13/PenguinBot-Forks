@@ -1,4 +1,3 @@
-const synchronizeSlashCommands = require('@frostzzone/discord-sync-commands');
 const glob = require("glob");
 
 const env = require("../../util/env-util");
@@ -29,7 +28,6 @@ class BotEvent {
         let failed = false;
 
         // handle files
-        const slash = [];
         for (const fileName of files) {
             try {
                 // modules should be treated as objects with commandName:CommandClass pairs if they arent already
@@ -52,14 +50,6 @@ class BotEvent {
 
                     // Register command and aliases in state.commands map
                     state.commands[command.name] = command;
-                    state.slash[command.name] = command.convertSlashCommand || (() => false);
-
-                    if (command.slash) {
-                        command.slash.name = command.name;
-                        command.slash.description = command.slashdescription || command.description;
-                        slash.push(command.slash);
-                        console.log('Slash command', command.name, 'is queued...');
-                    }
 
                     if (Array.isArray(command.alias)) {
                         for (const alias of command.alias) {
@@ -75,12 +65,6 @@ class BotEvent {
                 failed = true;
             }
         }
-
-        // register slash commands
-        synchronizeSlashCommands(client, slash, {
-            debug: false,
-        });
-        console.log('Registered slash commands!');
 
         // set our status
         const baseStatusText = isInTestMode ? configuration.status.testing : configuration.status.normal;
