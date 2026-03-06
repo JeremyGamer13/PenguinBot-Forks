@@ -15,7 +15,7 @@ class Command {
 
     reject(message) {
         message.reply({
-            files: ['./assets/randomImages/iknow.png']
+            files: ['./assets/randomImages/pleasespeed.png']
         });
     }
 
@@ -51,7 +51,7 @@ class Command {
         try {
             this.run(message, args, util);
         } catch (err) {
-            message.reply('erm, error? 👉👈');
+            message.reply('you. IDIOT.');
             console.log(err);
         }
     }
