@@ -1,3 +1,4 @@
+const makePng = require('../../util/make-png');
 const ChatGPT = require("../../util/chatgpt");
 const ChatGPTClient = new ChatGPT();
 
@@ -14,7 +15,7 @@ class Command {
     async invoke(message, args, util) {
         const attachment = message.attachments.first();
         const endingType = util.getAttachmentType(attachment);
-        const supportedTypes = ['png', 'jpeg', 'jpg'];
+        const supportedTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
         if (!supportedTypes.includes(endingType)) {
             return message.reply('Please use a valid image in `.png` or `.jpeg`/`.jpg` format.');
@@ -28,6 +29,7 @@ class Command {
         const attachmentFetch = await fetch(attachment.url);
         const attachmentArrayBuffer = await attachmentFetch.arrayBuffer();
         const attachmentBuffer = Buffer.from(attachmentArrayBuffer);
+        const imageBuffer = await makePng(attachmentBuffer);
 
         // start asking chattus geepitus
         const chatId = `aiscanimage-${Math.random()}`;
@@ -41,7 +43,7 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            response = await ChatGPTClient.advancedPrompt(chatId, "Please return all of the text you find in this image.", attachmentBuffer);
+            response = await ChatGPTClient.advancedPrompt(chatId, "Please return all of the text you find in this image.", imageBuffer);
         } catch (err) {
             message.reply("**Took too long to prompt.**")
         }
