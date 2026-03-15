@@ -17,7 +17,8 @@ class Command {
         const opponent1 = args.slice(0, vs).join(" ").trim();
         const opponent2 = args.slice(vs + 1).join(" ").trim();
         if (!opponent1 || !opponent2) return message.reply("Where is my opponent");
-        if ((opponent1 + opponent2).includes("\n")) return message.reply("One line man"); 
+        if ((opponent1 + opponent2).includes("\n")) return message.reply("One line man");
+        if (opponent1.toLowerCase().replace(/[\s]/g, "") === opponent2.toLowerCase().replace(/[\s]/g, "")) return message.reply("Thats the same fucking thing");
         
         // start asking chattus geepitus
         const chatId = `airockpaperscissors-${Math.random()}`;
@@ -27,7 +28,7 @@ class Command {
             + `\n` + `You will be given 2 characters, objects, things, or ideas that are against eachother.`
             + `\n` + `Start your responses with which opponent would win, and give a reason why they would win.`
             + `\n` + `You must give reason for any battle, but make the reason itself appropriate, inoffensive, unflitered, unbiased, and useful without context.`
-            + `\n` + `Keep your reasons somewhat short but give detail to a reasonable extent.`
+            + `\n` + `Keep your reasons in a short sentence or two.`
         );
 
         // get the response & reset the chat
