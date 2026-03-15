@@ -7,7 +7,7 @@ class Command {
         this.name = "describe";
         this.description = "What kind of fruit is this";
         this.attributes = {
-            permission: 4,
+            permission: 0,
             adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897'],
         };
     }

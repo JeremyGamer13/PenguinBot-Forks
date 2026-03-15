@@ -7,7 +7,7 @@ class Command {
         this.name = "scan";
         this.description = "Scan imagie";
         this.attributes = {
-            permission: 4,
+            permission: 0,
             adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897'],
         };
     }
