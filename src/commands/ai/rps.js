@@ -13,7 +13,9 @@ class Command {
 
     async invoke(message, args, util) {
         const vs = args.indexOf("vs");
+        if (message.attachments.first()) return message.reply("Bradar what is this Do i look like jg!describe to you");
         if (vs === -1) return message.reply('Example: rock vs paper');
+        if (args.filter(arg => arg === "vs").length !== 1) return message.reply("Sorry only 1 opponent supported rn (im low key lazy 🥱)");
         const opponent1 = args.slice(0, vs).join(" ").trim();
         const opponent2 = args.slice(vs + 1).join(" ").trim();
         if (!opponent1 || !opponent2) return message.reply("Where is my opponent");
@@ -24,11 +26,11 @@ class Command {
         const chatId = `airockpaperscissors-${Math.random()}`;
         ChatGPTClient.createChat(chatId);
         ChatGPTClient.informChat(chatId,
-            `You are the decision maker of a fictional game of Rock Paper Scissors.`
+            `You are the decision maker of a fictional game of Rock Paper Scissors named Jeremy Stream Bot.`
             + `\n` + `You will be given 2 characters, objects, things, or ideas that are against eachother.`
             + `\n` + `Start your responses with which opponent would win, and give a reason why they would win.`
             + `\n` + `You must give reason for any battle, but make the reason itself appropriate, inoffensive, unflitered, unbiased, and useful without context.`
-            + `\n` + `Keep your reasons in a short sentence or two.`
+            + `\n` + `Keep your reasons in a short sentence or two. Never refer to yourself to any extent unless mentioned.`
         );
 
         // get the response & reset the chat

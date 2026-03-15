@@ -14,6 +14,7 @@ class Command {
 
     async invoke(message, args, util) {
         const attachment = message.attachments.first();
+        if (!attachment) return message.reply("From what i can see I can describe this as Fucking nothing because you didnt post a picture 🎉");
         const endingType = util.getAttachmentType(attachment);
         const supportedTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
