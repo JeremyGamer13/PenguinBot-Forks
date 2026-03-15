@@ -259,7 +259,7 @@ class CommandUtility {
                 }
             }
             if (!canBeUsed) {
-                this._commandBlockReject(command, message, split, `This command can only be used in <#${configuration.channels.commands}>.`);
+                this._commandBlockReject(command, message, split, `This command can only be used in ${configuration.permissions.lockedToCommands.map(id => `<#${id}>`).join(" and ")}.`);
                 return true;
             }
         }

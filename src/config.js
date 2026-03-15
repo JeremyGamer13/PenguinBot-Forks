@@ -75,6 +75,9 @@ const configuration = {
             '1443403986357981274', // tuff vc
             '746156168560508953', // epic test channel
             '1139749855913316474', // penguinbot-test
+            '1124133055012020296', // tuff vc
+            '1038236270079516682', // tuff vc
+            '1169802355861114901', // tuff vc
         ],
 
         // On top of the permission check, who can use pm!eval (run custom code)
