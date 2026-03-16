@@ -7,6 +7,7 @@ class Command {
         this.description = "Rock paper scissors";
         this.attributes = {
             permission: 0,
+            lockedToCommands: true,
             adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897'],
         };
     }
@@ -38,7 +39,7 @@ class Command {
         try {
             response = await ChatGPTClient.advancedPrompt(chatId, "Who would win, if I placed \"" + opponent1 + "\" against \"" + opponent2 + "\"?");
         } catch (err) {
-            message.reply("**Took too long to prompt.**")
+            message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         }
         ChatGPTClient.removeChat(chatId);
         message.reply({
