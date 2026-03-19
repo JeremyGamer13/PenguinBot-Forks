@@ -44,6 +44,7 @@ const state = {
 
     // JG: Random thihngs
     nodeApiStuff: false,
+    heavyExternalStuff: true,
     santaListProcessing: false,
     santaListLastAddedTo: 0,
 };
