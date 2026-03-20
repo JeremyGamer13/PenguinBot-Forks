@@ -4,6 +4,8 @@ const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
 const probeLength = require('../../util/probe-length');
+const probeIsVideo = require('../../util/probe-video');
+const ffmpegCompatible = require('../../util/ffmpeg-compatible');
 
 class Command {
     constructor() {
@@ -26,16 +28,18 @@ class Command {
         const attachment2 = message.attachments.last();
         if (!attachment1) return replyMessage.edit("Add an mp4 video to take the frames from");
         if (!attachment2) return replyMessage.edit("Add an mp4 video to sync the video to");
-        const endingType1 = util.getAttachmentType(attachment1);
-        const endingType2 = util.getAttachmentType(attachment2);
-        if (endingType1 !== "mp4") return replyMessage.edit('Please use a valid video in `.mp4` format.');
-        if (endingType2 !== "mp4") return replyMessage.edit('Please use a valid video in `.mp4` format.');
+        const endingTypeRaw1 = util.getAttachmentType(attachment1);
+        const endingTypeRaw2 = util.getAttachmentType(attachment2);
+        if (!ffmpegCompatible.isCompatibleVidio(endingTypeRaw1) && !ffmpegCompatible.isCompatibleAudio(endingTypeRaw1))
+            return replyMessage.edit('Please use a valid video or audio format. (video 1)');
+        if (!ffmpegCompatible.isCompatibleVidio(endingTypeRaw2) && !ffmpegCompatible.isCompatibleAudio(endingTypeRaw2))
+            return replyMessage.edit('Please use a valid video or audio format. (video 2)');
         // check atachemtn size
         if (attachment1.size > 15 * 1e+6) return replyMessage.edit("Files must be below 15 MB.");
         if (attachment2.size > 15 * 1e+6) return replyMessage.edit("Files must be below 15 MB.");
 
         // prep to download
-        await replyMessage.edit("Downloading video...");
+        await replyMessage.edit("Downloading contents...");
         const tempDir = path.join(__dirname, `../../../temp/stammer`);
         if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
         // download
@@ -45,10 +49,22 @@ class Command {
         const arrayBuffer2 = await fetch2.arrayBuffer();
         const file1 = Buffer.from(arrayBuffer1);
         const file2 = Buffer.from(arrayBuffer2);
+        const rawPath1 = path.join(tempDir, `rawinput1.bin`);
+        const rawPath2 = path.join(tempDir, `rawinput2.bin`);
+        fs.writeFileSync(rawPath1, file1);
+        fs.writeFileSync(rawPath2, file2);
+        // convert to safe types
+        await replyMessage.edit("Converting contents...");
+        let endingType1 = "mp3";
+        let endingType2 = "mp3";
+        if (await probeIsVideo(rawPath1)) endingType1 = "mp4";
+        if (await probeIsVideo(rawPath2)) endingType2 = "mp4";
         const path1 = path.join(tempDir, `input1.${endingType1}`);
         const path2 = path.join(tempDir, `input2.${endingType2}`);
-        fs.writeFileSync(path1, file1);
-        fs.writeFileSync(path2, file2);
+        const command1 = `ffmpeg -y -i "${rawPath1}" ${endingType1 === "mp3" ? "-c:a libmp3lame" : `-c:v libx264 -c:a aac -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"`} "${path1}"`;
+        const command2 = `ffmpeg -y -i "${rawPath2}" ${endingType2 === "mp3" ? "-c:a libmp3lame" : `-c:v libx264 -c:a aac -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"`} "${path2}"`;
+        childProcess.execSync(command1);
+        childProcess.execSync(command2);
         // check length
         const length1 = await probeLength(path1);
         const length2 = await probeLength(path2);
@@ -56,8 +72,8 @@ class Command {
         if (length2 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
 
         // generate
-        await replyMessage.edit("Generating stammer video...");
-        const outputPath = path.join(tempDir, `output.mp4`);
+        await replyMessage.edit(`Generating stammer output...\n(SOURCE: ${endingType1}, MODIFIER: ${endingType2})\nwill output as ${endingType1}`);
+        const outputPath = path.join(tempDir, `output.${endingType1}`);
         const command = `${env.get("STAMMER_PYTHON")}`
             .replaceAll("{{CARRIER}}", `"${path1}"`)
             .replaceAll("{{MODULATOR}}", `"${path2}"`)

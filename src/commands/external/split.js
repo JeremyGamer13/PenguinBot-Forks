@@ -4,6 +4,7 @@ const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
 const probeLength = require('../../util/probe-length');
+const ffmpegCompatible = require('../../util/ffmpeg-compatible');
 
 class Command {
     constructor() {
@@ -25,8 +26,7 @@ class Command {
         const attachment = message.attachments.first();
         if (!attachment) return replyMessage.edit("Add an Audio to split");
         const endingType = util.getAttachmentType(attachment);
-        console.log(endingType);
-        if (!["mp3", "mpeg", "wav", "ogg"].includes(endingType)) return replyMessage.edit('Please use a valid audio in `.mp3`/`.wav`/`.ogg` format.');
+        if (!ffmpegCompatible.isCompatibleAudio(endingType)) return replyMessage.edit('Please use a valid audio in `.mp3`/`.wav`/`.ogg` format.');
         // check atachemtn size
         if (attachment.size > 15 * 1e+6) return replyMessage.edit("Files must be below 15 MB.");
 
