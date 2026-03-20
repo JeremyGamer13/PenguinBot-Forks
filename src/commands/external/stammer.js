@@ -3,9 +3,7 @@ const path = require("path");
 const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
-const probeLength = require('../../util/probe-length');
-const probeIsVideo = require('../../util/probe-video');
-const ffmpegCompatible = require('../../util/ffmpeg-compatible');
+const FFmpegUtil = require('../../util/ffmpeg-util');
 
 class Command {
     constructor() {
