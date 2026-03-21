@@ -6,7 +6,7 @@
 const fetchWithTimeout = require("./fetch-timeout");
 const env = require("./env-util");
 
-class ChatGPTClient {
+class OllamaClient {
     constructor() {
         this.chatHistories = {};
         this.currentIndex = 0;
@@ -90,7 +90,7 @@ class ChatGPTClient {
                 return botResponse;
             })
             .catch(error => {
-                console.error("Error sending prompt to GPT", error.message);
+                console.error("Error sending prompt to AI", error.message);
 
                 if (error.message === "API quota exceeded") {
                     throw new Error("You exceeded the API's quota, Please try again later or use a different API URL.");
@@ -222,12 +222,12 @@ class ChatGPTClient {
                 return botResponse;
             })
             .catch(error => {
-                console.error("Error sending prompt to GPT", error.message);
+                console.error("Error sending prompt to AI", error.message);
                 console.error(this._api_url);
 
                 // Handle different error scenarios with custom messages
                 if (error.message === "Unexpected response from the API") {
-                    throw new Error("Unexpected response from ChatGPT");
+                    throw new Error("Unexpected response from AI");
                 } else if (error.message === "Network response was not ok: 429 Too Many Requests") {
                     throw new Error("Too many requests. Please try again later");
                 } else {
@@ -270,4 +270,4 @@ class ChatGPTClient {
 
 }
 
-module.exports = ChatGPTClient;
+module.exports = OllamaClient;

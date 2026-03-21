@@ -1,5 +1,5 @@
-const ChatGPT = require("../../util/chatgpt");
-const ChatGPTClient = new ChatGPT();
+const Ollama = require("../../util/ollama");
+const OllamaClient = new Ollama();
 
 class Command {
     constructor() {
@@ -25,8 +25,8 @@ class Command {
         
         // start asking chattus geepitus
         const chatId = `airockpaperscissors-${Math.random()}`;
-        ChatGPTClient.createChat(chatId);
-        ChatGPTClient.informChat(chatId,
+        OllamaClient.createChat(chatId);
+        OllamaClient.informChat(chatId,
             `You are the decision maker of a fictional game of Rock Paper Scissors named Jeremy Stream Bot.`
             + `\n` + `You will be given 2 characters, objects, things, or ideas that are against eachother.`
             + `\n` + `Start your responses with which opponent would win, and give a reason why they would win.`
@@ -37,11 +37,11 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            response = await ChatGPTClient.advancedPrompt(chatId, "Who would win, if I placed \"" + opponent1 + "\" against \"" + opponent2 + "\"?");
+            response = await OllamaClient.advancedPrompt(chatId, "Who would win, if I placed \"" + opponent1 + "\" against \"" + opponent2 + "\"?");
         } catch (err) {
             message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         }
-        ChatGPTClient.removeChat(chatId);
+        OllamaClient.removeChat(chatId);
         message.reply({
             content: response.trim(),
             allowedMentions: {

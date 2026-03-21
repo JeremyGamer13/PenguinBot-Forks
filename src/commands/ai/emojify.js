@@ -1,6 +1,6 @@
 const makePng = require('../../util/make-png');
-const ChatGPT = require("../../util/chatgpt");
-const ChatGPTClient = new ChatGPT();
+const Ollama = require("../../util/ollama");
+const OllamaClient = new Ollama();
 
 class Command {
     constructor() {
@@ -35,8 +35,8 @@ class Command {
 
         // start asking chattus geepitus
         const chatId = `aiemojifyimage-${Math.random()}`;
-        ChatGPTClient.createChat(chatId);
-        ChatGPTClient.informChat(chatId,
+        OllamaClient.createChat(chatId);
+        OllamaClient.informChat(chatId,
             `Scan the image that the user provides for any content.`
             + `\n` + `Please respond with only the content that was seen in the image, represented with emojis.`
             + `\n` + `Return all of the content found in the image only using emojis and nothing else.`
@@ -48,11 +48,11 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            response = await ChatGPTClient.advancedPrompt(chatId, "Please describe the image using emojis.", imageBuffer);
+            response = await OllamaClient.advancedPrompt(chatId, "Please describe the image using emojis.", imageBuffer);
         } catch (err) {
             message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         }
-        ChatGPTClient.removeChat(chatId);
+        OllamaClient.removeChat(chatId);
         message.reply({
             content: response.trim(),
             allowedMentions: {

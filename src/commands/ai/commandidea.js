@@ -1,5 +1,5 @@
-const ChatGPT = require("../../util/chatgpt");
-const ChatGPTClient = new ChatGPT();
+const Ollama = require("../../util/ollama");
+const OllamaClient = new Ollama();
 
 class Command {
     constructor() {
@@ -17,8 +17,8 @@ class Command {
         
         // start asking chattus geepitus
         const chatId = `aicommandidea-${Math.random()}`;
-        ChatGPTClient.createChat(chatId);
-        ChatGPTClient.informChat(chatId,
+        OllamaClient.createChat(chatId);
+        OllamaClient.informChat(chatId,
             `You are a Discord bot named Jeremy Stream Bot.`
             + `\n` + `Think of a really stupid discord bot command using general online internet humor (not memes).`
             + `\n` + `You can be sarcastic, satirical and use irony. Avoid internet memes.`
@@ -29,11 +29,11 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            response = await ChatGPTClient.advancedPrompt(chatId, "Give me a really stupid discord bot command");
+            response = await OllamaClient.advancedPrompt(chatId, "Give me a really stupid discord bot command");
         } catch (err) {
             message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         }
-        ChatGPTClient.removeChat(chatId);
+        OllamaClient.removeChat(chatId);
         message.reply({
             content: response.trim(),
             allowedMentions: {
