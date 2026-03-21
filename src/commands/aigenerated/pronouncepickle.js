@@ -3,13 +3,13 @@ class Command {
         this.name = "pronouncepickle";
         this.description = "it pronounces a pickle";
         this.attributes = {
-            unlisted: true,
+            unlisted: false,
             permission: 0,
         };
     }
 
     invoke(message) {
-        message.reply(`pickle`);
+        message.reply(`Pickle`);
     }
 }
 
