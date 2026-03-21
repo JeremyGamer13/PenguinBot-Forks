@@ -3,6 +3,8 @@ const path = require("path");
 const nodeUtil = require("util");
 const childProcess = require("child_process");
 
+const getFileSize = require('./file-size');
+
 const execPromise = nodeUtil.promisify(childProcess.exec);
 
 const compatibleAudio = [
@@ -155,8 +157,59 @@ class FFmpegUtil {
     }
     
     // ffmpeg heavy
+    // ai generate Ohhj my god hes vibe coding
+    /**
+     * Compresses a video to a target size using a calculated bitrate.
+     * @param {string} input - Path to source video
+     * @param {string} output - Path for output mp4
+     * @param {number} targetSizeBytes - Desired file size in bytes
+     */
+    static async dynamicallyCompressToMp4(absolutePathInput, absolutePathOutput, targetSizeBytes) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
 
-    
+        const currentSizeBytes = await getFileSize(absolutePathInput);
+        const durationSeconds = await this.probeLength(absolutePathInput);
+
+        // 1. Calculate the required bitrate in bits per second (bps)
+        // Formula: (Target Bytes * 8) / Duration
+        // We multiply by 0.9 to leave a 10% buffer for audio and container overhead.
+        const totalBitsAvailable = targetSizeBytes * 8;
+        const targetBitrateBps = Math.floor((totalBitsAvailable / durationSeconds) * 0.9);
+
+        // Convert to kbps for the FFmpeg flag (FFmpeg likes 'k' suffix)
+        const targetBitrateKbs = Math.floor(targetBitrateBps / 1000);
+
+        // 2. Determine "Preset" speed based on the compression gap.
+        const compressionRatio = currentSizeBytes / targetSizeBytes;
+        let preset = 'medium';
+
+        if (compressionRatio > 4) {
+            preset = 'slower';
+        } else if (compressionRatio > 2) {
+            preset = 'slow';
+        }
+
+        // 3. Construct the FFmpeg command
+        // Note: If targetBitrateKbs is extremely low (e.g., < 100), the video will look like Lego bricks.
+        // We ensure a minimum of 64k just so it doesn't completely error out.
+        const safeBitrate = Math.max(targetBitrateKbs, 64);
+
+        const command = [
+            'ffmpeg -y',
+            `-i "${absolutePathInput}"`,
+            '-c:v libx264',
+            `-b:v ${safeBitrate}k`,
+            `-maxrate ${Math.floor(safeBitrate * 1.5)}k`,
+            `-bufsize ${safeBitrate * 2}k`,
+            `-preset ${preset}`,
+            '-c:a aac',
+            '-b:a 128k',
+            `"${absolutePathOutput}"`
+        ].join(' ');
+        await execPromise(command);
+    }
 }
 
 module.exports = FFmpegUtil;
