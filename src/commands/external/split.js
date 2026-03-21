@@ -3,8 +3,10 @@ const path = require("path");
 const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
-const probeLength = require('../../util/probe-length');
-const ffmpegCompatible = require('../../util/ffmpeg-compatible');
+const Demucs = require('../../util/demucs');
+const FFmpegUtil = require('../../util/ffmpeg-util');
+const TempFolder = require('../../util/temp-folder');
+const downloadAttachments = require('../../util/download-attachments');
 
 class Command {
     constructor() {
@@ -14,89 +16,57 @@ class Command {
             unlisted: false,
             permission: 0,
         };
-
-        this.processing = false;
     }
 
-    async handle(message, args, util, replyMessage) {
-        // track time
-        const startTime = Date.now();
-
-        // check attachements
+    async handle(message, args, util) {
+        // get attachements
         const attachment = message.attachments.first();
-        if (!attachment) return replyMessage.edit("Add an Audio to split");
+        if (!attachment) throw new Error("Add an Audio to split");
         const endingType = util.getAttachmentType(attachment);
-        if (!ffmpegCompatible.isCompatibleAudio(endingType)) return replyMessage.edit('Please use a valid audio in `.mp3`/`.wav`/`.ogg` format.');
+        if (!FFmpegUtil.isCompatibleAudio(endingType)) throw new Error('Please use a valid audio format.');
         // check atachemtn size
-        if (attachment.size > 15 * 1e+6) return replyMessage.edit("Files must be below 15 MB.");
+        if (attachment.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");
 
-        // prep to download
-        await replyMessage.edit("Downloading audio...");
-        const tempDir = path.join(__dirname, `../../../temp/split`);
-        if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
-        // download
-        const fetchResponse = await fetch(attachment.url);
-        const arrayBuffer = await fetchResponse.arrayBuffer();
-        const file = Buffer.from(arrayBuffer);
-        const inputPath = path.join(tempDir, `input.${endingType}`);
-        fs.writeFileSync(inputPath, file);
-        // check length
-        const length = await probeLength(inputPath);
-        if (length > 10 * 60) return replyMessage.edit("Files must be within 10 minutes long OR you can buy me 64 gigabytes of ram 🎉");
+        // actually start doing stuff
+        const startTime = Date.now();
+        const jobName = TempFolder.makeTempName("split");
+        const temporaryFolder = new TempFolder(jobName);
+        await temporaryFolder.createAndDestroy(async (tempDir) => {
+            // download
+            const replyMessage = await message.reply("Downloading contents...");
+            const [rawInputPath] = await downloadAttachments([attachment], (i) => `input${i}.bin`, tempDir);
+            console.log(rawInputPath);
+            // convert to safe type
+            await replyMessage.edit("Converting contents...");
+            const inputPath = path.join(tempDir, `inputsafe.ogg`);
+            await FFmpegUtil.convertToSafeOgg(rawInputPath, inputPath);
+            // check length
+            const length = await FFmpegUtil.probeLength(inputPath);
+            if (length > 10 * 60) return replyMessage.edit("Files must be within 10 minutes long OR you can buy me 64 gigabytes of ram 🎉");
 
-        // generate
-        await replyMessage.edit("Splitting audio with demucs...");
-        // this is where we do funky things
-        // this is the AI coded part because ive already tested this command works well
-        const demucsExec = env.get("DEMUCS_EXECUTABLE");
+            // generate
+            await replyMessage.edit("Splitting audio with demucs...");
+            const [outputPathInst, outputPathVocals] = await Demucs.splitVocals(inputPath, tempDir);
 
-        // --- Execution ---
-        // Get the filename without extension to predict Demucs output folder
-        const songName = path.basename(inputPath, path.extname(inputPath));
-        const modelName = "htdemucs";
+            // ok now we convert that to ogg because its too big
+            await replyMessage.edit("Converting to OGG... (because wav files are Fat)");
+            const outputPathOggInst = path.join(tempDir, "instrumental.ogg");
+            const outputPathOggVocals = path.join(tempDir, "vocals.ogg");
+            await FFmpegUtil.convertToSafeOgg(outputPathInst, outputPathOggInst);
+            await FFmpegUtil.convertToSafeOgg(outputPathVocals, outputPathOggVocals);
 
-        // Run Demucs
-        // --two-stems=vocals: Splits into 'vocals.wav' and 'no_vocals.wav' (the instrumental)
-        // NOTE: We actually give demucs a .mpeg file for .mp3s right now, that might be problematic but it doesnt seem to care about just the ext
-        childProcess.execSync(`${demucsExec} -n ${modelName} --two-stems=vocals -o "${tempDir}" "${inputPath}"`);
-
-        // --- Final Output Variables ---
-        // Demucs outputs to: [tempDir]/[modelName]/[songName]/
-        const outputPathVocals = path.join(tempDir, modelName, songName, "vocals.wav");
-        const outputPathInst = path.join(tempDir, modelName, songName, "no_vocals.wav");
-
-        // ok now we convert that to ogg because its too big
-        await replyMessage.edit("Converting to OGG... (because wav files are Fat)");
-        const outputPathOggInst = path.join(tempDir, "instrumental.ogg");
-        const outputPathOggVocals = path.join(tempDir, "vocals.ogg");
-        const command1 = `ffmpeg -y -i "${outputPathInst}" -c:a libvorbis "${outputPathOggInst}"`;
-        const command2 = `ffmpeg -y -i "${outputPathVocals}" -c:a libvorbis "${outputPathOggVocals}"`;
-        childProcess.execSync(command1);
-        childProcess.execSync(command2);
-
-        await replyMessage.edit({
-            content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"
-                + "\n" + `-# Generated by <@${message.author.id}>`,
-            files: [outputPathOggInst, outputPathOggVocals]
+            await replyMessage.edit({
+                content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"
+                    + "\n" + `-# Generated by <@${message.author.id}>`,
+                files: [outputPathOggInst, outputPathOggVocals]
+            });
         });
     }
     async invoke(message, args, util) {
         const canDo = util.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
-        if (this.processing) return message.reply("Yo chill tf out yo");
 
-        this.processing = true;
-        let replyMessage;
-        try {
-            replyMessage = await message.reply("Generating output...");
-            await this.handle(message, args, util, replyMessage);
-        } catch (err) {
-            this.processing = false;
-            replyMessage.edit(`${err}`.substring(0, 2000));
-            throw err;
-        } finally {
-            this.processing = false;
-        }
+        await this.handle(message, args, util);
     }
 }
 

@@ -3,7 +3,10 @@ const path = require("path");
 const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
+const Stammer = require('../../util/stammer');
 const FFmpegUtil = require('../../util/ffmpeg-util');
+const TempFolder = require('../../util/temp-folder');
+const downloadAttachments = require('../../util/download-attachments');
 
 class Command {
     constructor() {
@@ -13,96 +16,64 @@ class Command {
             unlisted: false,
             permission: 0,
         };
-
-        this.processing = false;
     }
 
-    async handle(message, args, util, replyMessage) {
-        // track time
-        const startTime = Date.now();
-
+    getAttachments(message, args, util) {
         // check attachements
         const attachment1 = message.attachments.first();
         const attachment2 = message.attachments.last();
-        if (!attachment1) return replyMessage.edit("Add an mp4 video to take the frames from");
-        if (!attachment2) return replyMessage.edit("Add an mp4 video to sync the video to");
+        if (!attachment1) throw new Error("Add an video or audio to take the frames/source from");
+        if (!attachment2) throw new Error("Add an video or audio to sync the video/audio to");
         const endingTypeRaw1 = util.getAttachmentType(attachment1);
         const endingTypeRaw2 = util.getAttachmentType(attachment2);
-        if (!ffmpegCompatible.isCompatibleVidio(endingTypeRaw1) && !ffmpegCompatible.isCompatibleAudio(endingTypeRaw1))
-            return replyMessage.edit('Please use a valid video or audio format. (video 1)');
-        if (!ffmpegCompatible.isCompatibleVidio(endingTypeRaw2) && !ffmpegCompatible.isCompatibleAudio(endingTypeRaw2))
-            return replyMessage.edit('Please use a valid video or audio format. (video 2)');
+        if (!FFmpegUtil.isCompatibleVideo(endingTypeRaw1) && !FFmpegUtil.isCompatibleAudio(endingTypeRaw1))
+            throw new Error('Please use a valid video or audio format. (video 1)');
+        if (!FFmpegUtil.isCompatibleVideo(endingTypeRaw2) && !FFmpegUtil.isCompatibleAudio(endingTypeRaw2))
+            throw new Error('Please use a valid video or audio format. (video 2)');
         // check atachemtn size
-        if (attachment1.size > 15 * 1e+6) return replyMessage.edit("Files must be below 15 MB.");
-        if (attachment2.size > 15 * 1e+6) return replyMessage.edit("Files must be below 15 MB.");
+        if (attachment1.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");
+        if (attachment2.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");
+        return [attachment1, attachment2];
+    }
+    async handle(message, args, util) {
+        const [attachment1, attachment2] = this.getAttachments(message, args, util);
 
-        // prep to download
-        await replyMessage.edit("Downloading contents...");
-        const tempDir = path.join(__dirname, `../../../temp/stammer`);
-        if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
-        // download
-        const fetch1 = await fetch(attachment1.url);
-        const fetch2 = await fetch(attachment2.url);
-        const arrayBuffer1 = await fetch1.arrayBuffer();
-        const arrayBuffer2 = await fetch2.arrayBuffer();
-        const file1 = Buffer.from(arrayBuffer1);
-        const file2 = Buffer.from(arrayBuffer2);
-        const rawPath1 = path.join(tempDir, `rawinput1.bin`);
-        const rawPath2 = path.join(tempDir, `rawinput2.bin`);
-        fs.writeFileSync(rawPath1, file1);
-        fs.writeFileSync(rawPath2, file2);
-        // convert to safe types
-        await replyMessage.edit("Converting contents...");
-        let endingType1 = "mp3";
-        let endingType2 = "mp3";
-        if (await probeIsVideo(rawPath1)) endingType1 = "mp4";
-        if (await probeIsVideo(rawPath2)) endingType2 = "mp4";
-        const path1 = path.join(tempDir, `input1.${endingType1}`);
-        const path2 = path.join(tempDir, `input2.${endingType2}`);
-        const command1 = `ffmpeg -y -i "${rawPath1}" ${endingType1 === "mp3" ? "-c:a libmp3lame" : `-c:v libx264 -c:a aac -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"`} "${path1}"`;
-        const command2 = `ffmpeg -y -i "${rawPath2}" ${endingType2 === "mp3" ? "-c:a libmp3lame" : `-c:v libx264 -c:a aac -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"`} "${path2}"`;
-        childProcess.execSync(command1);
-        childProcess.execSync(command2);
-        // check length
-        const length1 = await probeLength(path1);
-        const length2 = await probeLength(path2);
-        if (length1 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
-        if (length2 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
+        // actually start doing stuff
+        const startTime = Date.now();
+        const jobName = TempFolder.makeTempName("stammer");
+        const temporaryFolder = new TempFolder(jobName);
+        await temporaryFolder.createAndDestroy(async (tempDir) => {
+            // download
+            const replyMessage = await message.reply("Downloading contents...");
+            const [rawPath1, rawPath2] = await downloadAttachments([attachment1, attachment2], (i) => `input${i}.bin`, tempDir);
+            // convert to safe types
+            await replyMessage.edit("Converting contents...");
+            const path1 = await FFmpegUtil.convertToSafeVideoOrAudio(rawPath1, (fileType) => path.join(tempDir, `inputsafe1.${fileType}`));
+            const path2 = await FFmpegUtil.convertToSafeVideoOrAudio(rawPath2, (fileType) => path.join(tempDir, `inputsafe2.${fileType}`));
+            // check length
+            const length1 = await FFmpegUtil.probeLength(path1);
+            const length2 = await FFmpegUtil.probeLength(path2);
+            if (length1 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
+            if (length2 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
 
-        // generate
-        await replyMessage.edit(`Generating stammer output...\n(SOURCE: ${endingType1}, MODIFIER: ${endingType2})\nwill output as ${endingType1}`);
-        const outputPath = path.join(tempDir, `output.${endingType1}`);
-        const command = `${env.get("STAMMER_PYTHON")}`
-            .replaceAll("{{CARRIER}}", `"${path1}"`)
-            .replaceAll("{{MODULATOR}}", `"${path2}"`)
-            .replaceAll("{{OUTPUT}}", `"${outputPath}"`);
-        childProcess.execSync(command, {
-            cwd: env.get("STAMMER_PATH")
-        });
+            // generate
+            const finalExt = `${path.extname(path1)}`;
+            const outputPath = path.join(tempDir, `output.${finalExt}`);
+            await replyMessage.edit(`Generating stammer output...\n(SOURCE: ${attachment1.name}, MODIFIER: ${attachment2.name})\nwill output as ${finalExt}`);
+            await Stammer.stammer(path1, path2, outputPath);
 
-        await replyMessage.edit({
-            content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"
-                + "\n" + `-# Generated by <@${message.author.id}>`,
-            files: [outputPath]
+            await replyMessage.edit({
+                content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"
+                    + "\n" + `-# Generated by <@${message.author.id}>`,
+                files: [outputPath]
+            });
         });
     }
     async invoke(message, args, util) {
         const canDo = util.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
-        if (this.processing) return message.reply("Yo chill tf out yo");
 
-        this.processing = true;
-        let replyMessage;
-        try {
-            replyMessage = await message.reply("Generating output...");
-            await this.handle(message, args, util, replyMessage);
-        } catch (err) {
-            this.processing = false;
-            replyMessage.edit(`${err}`.substring(0, 2000));
-            throw err;
-        } finally {
-            this.processing = false;
-        }
+        await this.handle(message, args, util);
     }
 }
 
