@@ -168,6 +168,7 @@ class FFmpegUtil {
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
 
         const currentSizeBytes = await getFileSize(absolutePathInput);
         const durationSeconds = await this.probeLength(absolutePathInput);
@@ -208,6 +209,72 @@ class FFmpegUtil {
             '-b:a 128k',
             `"${absolutePathOutput}"`
         ].join(' ');
+        await execPromise(command);
+    }
+    // ai generate Ohhj my god hes vibe coding
+    /**
+     * Compresses a video while mixing its original audio with a backing track.
+     * This is probably only useful for like 1 command but i dont care lole
+     * @param {string} absolutePathInput - Path to source video
+     * @param {string} absolutePathBacking - Path to audio backing track (mp3/wav/etc)
+     * @param {string} absolutePathOutput - Path for output mp4
+     * @param {number} targetSizeBytes - Desired file size in Bytes
+     */
+    static async dynamicallyCompressToMp4WithBackingTrack(absolutePathInput, absolutePathBacking, absolutePathOutput, targetSizeBytes) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathBacking)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathBacking)) throw new Error("Cannot add non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        const durationSeconds = await this.probeLength(absolutePathInput);
+
+        // 1. Bitrate Math (identical to previous version)
+        // We stick with the 0.9 buffer to account for the muxing overhead
+        const totalBitsAvailable = targetSizeBytes * 8;
+        const targetBitrateBps = Math.floor((totalBitsAvailable / durationSeconds) * 0.9);
+        const targetBitrateKbs = Math.max(Math.floor(targetBitrateBps / 1000), 64);
+
+        // 2. Determine Preset
+        const currentSizeBytes = await getFileSize(absolutePathInput);
+        const compressionRatio = currentSizeBytes / targetSizeBytes;
+        let preset = compressionRatio > 4 ? 'slower' : (compressionRatio > 2 ? 'slow' : 'medium');
+
+        // 3. Construct the Audio-Mixing FFmpeg command
+        // [0:a] is video audio, [1:a] is backing track. 
+        // amix=inputs=2:duration=shortest mixes them and crops to the video length.
+        const command = [
+            'ffmpeg -y',
+            `-i "${absolutePathInput}"`,
+            `-i "${absolutePathBacking}"`,
+            '-filter_complex "[0:a][1:a]amix=inputs=2:duration=shortest[aout]"',
+            '-map 0:v',         // Map the video from the first input
+            '-map "[aout]"',    // Map the mixed audio result
+            '-c:v libx264',
+            `-b:v ${targetBitrateKbs}k`,
+            `-maxrate ${Math.floor(targetBitrateKbs * 1.5)}k`,
+            `-bufsize ${targetBitrateKbs * 2}k`,
+            `-preset ${preset}`,
+            '-c:a aac',
+            '-b:a 128k',
+            `"${absolutePathOutput}"`
+        ].join(' ');
+        await execPromise(command);
+    }
+    // ai generate Ohhj my god hes vibe coding
+    static async mixAudio(absolutePathInput, absolutePathBacking, absolutePathOutput) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathBacking)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathBacking)) throw new Error("Cannot add non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        // We wrap paths in double quotes to prevent errors with spaces in filenames.
+        // amix=inputs=2 combines the streams.
+        // duration=shortest ensures the output lasts until the end of the longer file. No i dont want that are you Stupid
+        const command = `ffmpeg -i "${absolutePathInput}" -i "${absolutePathBacking}" -filter_complex "amix=inputs=2:duration=shortest" -y "${absolutePathOutput}"`;
         await execPromise(command);
     }
 }
