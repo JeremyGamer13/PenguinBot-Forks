@@ -16,6 +16,7 @@ class Command {
         this.description = "Lalala my epic YTPmv but its REALLY BAD and SUCKS";
         this.attributes = {
             unlisted: false,
+            lockedToCommands: true,
             permission: 0,
         };
     }

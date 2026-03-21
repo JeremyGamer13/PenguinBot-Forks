@@ -15,6 +15,7 @@ class Command {
         this.description = "Make a video using another video";
         this.attributes = {
             unlisted: false,
+            lockedToCommands: true,
             permission: 0,
         };
     }

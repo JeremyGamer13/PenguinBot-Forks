@@ -17,10 +17,10 @@ class Command {
         const attachment = message.attachments.first();
         if (!attachment) return message.reply("There is no text in the image because you didnt fucking post anything bud");
         const endingType = util.getAttachmentType(attachment);
-        const supportedTypes = ['png', 'jpeg', 'jpg', 'webp'];
+        const supportedTypes = ['png', 'jpeg', 'jpg', 'webp', 'avif', 'heif', 'heic', 'x-tiff', 'gif', 'tiff'];
 
         if (!supportedTypes.includes(endingType)) {
-            return message.reply('Please use a valid image in `.png` or `.jpeg`/`.jpg` format.');
+            return message.reply('Please use a valid image format.');
         }
 
         if (attachment.size > 512000) {

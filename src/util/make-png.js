@@ -1,12 +1,9 @@
-const { createCanvas, loadImage } = require('canvas');
+const sharp = require('sharp');
 
 const makePng = async (buffer) => {
-    const image = await loadImage(buffer);
-    const canvas = createCanvas(image.width, image.height);
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(image, 0, 0);
-
-    const pngBuffer = canvas.toBuffer();
+    const pngBuffer = await sharp(buffer)
+        .png()
+        .toBuffer();
     return pngBuffer;
 };
 
