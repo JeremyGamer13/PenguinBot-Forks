@@ -114,6 +114,14 @@ class OllamaClient {
             this.chatHistories[chatID].push({ role: "system", content: inform });
         }
     }
+    /**
+     * @param {"user"|"assistant"|"system"} role 
+     */
+    informChatWithRole(chatID, role, inform) {
+        if (chatID in this.chatHistories) {
+            this.chatHistories[chatID].push({ role, content: inform });
+        }
+    }
 
     /**
      * @param {"user"|"assistant"} type 
