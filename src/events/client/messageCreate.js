@@ -141,7 +141,7 @@ class BotEvent {
         } catch (err) {
             console.error(err);
             message.reply({
-                content: `An unknown error occurred.\n${err}`,
+                content: `An unknown error occurred.\n${err}`.substring(0, 2000),
                 allowedMentions: {
                     parse: [],
                     users: [],
