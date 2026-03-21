@@ -1,5 +1,6 @@
 const configuration = require("../../config");
-const evalEnvironment = require("../../util/eval-environment");
+const tryCatch = require('../../util/try-catch');
+const evalEnvironment = tryCatch(() => require("../../util/eval-environment")) || eval;
 
 class Command {
     constructor(client) {
