@@ -121,7 +121,7 @@ class FFmpegUtil {
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
         // if (!fs.existsSync(absolutePathOutput)) throw new Error("Cannot create non-existent path"); // thats the poiint
 
-        const command = `ffmpeg -y -i "${absolutePathInput}" -c:a libvorbis "${absolutePathOutput}"`;
+        const command = `ffmpeg -y -i "${absolutePathInput}" -map_metadata -1 -vn -c:a libvorbis "${absolutePathOutput}"`;
         await execPromise(command);
     }
     static async convertToSafeMp3(absolutePathInput, absolutePathOutput) {
@@ -131,7 +131,7 @@ class FFmpegUtil {
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
         // if (!fs.existsSync(absolutePathOutput)) throw new Error("Cannot create non-existent path"); // thats the poiint
 
-        const command = `ffmpeg -y -i "${absolutePathInput}" -c:a libmp3lame "${absolutePathOutput}"`;
+        const command = `ffmpeg -y -i "${absolutePathInput}" -map_metadata -1 -vn -c:a libmp3lame "${absolutePathOutput}"`;
         await execPromise(command);
     }
     static async convertToSafeMp4(absolutePathInput, absolutePathOutput) {
