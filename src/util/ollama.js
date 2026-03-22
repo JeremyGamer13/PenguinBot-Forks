@@ -182,7 +182,7 @@ class OllamaClient {
      * @param {string} chatID 
      * @param {string} prompt 
      * @param {Buffer} imageBuffer 
-     * @returns {string}
+     * @returns {Promise<string>}
      */
     advancedPrompt(chatID, prompt, imageBuffer) {
         if (!(chatID in this.chatHistories)) {
