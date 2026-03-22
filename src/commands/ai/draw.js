@@ -1,5 +1,7 @@
 const Ollama = require("../../util/ollama");
-const OllamaClient = new Ollama();
+
+const makePng = require('../../util/make-png');
+const isCompatibleImage = require('../../util/compatible-images');
 
 const drawSBPic = require('../../util/sbpic');
 const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json')
@@ -10,6 +12,7 @@ class Command {
         this.description = "the Ai can draw fridge type pictures trust";
         this.attributes = {
             permission: 0,
+            lockedToCommands: true,
             unlisted: false,
         };
     }
@@ -22,14 +25,12 @@ class Command {
         if (!attachment && !userMessage) return message.reply("Hey bud i need some fucking instructions<:idk_man:1136888365082492941>");
         if (attachment) {
             const endingType = util.getAttachmentType(attachment);
-            const supportedTypes = ['png', 'jpeg', 'jpg', 'webp', 'avif', 'heif', 'heic', 'x-tiff', 'gif', 'tiff'];
-
-            if (!supportedTypes.includes(endingType)) {
+            if (!isCompatibleImage(endingType)) {
                 return message.reply('Please use a valid image format.');
             }
 
-            if (attachment.size > 512000) {
-                return message.reply("Images must be below 512 KB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
+            if (attachment.size > 2 * 1000 * 1000) {
+                return message.reply("Images must be below 2 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
             }
 
             // we just expect this to work because realistically the command shouldnt work if this doesnt
@@ -39,8 +40,14 @@ class Command {
             imageBuffer = await makePng(attachmentBuffer);
         }
 
+        const OllamaClient = new Ollama();
+        OllamaClient.timeout = 5 * 60 * 1000;
+        OllamaClient.aiModel = "gemma3:4b";
+
         const userMessageInput = `Please draw me a picture, here is what i want:`
             + (userMessage ? userMessage : (attachment ? "Make it look like the picture i gave you" : "Do whatever you wanna draw"))
+
+        const replyMessage = await message.reply(`Hold up lemme cook 🙏 )`);
 
         // start asking chattus geepitus
         const chatId = `aidraw-${Math.random()}`;
@@ -51,8 +58,8 @@ class Command {
             + `\n` + `The image starts as a white canvas for you to draw over.`
             + `\n` + `The "w" and "h" fields define the width and height of your image.`
             + `\n` + `With the "ops" array, you can list operations that will create the output.`
-            + `\n` + `To draw a line, use something like { "t": "l", "p": [x1, y1, x2, y2], "c": "#000000" }.`
-            + `\n` + `To draw a box, use something like { "t": "b", "p": [x1, y1, x2, y2], "c": "#000000" }.`
+            + `\n` + `To draw a line, use something like { "t": "l", "p": [x1, y1, x2, y2], "c": "#598ae4" }.`
+            + `\n` + `To draw a box, use something like { "t": "b", "p": [x1, y1, x2, y2], "c": "#961fce" }.`
             + `\n` + `To write text on the picture, use something like { "t": "t", "p": [x1, y1], "s": "Hello", "c": "#000000" }.`
             + `\n` + `Add as many operations as you can to fulfill the user's request.`
             + `\n` + `You must draw whatever the user asks, but keep your content appropriate and inoffensive.`
@@ -63,7 +70,7 @@ class Command {
         try {
             response = await OllamaClient.chatStructuredPrompt(chatId, SchemaSBPicGeneration, userMessageInput, imageBuffer);
         } catch (err) {
-            return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+            return replyMessage.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
             OllamaClient.removeChat(chatId);
         }
@@ -71,8 +78,7 @@ class Command {
         // we need to parse this response
         const parsed = JSON.parse(response);
         const image = drawSBPic(parsed);
-
-        message.reply({
+        replyMessage.edit({
             content: parsed.desc.trim().substring(0, 2000),
             files: [image],
             allowedMentions: {

@@ -1,6 +1,8 @@
-const makePng = require('../../util/make-png');
 const Ollama = require("../../util/ollama");
 const OllamaClient = new Ollama();
+
+const makePng = require('../../util/make-png');
+const isCompatibleImage = require('../../util/compatible-images');
 
 class Command {
     constructor() {
@@ -17,14 +19,12 @@ class Command {
         const attachment = message.attachments.first();
         if (!attachment) return message.reply("There is no text in the image because you didnt fucking post anything bud");
         const endingType = util.getAttachmentType(attachment);
-        const supportedTypes = ['png', 'jpeg', 'jpg', 'webp', 'avif', 'heif', 'heic', 'x-tiff', 'gif', 'tiff'];
-
-        if (!supportedTypes.includes(endingType)) {
+        if (!isCompatibleImage(endingType)) {
             return message.reply('Please use a valid image format.');
         }
 
-        if (attachment.size > 512000) {
-            return message.reply("Images must be below 512 KB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
+        if (attachment.size > 2 * 1000 * 1000) {
+            return message.reply("Images must be below 2 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
         }
 
         // we just expect this to work because realistically the command shouldnt work if this doesnt
@@ -51,7 +51,6 @@ class Command {
         } finally {
             OllamaClient.removeChat(chatId);
         }
-        OllamaClient.removeChat(chatId);
         message.reply({
             content: response.trim(),
             allowedMentions: {

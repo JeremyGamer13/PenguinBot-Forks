@@ -43,7 +43,6 @@ class Command {
         } finally {
             OllamaClient.removeChat(chatId);
         }
-        OllamaClient.removeChat(chatId);
         message.reply({
             content: response.trim(),
             allowedMentions: {
