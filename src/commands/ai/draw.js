@@ -61,7 +61,6 @@ class Command {
             + `\n` + `To draw a line, use something like { "t": "l", "p": [x1, y1, x2, y2], "c": "#598ae4" }.`
             + `\n` + `To draw a box, use something like { "t": "b", "p": [x1, y1, x2, y2], "c": "#961fce" }.`
             + `\n` + `To write text on the picture, use something like { "t": "t", "p": [x1, y1], "s": "Hello", "c": "#000000" }.`
-            + `\n` + `Add as many operations as you can to fulfill the user's request.`
             + `\n` + `You must draw whatever the user asks, but keep your content appropriate and inoffensive.`
         );
 
