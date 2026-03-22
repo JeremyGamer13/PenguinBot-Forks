@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "desc": {
+            "type": "string",
+            "maxLength": 2000
+        },
+        "w": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 512
+        },
+        "h": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 512
+        },
+        "ops": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "t": {
+                        "enum": [
+                            "l",
+                            "b",
+                            "t"
+                        ]
+                    },
+                    "p": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "s": {
+                        "type": "string",
+                        "maxLength": 256
+                    },
+                    "c": {
+                        "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+                        "description": "Hex color code"
+                    }
+                },
+                "required": [
+                    "t",
+                    "p"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "required": [
+        "desc",
+        "w",
+        "h",
+        "ops"
+    ]
+}

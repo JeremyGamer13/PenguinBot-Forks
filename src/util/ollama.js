@@ -13,7 +13,7 @@ class OllamaClient {
 
         // lightweight ollama model i have rn
         this.aiModel = 'gemma3:4b';
-        this.timeout = 15 * 1000; // 15 seconds
+        this.timeout = 25 * 1000; // 25 seconds
 
         this._api_url = env.get("OLLAMA_URL");
     }
@@ -27,6 +27,10 @@ class OllamaClient {
         this._api_url = newApiUrl;
     }
 
+    /**
+     * Uses a generation to check that the api is working
+     * @returns {Promise<void>}
+     */
     checkApiUrl() {
         // Send a simple GET request to the api_url
         return fetchWithTimeout(this._api_url, {
@@ -48,57 +52,6 @@ class OllamaClient {
             .catch(() => {
                 // If there's an error, return false
                 return false;
-            });
-    }
-
-    singlePrompt(PROMPT) {
-        const prompt = PROMPT;
-
-        return fetchWithTimeout(this._api_url, {
-            method: 'POST',
-            timeout: this.timeout,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: this.aiModel,
-                stream: false,
-                messages: [{ role: "user", content: prompt }]
-            }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    // Check for specific error scenarios
-                    if (response.status === 429) {
-                        // API quota exceeded
-                        throw new Error("API quota exceeded");
-                    } else {
-                        // Generic error for other cases
-                        throw new Error(`Generic error: ${response.status} ${response.statusText}`);
-                    }
-                }
-                return response.json();
-            })
-            .then(data => {
-                if ((!data.choices || data.choices.length === 0) && !(data.message && data.message.content)) {
-                    throw new Error("No response");
-                }
-                if (data.message && data.message.content) {
-                    return data.message.content;
-                }
-                const botResponse = data.choices[0].message.content;
-                return botResponse;
-            })
-            .catch(error => {
-                console.error("Error sending prompt to AI", error.message);
-
-                if (error.message === "API quota exceeded") {
-                    throw new Error("You exceeded the API's quota, Please try again later or use a different API URL.");
-                } else if (error.message === "No response") {
-                    throw new Error("There was no response from the API. Please try again later or try a new API URL.");
-                } else {
-                    throw error;
-                }
             });
     }
 
@@ -177,25 +130,7 @@ class OllamaClient {
         }
     }
 
-    /**
-     * 
-     * @param {string} chatID 
-     * @param {string} prompt 
-     * @param {Buffer} imageBuffer 
-     * @returns {Promise<string>}
-     */
-    advancedPrompt(chatID, prompt, imageBuffer) {
-        if (!(chatID in this.chatHistories)) {
-            throw new Error("That chatbot does not exist");
-        }
-
-        const chatHistory = this.chatHistories[chatID] || [];
-        chatHistory.push({
-            role: "user",
-            content: prompt,
-            images: !imageBuffer ? [] : [imageBuffer.toString("base64")],
-        });
-
+    chatWithMessages(messages, format) {
         return fetchWithTimeout(this._api_url, {
             method: 'POST',
             timeout: this.timeout,
@@ -205,7 +140,8 @@ class OllamaClient {
             body: JSON.stringify({
                 model: this.aiModel,
                 stream: false,
-                messages: chatHistory,
+                messages,
+                format
             })
         })
             .then(response => {
@@ -216,6 +152,8 @@ class OllamaClient {
                 return response.json();
             })
             .then(data => {
+                if (format) console.log(data);
+
                 let botResponse = null;
                 if (data.message && data.message.content) {
                     botResponse = data.message.content;
@@ -225,8 +163,6 @@ class OllamaClient {
                     throw new Error("Unexpected response from the API");
                 }
 
-                chatHistory.push({ role: "assistant", content: botResponse });
-                this.chatHistories[chatID] = chatHistory;
                 return botResponse;
             })
             .catch(error => {
@@ -244,6 +180,70 @@ class OllamaClient {
             });
     }
 
+    async singlePrompt(prompt, imageBuffer) {
+        const messages = [{
+            role: "user",
+            content: prompt,
+            images: !imageBuffer ? [] : [imageBuffer.toString("base64")],
+        }];
+        return this.chatWithMessages(messages);
+    }
+    /**
+     * Prompt for a specific chatID
+     * @param {string} chatID 
+     * @param {string} prompt 
+     * @param {Buffer} imageBuffer 
+     * @returns {Promise<string>}
+     */
+    async chatPrompt(chatID, prompt, imageBuffer) {
+        if (!(chatID in this.chatHistories)) {
+            throw new Error("That chatbot does not exist");
+        }
+
+        const chatHistory = this.chatHistories[chatID] || [];
+        chatHistory.push({
+            role: "user",
+            content: prompt,
+            images: !imageBuffer ? [] : [imageBuffer.toString("base64")],
+        });
+
+        const botResponse = await this.chatWithMessages(chatHistory);
+        chatHistory.push({ role: "assistant", content: botResponse });
+        this.chatHistories[chatID] = chatHistory;
+        return botResponse;
+    }
+    async singleStructuredPrompt(format, prompt, imageBuffer) {
+        const messages = [{
+            role: "user",
+            content: prompt,
+            images: !imageBuffer ? [] : [imageBuffer.toString("base64")],
+        }];
+        return this.chatWithMessages(messages, format);
+    }
+    /**
+     * Prompt for a specific chatID
+     * @param {string} chatID 
+     * @param {string} prompt 
+     * @param {Buffer} imageBuffer 
+     * @returns {Promise<string>}
+     */
+    async chatStructuredPrompt(chatID, format, prompt, imageBuffer) {
+        if (!(chatID in this.chatHistories)) {
+            throw new Error("That chatbot does not exist");
+        }
+
+        const chatHistory = this.chatHistories[chatID] || [];
+        chatHistory.push({
+            role: "user",
+            content: prompt,
+            images: !imageBuffer ? [] : [imageBuffer.toString("base64")],
+        });
+
+        const botResponse = await this.chatWithMessages(chatHistory, format);
+        chatHistory.push({ role: "assistant", content: botResponse });
+        this.chatHistories[chatID] = chatHistory;
+        return botResponse;
+    }
 
     exportAll() {
         const allChats = {};

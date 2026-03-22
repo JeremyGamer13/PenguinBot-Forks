@@ -37,9 +37,11 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            response = await OllamaClient.advancedPrompt(chatId, "Who would win, if I placed \"" + opponent1 + "\" against \"" + opponent2 + "\"?");
+            response = await OllamaClient.chatPrompt(chatId, "Who would win, if I placed \"" + opponent1 + "\" against \"" + opponent2 + "\"?");
         } catch (err) {
-            message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+            return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+        } finally {
+            OllamaClient.removeChat(chatId);
         }
         OllamaClient.removeChat(chatId);
         message.reply({

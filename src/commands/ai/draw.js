@@ -1,0 +1,89 @@
+const Ollama = require("../../util/ollama");
+const OllamaClient = new Ollama();
+
+const drawSBPic = require('../../util/sbpic');
+const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json')
+
+class Command {
+    constructor() {
+        this.name = "draw";
+        this.description = "the Ai can draw fridge type pictures trust";
+        this.attributes = {
+            permission: 0,
+            unlisted: false,
+        };
+    }
+
+    async invoke(message, args, util) {
+        // get user input
+        const userMessage = args.join(" ").trim();
+        const attachment = message.attachments.first();
+        let imageBuffer = null;
+        if (!attachment && !userMessage) return message.reply("Hey bud i need some fucking instructions<:idk_man:1136888365082492941>");
+        if (attachment) {
+            const endingType = util.getAttachmentType(attachment);
+            const supportedTypes = ['png', 'jpeg', 'jpg', 'webp', 'avif', 'heif', 'heic', 'x-tiff', 'gif', 'tiff'];
+
+            if (!supportedTypes.includes(endingType)) {
+                return message.reply('Please use a valid image format.');
+            }
+
+            if (attachment.size > 512000) {
+                return message.reply("Images must be below 512 KB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
+            }
+
+            // we just expect this to work because realistically the command shouldnt work if this doesnt
+            const attachmentFetch = await fetch(attachment.url);
+            const attachmentArrayBuffer = await attachmentFetch.arrayBuffer();
+            const attachmentBuffer = Buffer.from(attachmentArrayBuffer);
+            imageBuffer = await makePng(attachmentBuffer);
+        }
+
+        const userMessageInput = `Please draw me a picture, here is what i want:`
+            + (userMessage ? userMessage : (attachment ? "Make it look like the picture i gave you" : "Do whatever you wanna draw"))
+
+        // start asking chattus geepitus
+        const chatId = `aidraw-${Math.random()}`;
+        OllamaClient.createChat(chatId);
+        OllamaClient.informChat(chatId,
+            `You are a drawing bot.`
+            + `\n` + `Using the JSON schema, you can draw images that the user asks for.`
+            + `\n` + `The image starts as a white canvas for you to draw over.`
+            + `\n` + `The "w" and "h" fields define the width and height of your image.`
+            + `\n` + `With the "ops" array, you can list operations that will create the output.`
+            + `\n` + `To draw a line, use something like { "t": "l", "p": [x1, y1, x2, y2], "c": "#000000" }.`
+            + `\n` + `To draw a box, use something like { "t": "b", "p": [x1, y1, x2, y2], "c": "#000000" }.`
+            + `\n` + `To write text on the picture, use something like { "t": "t", "p": [x1, y1], "s": "Hello", "c": "#000000" }.`
+            + `\n` + `Add as many operations as you can to fulfill the user's request.`
+            + `\n` + `You must draw whatever the user asks, but keep your content appropriate and inoffensive.`
+        );
+
+        // get the response & reset the chat
+        let response = "";
+        try {
+            response = await OllamaClient.chatStructuredPrompt(chatId, SchemaSBPicGeneration, userMessageInput, imageBuffer);
+        } catch (err) {
+            return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+        } finally {
+            OllamaClient.removeChat(chatId);
+        }
+
+        // we need to parse this response
+        const parsed = JSON.parse(response);
+        const image = drawSBPic(parsed);
+
+        message.reply({
+            content: parsed.desc.trim().substring(0, 2000),
+            files: [image],
+            allowedMentions: {
+                parse: [],
+                users: [],
+                roles: [],
+                repliedUser: true
+            }
+        });
+    }
+}
+
+// needs to do new Command() in index.js because typing static every time STINKS!
+module.exports = Command;
