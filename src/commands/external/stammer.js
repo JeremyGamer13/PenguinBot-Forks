@@ -16,6 +16,7 @@ class Command {
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,
+            numberConversion: true,
             permission: 0,
         };
     }
@@ -40,6 +41,10 @@ class Command {
     async handle(message, args, util) {
         const [attachment1, attachment2] = this.getAttachments(message, args, util);
 
+        let secondsPerFrame = args[0] || 0.016;
+        if (typeof secondsPerFrame !== "number") secondsPerFrame = 0.016;
+        secondsPerFrame = Math.min(Math.max(secondsPerFrame, 0.016), 60);
+
         // actually start doing stuff
         const startTime = Date.now();
         const jobName = TempFolder.makeTempName("stammer");
@@ -61,10 +66,12 @@ class Command {
             // generate
             const finalExt = `${path.extname(path1)}`;
             const isVideo = await FFmpegUtil.probeIsVideo(path1);
-            await replyMessage.edit(`Generating stammer output...\n(SOURCE: ${attachment1.name}, MODIFIER: ${attachment2.name})\nwill output as ${finalExt}`);
+            await replyMessage.edit(`Generating stammer output... (seconds per frame: ${secondsPerFrame})`
+                + `\n` + `(SOURCE: ${attachment1.name}, MODIFIER: ${attachment2.name})`
+                + `\n` + `will output as ${finalExt}`);
 
             const outputPath = path.join(tempDir, `output${finalExt}`);
-            await Stammer.stammer(path1, path2, outputPath);
+            await Stammer.stammer(path1, path2, outputPath, secondsPerFrame);
 
             // compress if necessary
             const compressTarget = 8 * 1e+6; // 8mb

@@ -17,6 +17,7 @@ class Command {
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,
+            numberConversion: true,
             permission: 0,
         };
     }
@@ -40,6 +41,10 @@ class Command {
     }
     async handle(message, args, util) {
         const [attachment1, attachment2] = this.getAttachments(message, args, util);
+
+        let secondsPerFrame = args[0] || 0.016;
+        if (typeof secondsPerFrame !== "number") secondsPerFrame = 0.016;
+        secondsPerFrame = Math.min(Math.max(secondsPerFrame, 0.016), 60);
 
         // actually start doing stuff
         const startTime = Date.now();
@@ -69,10 +74,12 @@ class Command {
             // generate
             const finalExt = `${path.extname(path1)}`;
             const isVideo = await FFmpegUtil.probeIsVideo(path1);
-            await replyMessage.edit(`Generating stammer output...\n(SOURCE: ${attachment1.name}, MODIFIER: ${attachment2.name} (VOCALS ONLY))\nwill output as ${isVideo ? "video" : "audio"}`);
+            await replyMessage.edit(`Generating stammer output... (seconds per frame: ${secondsPerFrame})`
+                + `\n` + `(SOURCE: ${attachment1.name}, MODIFIER: ${attachment2.name} (VOCALS ONLY))`
+                + `\n` + `will output as ${isVideo ? "video" : "audio"}`);
 
             const outputStammerPath = path.join(tempDir, `outputstammer.${finalExt}`);
-            await Stammer.stammer(path1, outputPathVocals, outputStammerPath);
+            await Stammer.stammer(path1, outputPathVocals, outputStammerPath, secondsPerFrame);
 
             // BRANCH HERE: ok so we ahave Demucs split and stammer split but we actually need to do 2 different things based on this
             let finalOutputPath = null;
