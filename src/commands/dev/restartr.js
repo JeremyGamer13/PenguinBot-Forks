@@ -6,7 +6,7 @@ class Command {
             unlisted: true,
             permission: 4,
         };
-        this.alias = ["restat"];
+        this.alias = ["restat", "restar"];
     }
 
     invoke(message) {
