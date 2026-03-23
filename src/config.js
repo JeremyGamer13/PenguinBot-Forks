@@ -78,6 +78,9 @@ const configuration = {
             '1124133055012020296', // tuff vc
             '1038236270079516682', // tuff vc
             '1169802355861114901', // tuff vc
+            '1463077406146301963', // dev dump
+            '1174359501688803358', // dev commands
+            '1485480777658400819', // staff commands
         ],
 
         // On top of the permission check, who can use pm!eval (run custom code)
