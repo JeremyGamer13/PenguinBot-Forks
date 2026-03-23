@@ -62,6 +62,10 @@ class OllamaClient {
         }
     }
 
+    chatExists(chatID) {
+        return chatID in this.chatHistories;
+    }
+
     informChat(chatID, inform) {
         if (chatID in this.chatHistories) {
             this.chatHistories[chatID].push({ role: "system", content: inform });
