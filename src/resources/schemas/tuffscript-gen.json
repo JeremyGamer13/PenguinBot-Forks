@@ -6,9 +6,6 @@
         "result"
     ],
     "properties": {
-        "stdout": {
-            "type": "string"
-        },
         "result": {
             "oneOf": [
                 {

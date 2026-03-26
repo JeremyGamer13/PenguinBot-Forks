@@ -15,7 +15,7 @@ class OllamaClient {
          * boolean for models except for GPT-OSS which requires string for osme reason
          * @type {boolean|"low"|"medium"|"high"}
          */
-        this.aiThinking = true;
+        this.aiThinking = false;
         this.timeout = 25 * 1000; // 25 seconds
 
         this._api_url = env.get("OLLAMA_URL");
