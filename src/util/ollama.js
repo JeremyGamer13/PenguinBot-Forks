@@ -8,14 +8,18 @@ const env = require("./env-util");
 
 class OllamaClient {
     constructor() {
-        this.chatHistories = {};
-        this.currentIndex = 0;
-
+        // config
         // lightweight ollama model i have rn
         this.aiModel = 'gemma3:4b';
+        /**
+         * boolean for models except for GPT-OSS which requires string for osme reason
+         * @type {boolean|"low"|"medium"|"high"}
+         */
+        this.aiThinking = true;
         this.timeout = 25 * 1000; // 25 seconds
 
         this._api_url = env.get("OLLAMA_URL");
+        this._chatHistories = {};
     }
 
     get apiUrl() {
@@ -27,113 +31,103 @@ class OllamaClient {
         this._api_url = newApiUrl;
     }
 
-    /**
-     * Uses a generation to check that the api is working
-     * @returns {Promise<void>}
-     */
-    checkApiUrl() {
-        // Send a simple GET request to the api_url
-        return fetchWithTimeout(this._api_url, {
-            method: 'POST',
-            timeout: this.timeout,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: this.aiModel,
-                stream: false,
-                messages: [{ role: "user", content: "Return nothing" }]
-            }),
-        })
-            .then(response => {
-                // Check if the response status code is in the 200 range (success)
-                return response.status >= 200 && response.status < 300;
-            })
-            .catch(() => {
-                // If there's an error, return false
-                return false;
-            });
+    // management
+    chatExists(chatID) {
+        return chatID in this._chatHistories;
     }
 
     createChat(chatIDd) {
         const chatID = chatIDd;
-        if (!(chatID in this.chatHistories)) {
-            this.chatHistories[chatID] = [];
+        if (!(chatID in this._chatHistories)) {
+            this._chatHistories[chatID] = [];
+        } else {
+            throw new Error("That chat already exists");
+        }
+    }
+    resetChat(chatID) {
+        if (chatID in this._chatHistories) {
+            this._chatHistories[chatID] = [];
+        }
+    }
+    removeChat(chatID) {
+        if (chatID in this._chatHistories) {
+            delete this._chatHistories[chatID];
         }
     }
 
-    chatExists(chatID) {
-        return chatID in this.chatHistories;
+    overwriteChat(chatID, chatHistory) {
+        if (Array.isArray(chatHistory)) {
+            this._chatHistories[chatID] = chatHistory;
+        } else {
+            throw new Error('Invalid chatHistory. Expected an array.');
+        }
+    }
+    /**
+     * @param {object} importedChats 
+     * @param {"overwrite"|"merge"} merge 
+     */
+    importChats(importedChats, merge) {
+        const mergeOption = merge.toLowerCase();
+        if (typeof importedChats === 'object' && importedChats !== null) {
+            if (mergeOption === 'overwrite') {
+                this._chatHistories = importedChats;
+            } else if (mergeOption === 'merge') {
+                const importedChatIDs = Object.keys(importedChats);
+                for (const chatID of importedChatIDs) {
+                    this._chatHistories[chatID] = importedChats[chatID];
+                }
+            } else {
+                throw new Error('Invalid merge option. Expected "overwrite" or "merge".');
+            }
+        } else {
+            throw new Error('Invalid importedChats. Expected an object.');
+        }
     }
 
+    getChat(chatID) {
+        if (this._chatHistories[chatID] !== undefined) {
+            const chatHistory = this._chatHistories[chatID];
+            return chatHistory;
+        } else {
+            throw new Error("Not a chat");
+        }
+    }
+    getAllChats() {
+        const allChats = {};
+        const chatIDs = Object.keys(this._chatHistories);
+        for (const chatID of chatIDs) {
+            allChats[chatID] = this._chatHistories[chatID];
+        }
+        return allChats;
+    }
+    listChatIds() {
+        const activeChats = Object.keys(this._chatHistories);
+        return activeChats;
+    }
+
+    // chatting
     informChat(chatID, inform) {
-        if (chatID in this.chatHistories) {
-            this.chatHistories[chatID].push({ role: "system", content: inform });
+        if (chatID in this._chatHistories) {
+            this._chatHistories[chatID].push({ role: "system", content: inform });
         }
     }
     /**
      * @param {"user"|"assistant"|"system"} role 
      */
     informChatWithRole(chatID, role, inform) {
-        if (chatID in this.chatHistories) {
-            this.chatHistories[chatID].push({ role, content: inform });
+        if (chatID in this._chatHistories) {
+            this._chatHistories[chatID].push({ role, content: inform });
         }
     }
 
     /**
-     * @param {"user"|"assistant"} type 
+     * @typedef {Object} AIResponse
+     * @property {"assistant"} role
+     * @property {string} content - always a string, regardless of schema being used or other settings
+     * @property {string?} thinking 
      */
-    lastGeneration(chatID, type) {
-        if (type === 'user') {
-            type = 'user';
-        } else {
-            type = 'assistant';
-        }
-        if (this.chatHistories[chatID] !== undefined) {
-            const chatHistory = this.chatHistories[chatID];
-            for (let i = chatHistory.length - 1; i >= 0; i--) {
-                if ('role' in chatHistory[i] && chatHistory[i].role === type) {
-                    return chatHistory[i].content;
-                }
-            }
-        }
-        return '';
-    }
 
-    exportChat(chatID) {
-        if (this.chatHistories[chatID] !== undefined) {
-            const chatHistory = this.chatHistories[chatID];
-            return chatHistory;
-        } else {
-            return '';
-        }
-    }
-
-    listChats() {
-        const activeChats = Object.keys(this.chatHistories);
-        return activeChats;
-    }
-
-    importChat(chatID, chatHistory) {
-        if (Array.isArray(chatHistory)) {
-            this.chatHistories[chatID] = chatHistory;
-        } else {
-            throw new Error('Invalid JSON format. Expected an array.');
-        }
-    }
-
-    resetChat(chatID) {
-        if (chatID in this.chatHistories) {
-            this.chatHistories[chatID] = [];
-        }
-    }
-
-    removeChat(chatID) {
-        if (chatID in this.chatHistories) {
-            delete this.chatHistories[chatID];
-        }
-    }
-
+    /** @returns {Promise<AIResponse>} */
     chatWithMessages(messages, format) {
         return fetchWithTimeout(this._api_url, {
             method: 'POST',
@@ -143,6 +137,7 @@ class OllamaClient {
             },
             body: JSON.stringify({
                 model: this.aiModel,
+                think: this.aiThinking,
                 stream: false,
                 messages,
                 format
@@ -158,20 +153,18 @@ class OllamaClient {
             .then(data => {
                 if (format) console.log(data);
 
-                let botResponse = null;
-                if (data.message && data.message.content) {
-                    botResponse = data.message.content;
-                } else if (data.choices && data.choices.length > 0) {
-                    botResponse = data.choices[0].message.content;
-                } else {
+                let botResponse = data.message;
+                if (data.choices && data.choices.length > 0) {
+                    botResponse = data.choices[0].message;
+                }
+                if (!botResponse) {
                     throw new Error("Unexpected response from the API");
                 }
 
                 return botResponse;
             })
             .catch(error => {
-                console.error("Error sending prompt to AI", error.message);
-                console.error(this._api_url);
+                console.error("Error sending prompt to AI", this._api_url, error.message);
 
                 // Handle different error scenarios with custom messages
                 if (error.message === "Unexpected response from the API") {
@@ -200,11 +193,11 @@ class OllamaClient {
      * @returns {Promise<string>}
      */
     async chatPrompt(chatID, prompt, imageBuffer) {
-        if (!(chatID in this.chatHistories)) {
+        if (!(chatID in this._chatHistories)) {
             throw new Error("That chatbot does not exist");
         }
 
-        const chatHistory = this.chatHistories[chatID] || [];
+        const chatHistory = this._chatHistories[chatID] || [];
         chatHistory.push({
             role: "user",
             content: prompt,
@@ -212,8 +205,8 @@ class OllamaClient {
         });
 
         const botResponse = await this.chatWithMessages(chatHistory);
-        chatHistory.push({ role: "assistant", content: botResponse });
-        this.chatHistories[chatID] = chatHistory;
+        chatHistory.push({ role: "assistant", ...botResponse });
+        this._chatHistories[chatID] = chatHistory;
         return botResponse;
     }
     async singleStructuredPrompt(format, prompt, imageBuffer) {
@@ -232,11 +225,11 @@ class OllamaClient {
      * @returns {Promise<string>}
      */
     async chatStructuredPrompt(chatID, format, prompt, imageBuffer) {
-        if (!(chatID in this.chatHistories)) {
+        if (!(chatID in this._chatHistories)) {
             throw new Error("That chatbot does not exist");
         }
 
-        const chatHistory = this.chatHistories[chatID] || [];
+        const chatHistory = this._chatHistories[chatID] || [];
         chatHistory.push({
             role: "user",
             content: prompt,
@@ -244,42 +237,10 @@ class OllamaClient {
         });
 
         const botResponse = await this.chatWithMessages(chatHistory, format);
-        chatHistory.push({ role: "assistant", content: botResponse });
-        this.chatHistories[chatID] = chatHistory;
+        chatHistory.push({ role: "assistant", ...botResponse });
+        this._chatHistories[chatID] = chatHistory;
         return botResponse;
     }
-
-    exportAll() {
-        const allChats = {};
-        const chatIDs = Object.keys(this.chatHistories);
-        for (const chatID of chatIDs) {
-            allChats[chatID] = this.chatHistories[chatID];
-        }
-        return allChats;
-    }
-
-    /**
-     * @param {object} importedChats 
-     * @param {"overwrite"|"merge"} merge 
-     */
-    importAll(importedChats, merge) {
-        const mergeOption = merge.toLowerCase();
-        if (typeof importedChats === 'object' && importedChats !== null) {
-            if (mergeOption === 'overwrite') {
-                this.chatHistories = importedChats;
-            } else if (mergeOption === 'merge') {
-                const importedChatIDs = Object.keys(importedChats);
-                for (const chatID of importedChatIDs) {
-                    this.chatHistories[chatID] = importedChats[chatID];
-                }
-            } else {
-                throw new Error('Invalid merge option. Expected "overwrite" or "merge".');
-            }
-        } else {
-            throw new Error('Invalid JSON format. Expected an object.');
-        }
-    }
-
 }
 
 module.exports = OllamaClient;
