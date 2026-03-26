@@ -87,23 +87,29 @@ class FFmpegUtil {
         if (!fs.existsSync(absolutePath)) throw new Error("Cannot probe non-existent path");
 
         try {
-            // -select_streams v: Look only for video
-            // -show_entries stream=codec_type: Tell us the type
-            // -of csv=p=0: Give us a raw string (e.g., "video") without extra text
-            // we also remove album art// This command counts all video streams that are NOT marked as attached_pic
-            const command = `ffprobe -v error -select_streams v -show_entries stream=index -of csv=p=0 "${absolutePath}"`;
+            // this command seems to work fully in CLI soo yeah copy and paste
+            // We ask for: codec_name AND the attached_pic flag
+            // Format: h264,0 (for real video) or mjpeg,1 (for album art)
+            const command = `ffprobe -v error -select_streams v -show_entries stream=codec_name:disposition=attached_pic -of csv=p=0 "${absolutePath}"`;
+
             const { stdout } = await execPromise(command);
+            const lines = stdout.trim().split('\n');
 
-            const result = stdout.trim();
+            // Check every video stream found
+            for (const line of lines) {
+                if (!line) continue;
 
-            // 1. If result is empty, there is no video stream at all.
-            if (!result) return false;
+                // CSV format: codec_name,attached_pic_flag
+                // Example: "h264,0" or "mjpeg,1"
+                const [codec, isAttachedPic] = line.split(',');
 
-            // 2. If result is "1", it's an attached picture (Album Art).
-            if (result === '1') return false;
+                // If it's NOT an attached picture (isAttachedPic === '0'), it's a real video stream
+                if (isAttachedPic === '0') {
+                    return true;
+                }
+            }
 
-            // 3. If result is "0", it's a real video stream.
-            return result === '0';
+            return false; // No video streams, or only album art found
         } catch (error) {
             // If the file is corrupt or not a media file, ffprobe returns an error code
             return false;
