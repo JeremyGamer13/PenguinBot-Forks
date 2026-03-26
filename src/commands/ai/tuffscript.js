@@ -1,6 +1,7 @@
 const Ollama = require("../../util/ollama");
 const OllamaClient = new Ollama();
 OllamaClient.timeout = 2 * 60 * 1000;
+// OllamaClient.aiModel = "deepseek-r1:8b";
 OllamaClient.aiModel = "gemma3:12b";
 // OllamaClient.aiThinking = true;
 
@@ -52,7 +53,7 @@ class Command {
                 + ` ` + `if the language syntax is incorrect, or the program would enter a runtime error.`
 
             // globals
-            + `\n` + `In TuffScript, only 2 globals exist.`
+            + `\n` + `In TuffScript, only 3 globals exist.`
             + `\n` + `- The "print()" global is a function. This will add the specified message to the output.`
             + `\n` + `- The "fetch()" global is a function.`
                 + ` ` + `This function emulates fetching a website.`
@@ -64,9 +65,10 @@ class Command {
 
             // variables
             + `\n` + `In TuffScript, constant variables are a variable that can only have a value determined by you, the program runner.`
+                + ` ` + `A "ConstantAssignmentError" is thrown if the user code attempts to define a value for const variables themselves.`
             + `\n` + `Constant variables are typed with the "const" keyword.`
             + `\n` + `As the program runner, you must imagine what the value of the constant variable will be, based entirely on the variable name.`
-                + ` ` + `A "ConstantAssignmentError" is thrown if the user code attempts to define a value for this variable themselves.`
+                + ` ` + `A "ConstantAssignmentError" is thrown if the user code attempts to define a value for const variables themselves.`
 
             // numbers
             + `\n` + `In TuffScript, irrational and complex numbers can be typed literally.`
