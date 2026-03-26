@@ -1,0 +1,35 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "TuffScriptExecutionResult",
+    "type": "object",
+    "required": [
+        "result"
+    ],
+    "properties": {
+        "stdout": {
+            "type": "string"
+        },
+        "result": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "number"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                }
+            ]
+        },
+        "error": {
+            "type": [
+                "string",
+                "null"
+            ]
+        }
+    }
+}
