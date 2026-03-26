@@ -14,7 +14,8 @@ class Command {
 
     async getResponse(chatId, message) {
         try {
-            return await AIChatHelper.client.chatPrompt(chatId, message);
+            const response = await AIChatHelper.client.chatPrompt(chatId, message);
+            return response.content;
         } catch (err) {
             return null;
         }

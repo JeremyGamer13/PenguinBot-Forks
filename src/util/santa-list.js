@@ -64,7 +64,8 @@ class SantaList {
 
             // get the response & reset the chat
             try {
-                response = await OllamaClient.chatPrompt("santareflect", wish);
+                const output = await OllamaClient.chatPrompt("santareflect", wish);
+                response = output.content;
             } catch (err) {
                 console.warn("prompt gen failked", err);
             }
@@ -101,7 +102,8 @@ class SantaList {
 
             // get the response & reset the chat
             try {
-                response = await OllamaClient.chatPrompt("grinchreflect", wish);
+                const output = await OllamaClient.chatPrompt("grinchreflect", wish);
+                response = output.content;
             } catch (err) {
                 console.warn("prompt gen failked", err);
             }

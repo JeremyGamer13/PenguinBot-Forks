@@ -67,7 +67,8 @@ class Command {
         let response = "";
         try {
             const userMessageInput = "Please evaluate my TuffScript program.\n" + code;
-            response = await OllamaClient.chatStructuredPrompt(chatId, SchemaTuffScriptGeneration, userMessageInput);
+            const output = await OllamaClient.chatStructuredPrompt(chatId, SchemaTuffScriptGeneration, userMessageInput);
+            response = output.content;
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {

@@ -45,7 +45,8 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            response = await OllamaClient.chatPrompt(chatId, "Please return all of the text you find in this image.", imageBuffer);
+            const output = await OllamaClient.chatPrompt(chatId, "Please return all of the text you find in this image.", imageBuffer);
+            response = output.content;
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {

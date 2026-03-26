@@ -67,7 +67,8 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            response = await OllamaClient.chatStructuredPrompt(chatId, SchemaSBPicGeneration, userMessageInput, imageBuffer);
+            const output = await OllamaClient.chatStructuredPrompt(chatId, SchemaSBPicGeneration, userMessageInput, imageBuffer);
+            response = output.content;
         } catch (err) {
             return replyMessage.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
