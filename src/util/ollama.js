@@ -177,6 +177,12 @@ class OllamaClient {
             });
     }
 
+    /**
+     * Prompt
+     * @param {string} prompt 
+     * @param {Buffer} imageBuffer 
+     * @returns {Promise<AIResponse>}
+     */
     async singlePrompt(prompt, imageBuffer) {
         const messages = [{
             role: "user",
@@ -190,7 +196,7 @@ class OllamaClient {
      * @param {string} chatID 
      * @param {string} prompt 
      * @param {Buffer} imageBuffer 
-     * @returns {Promise<string>}
+     * @returns {Promise<AIResponse>}
      */
     async chatPrompt(chatID, prompt, imageBuffer) {
         if (!(chatID in this._chatHistories)) {
@@ -209,6 +215,10 @@ class OllamaClient {
         this._chatHistories[chatID] = chatHistory;
         return botResponse;
     }
+    /**
+     * Prompt structured
+     * @returns {Promise<AIResponse>}
+     */
     async singleStructuredPrompt(format, prompt, imageBuffer) {
         const messages = [{
             role: "user",
@@ -222,7 +232,7 @@ class OllamaClient {
      * @param {string} chatID 
      * @param {string} prompt 
      * @param {Buffer} imageBuffer 
-     * @returns {Promise<string>}
+     * @returns {Promise<AIResponse>}
      */
     async chatStructuredPrompt(chatID, format, prompt, imageBuffer) {
         if (!(chatID in this._chatHistories)) {
