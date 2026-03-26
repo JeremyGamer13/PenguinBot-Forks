@@ -35,7 +35,6 @@ const compatibleVideo = [
     "x-pn-realvideo", "x-sgi-movie", "x-yuv4mpegpipe"
 ];
 
-// TODO: centralize generic stuff like mp3 & mp4 fixing here
 class FFmpegUtil {
     // not really exec calls
     static isCompatibleAudio(mimeEnding) {
