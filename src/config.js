@@ -74,6 +74,7 @@ const configuration = {
             '1038251459843723274', // commands pm
             '1443403986357981274', // tuff vc
             '746156168560508953', // epic test channel
+            '1481769759371563277', // epit test
             '1139749855913316474', // penguinbot-test
             '1124133055012020296', // tuff vc
             '1038236270079516682', // tuff vc
