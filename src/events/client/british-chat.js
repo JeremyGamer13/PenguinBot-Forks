@@ -53,8 +53,9 @@ class BotEvent {
 
             const mention = message.mentions.users.first();
             if (mention) {
+                message.reply(`<@${message.author.id}> dont ping people or you'll cause ghost pings & get muted <:bfdi:1274604457979674737>`);
                 message.delete();
-                return message.reply(`<@${message.author.id}> dont ping people or you'll cause ghost pings & get muted <:bfdi:1274604457979674737>`);
+                return;
             }
 
             if (message.attachments.size > 0) return message.delete();
@@ -101,8 +102,15 @@ class BotEvent {
             }
 
             // parse
-            const parsed = JSON.parse(response);
-            const rewrittenPhrase = parsed.rewritten;
+            let rewrittenPhrase = "";
+            try {
+                const parsed = JSON.parse(response);
+                rewrittenPhrase = `${parsed.rewritten}`.replaceAll("\n", " ").trim();
+            } catch (err) {
+                message.delete();
+                throw err;
+            }
+            if (!rewrittenPhrase) return message.delete();
 
             // respond with the response
             const webhookUrl = env.get("CHANNEL_REWRITE_WEBHOOK");
@@ -113,7 +121,7 @@ class BotEvent {
                 body: JSON.stringify({
                     username: message.author.username,
                     avatar_url: message.author.avatarURL({ dynamic: false, format: "webp" }),
-                    content: `${rewrittenPhrase.replaceAll("\n", " ").trim()}`,
+                    content: `${rewrittenPhrase}`,
                     "allowed_mentions": {
                         "parse": [],
                         "users": [],

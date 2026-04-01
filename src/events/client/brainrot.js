@@ -48,7 +48,12 @@ class BotEvent {
         // BRAINRrot
         if (true && message.channel.id === "1488684785776726078") {
             const mention = message.mentions.users.first();
-            if (mention) return message.reply("dont ping people or you'll cause ghost pings & get muted <:bfdi:1274604457979674737>");
+            if (mention) {
+                message.reply(`<@${message.author.id}> dont ping people or you'll cause ghost pings & get muted <:bfdi:1274604457979674737>`);
+                message.delete();
+                return;
+            }
+
             if (message.attachments.size > 0) return message.delete();
             if (message.content.length <= 1) return message.delete();
             if (message.content.length > 512) return message.delete();
@@ -77,8 +82,13 @@ class BotEvent {
             }
 
             // we need to parse this response
-            const parsed = JSON.parse(response);
-            if (parsed.pun !== true) message.delete();
+            try {
+                const parsed = JSON.parse(response);
+                if (parsed.pun !== true) message.delete();
+            } catch (err) {
+                message.delete();
+                throw err;
+            }
             return;
         }
     }

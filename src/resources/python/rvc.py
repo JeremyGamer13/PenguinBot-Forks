@@ -3,11 +3,17 @@ import argparse
 
 # Fuck python i hate python its so fucking shit
 # You dont deserve any respect python this is all vibecoded fuck off python genuinely fuck this shitty language
+import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import torch
 from fairseq.data.dictionary import Dictionary
 
 # Tell Torch to allow fairseq objects to be loaded
 torch.serialization.add_safe_globals([Dictionary])
+# Limit RVC to only use 50% of your GPU's total VRAM
+# Adjust the 0.5 to whatever fraction you prefer (e.g., 0.7 for 70%)
+torch.cuda.set_per_process_memory_fraction(0.625, device=0)
 
 from rvc_python.infer import RVCInference
 
@@ -40,6 +46,9 @@ rvc.set_params(
     protect = 0.33,
     f0up_key = args.semitones
 )
+
+# Clear the cache to make room for the actual inference
+torch.cuda.empty_cache()
 
 # Perform the conversion
 rvc.infer_file(
