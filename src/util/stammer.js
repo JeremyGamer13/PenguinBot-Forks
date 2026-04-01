@@ -7,7 +7,7 @@ const env = require("./env-util");
 const execPromise = nodeUtil.promisify(childProcess.exec);
 
 class Stammer {
-    static async stammer(absolutePathCarrier, absolutePathModulator, absolutePathOutput, secondsPerFrame) {
+    static async process(absolutePathCarrier, absolutePathModulator, absolutePathOutput, secondsPerFrame) {
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePathCarrier)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePathCarrier)) throw new Error("Carrier cannot be non-existent path");

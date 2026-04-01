@@ -71,7 +71,7 @@ class Command {
                 + `\n` + `will output as ${finalExt}`);
 
             const outputPath = path.join(tempDir, `output${finalExt}`);
-            await Stammer.stammer(path1, path2, outputPath, secondsPerFrame);
+            await Stammer.process(path1, path2, outputPath, secondsPerFrame);
 
             // compress if necessary
             const compressTarget = 8 * 1e+6; // 8mb

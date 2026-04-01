@@ -79,7 +79,7 @@ class Command {
                 + `\n` + `will output as ${isVideo ? "video" : "audio"}`);
 
             const outputStammerPath = path.join(tempDir, `outputstammer.${finalExt}`);
-            await Stammer.stammer(path1, outputPathVocals, outputStammerPath, secondsPerFrame);
+            await Stammer.process(path1, outputPathVocals, outputStammerPath, secondsPerFrame);
 
             // BRANCH HERE: ok so we ahave Demucs split and stammer split but we actually need to do 2 different things based on this
             let finalOutputPath = null;
