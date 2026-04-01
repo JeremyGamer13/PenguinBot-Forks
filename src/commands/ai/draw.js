@@ -4,7 +4,7 @@ const makePng = require('../../util/make-png');
 const isCompatibleImage = require('../../util/compatible-images');
 
 const drawSBPic = require('../../util/sbpic');
-const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json')
+const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json');
 
 class Command {
     constructor() {

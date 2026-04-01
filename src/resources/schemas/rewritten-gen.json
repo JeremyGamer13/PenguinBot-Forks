@@ -1,0 +1,15 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Rewritten Phrase Schema",
+    "description": "A schema representing a rewritten version of an original phrase.",
+    "type": "object",
+    "properties": {
+        "rewritten": {
+            "description": "The newly drafted or modified version of the original text.",
+            "type": "string"
+        }
+    },
+    "required": [
+        "rewritten"
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Pun Schema",
+    "description": "Determine if the content is a pun.",
+    "type": "object",
+    "properties": {
+        "pun": {
+            "description": "Indicates whether the content is a pun.",
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "pun"
+    ]
+}
