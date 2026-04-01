@@ -115,7 +115,9 @@ class Command {
             // speech
             "normal", "robotic",
             // semitones
-            "high", "raise", "mid", "drop", "low"
+            "high", "raise", "mid", "drop", "low",
+            // volume
+            "louder", "quieter",
         ];
         if (!args[0]) return message.reply(`listing methods, add \`normal\` to your message to silence:`
             + "\n" + `\`\`${speechMethodsAllowed.map(m => JSON.stringify(m)).join(", ")}\`\``
@@ -125,6 +127,7 @@ class Command {
 
         let aiSpeechMethod = "rmvpe";
         let aiSemitones = 0;
+        let volumeAdjustment = 1;
         for (const method of args) {
             if (!speechMethodsAllowed.includes(method)) return message.reply("Fuck are you talkin bout i cant do that");
             switch (method) {
@@ -151,6 +154,14 @@ class Command {
                     break;
                 case "low":
                     aiSemitones -= 12;
+                    break;
+
+                // volume
+                case "louder":
+                    volumeAdjustment += 0.1;
+                    break;
+                case "quieter":
+                    volumeAdjustment -= 0.1;
                     break;
             }
         }
@@ -213,8 +224,9 @@ class Command {
 
             // merge audio
             const outputMixedPath = path.join(tempDir, `ai_cover_jeremy_merged.ogg`);
-            await replyMessage.edit(`Mixing instrumental with AI vocals (basically the opposite of liar macaron)`);
-            await FFmpegUtil.mixAudio(outputPathAICover, outputPathOggInst, outputMixedPath);
+            await replyMessage.edit(`Mixing instrumental with AI vocals (basically the opposite of liar macaron)`
+                + `\n` + `settings: volume: ${volumeAdjustment}x`);
+            await FFmpegUtil.mixAudio(outputPathOggInst, outputPathAICover, outputMixedPath, volumeAdjustment);
 
             await replyMessage.edit({
                 content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"

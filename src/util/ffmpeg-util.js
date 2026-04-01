@@ -162,18 +162,22 @@ class FFmpegUtil {
     }
 
     // ai generate Ohhj my god hes vibe coding
-    static async mixAudio(absolutePathInput, absolutePathBacking, absolutePathOutput) {
+    static async mixAudio(absolutePathInput, absolutePathInput2, absolutePathOutput, volumeAdjustment = 1) {
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
-        if (!path.isAbsolute(absolutePathBacking)) throw new Error("Path must be absolute");
-        if (!fs.existsSync(absolutePathBacking)) throw new Error("Cannot add non-existent path");
+        if (!path.isAbsolute(absolutePathInput2)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput2)) throw new Error("Cannot add non-existent path");
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        // Logic:
+        // [1:a]volume=${volumeAdjustment2}[louder2] -> Take input 2, adjust volume, name the result "louder2"
+        // [0:a][louder2]amix=inputs=2 -> Mix input 1 and our "louder2" stream
+        const filter = `[1:a]volume=${volumeAdjustment}[louder2];[0:a][louder2]amix=inputs=2:duration=longest`;
 
         // We wrap paths in double quotes to prevent errors with spaces in filenames.
         // amix=inputs=2 combines the streams.
-        // duration=shortest ensures the output lasts until the end of the longer file. No i dont want that are you Stupid Wait then why did i leave it whatever brah
-        const command = `ffmpeg -i "${absolutePathInput}" -i "${absolutePathBacking}" -filter_complex "amix=inputs=2:duration=shortest" -y "${absolutePathOutput}"`;
+        const command = `ffmpeg -y -i "${absolutePathInput}" -i "${absolutePathInput2}" -filter_complex "${filter}" "${absolutePathOutput}"`;
         await execPromise(command);
     }
     
