@@ -20,6 +20,8 @@ class Command {
             numberConversion: true,
             permission: 0,
         };
+
+        this.alias = ["coverstammer", "cstammer", "stammerc"];
     }
 
     getAttachments(message, args, util) {
