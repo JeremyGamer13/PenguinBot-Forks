@@ -1,17 +1,4 @@
-const fs = require("fs");
-const path = require("path");
 const sharp = require('sharp');
-
-/** @type {import("chroma-js").default} */
-const chroma = require("chroma-js");
-
-const delay = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, ms);
-    });
-};
 
 class StammerImage {
     /**
@@ -20,10 +7,9 @@ class StammerImage {
      * This essentially just remaps the colors of the 2nd image to use the closest 1st image colors
      * @param {Buffer} bufferCarrier should be something sharp accepts
      * @param {Buffer} bufferModulator should be something sharp accepts
-     * @param {Function?} processCallback runs after a color has been processed for remapping
      * @returns {Promise<Buffer>} the mixed output
      */
-    static async remap(bufferCarrier, bufferModulator, processCallback) {
+    static async remap(bufferCarrier, bufferModulator) {
         const { data:carrierDataContainer, info:carrierInfo } = await sharp(bufferCarrier)
             .resize({ width: 1024, height: 1024, fit: "inside", withoutEnlargement: true })
             .raw()
@@ -34,6 +20,8 @@ class StammerImage {
             .toBuffer({ resolveWithObject: true });
         const carrierData = new Uint8ClampedArray(carrierDataContainer.buffer);
         const modulatorData = new Uint8ClampedArray(modulatorDataContainer.buffer);
+
+        console.log(carrierInfo, modulatorInfo);
 
         // ok so the faster approach than old implementation is to create a lookup table type of deal so we can palette swap
         // 1. get the decimal colors of the first image into a set,
@@ -48,6 +36,9 @@ class StammerImage {
         // we are also gonna drop opacity because its probably nicer to see the 2nd image's opacity rather than the 1st
         const availableColors = new Set();
         for (let i = 0; i < carrierData.length; i += carrierInfo.channels) {
+            // actually just ignore colors past a certain point or the processing will hog the bot for a few seconds
+            if (availableColors.size > 100000) break;
+
             const colorR = carrierData[i + 0];
             const colorG = carrierData[i + 1];
             const colorB = carrierData[i + 2];
@@ -69,7 +60,6 @@ class StammerImage {
         }
 
         // 3. palette swap
-        let i = 0;
         for (const colorDecimal of modulatorPalette.keys()) {
             const colorR = (colorDecimal & 0xff0000) >> 16;
             const colorG = (colorDecimal & 0x00ff00) >> 8;
@@ -82,22 +72,21 @@ class StammerImage {
                 const carrierColorR = (carrierColor & 0xff0000) >> 16;
                 const carrierColorG = (carrierColor & 0x00ff00) >> 8;
                 const carrierColorB = (carrierColor & 0x0000ff);
-                const distance = chroma.distance([colorR, colorG, colorB], [carrierColorR, carrierColorG, carrierColorB]);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
+
+                // evil ai optimization
+                const dr = colorR - carrierColorR;
+                const dg = colorG - carrierColorG;
+                const db = colorB - carrierColorB;
+
+                // Simple weighted distance (Green is weighted highest)
+                const distSquared = dr * dr * 0.3 + dg * dg * 0.59 + db * db * 0.11;
+                if (distSquared < closestDistance) {
+                    closestDistance = distSquared;
                     closestColor = carrierColor;
                 }
             }
 
             modulatorPalette.set(colorDecimal, closestColor);
-            i++;
-
-            const segmentWaits = Math.round(Math.max(8, 100000 / availableColors.size));
-            if (i % segmentWaits == 0) {
-                console.log("stammerimage processing color", i, "of", modulatorPalette.size, "(each one does", availableColors.size, ")");
-                if (processCallback) processCallback(i, modulatorPalette.size, availableColors.size, segmentWaits);
-                await delay(1);
-            }
         }
         
         // now grab the colors
