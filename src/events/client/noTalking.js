@@ -39,7 +39,7 @@ class BotEvent {
         CommandUtility.state = state;
 
         // no talking
-        if (true && message.channel.id === "1488734908242329622") {
+        if (false && message.channel.id === "1488734908242329622") {
             return message.delete();
         }
     }

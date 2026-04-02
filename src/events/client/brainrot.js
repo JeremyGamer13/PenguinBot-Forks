@@ -46,7 +46,7 @@ class BotEvent {
         CommandUtility.state = state;
 
         // BRAINRrot
-        if (true && message.channel.id === "1488684785776726078") {
+        if (false && message.channel.id === "1488684785776726078") {
             const mention = message.mentions.users.first();
             if (mention) {
                 message.reply(`<@${message.author.id}> dont ping people or you'll cause ghost pings & get muted <:bfdi:1274604457979674737>`);
