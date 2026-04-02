@@ -123,7 +123,7 @@ class Command {
             + "\n" + `\`\`${speechMethodsAllowed.map(m => JSON.stringify(m)).join(", ")}\`\``
             + "\n" + `these can be added in sequence (however some overwrite others), the default is "normal" + "mid" (you might wanna use "low" for accuracy)`
             + "\n" + `note that ANY AUDIO you upload WILL BE SAVED for the bot to MANUALLY approve / deny so dont upload bad stuff`);
-        if (args.length > 64) return message.reply("yo thats too many settings bro calm down you do not need allat");
+        if (args.length > 256) return message.reply("yo thats too many settings bro calm down you do not need allat");
 
         let aiSpeechMethod = "rmvpe";
         let aiSemitones = 0;
