@@ -161,6 +161,24 @@ class FFmpegUtil {
         return outputPath;
     }
 
+    /**
+     * @param {string} absolutePathInput 
+     * @param {string} absolutePathOutput 
+     * @param {number} purity probability to leave x% of the file alone (0-1 range, lower = more tampering & higher = less)
+     */
+    static async tamper(absolutePathInput, absolutePathOutput, purity = 1) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        const fileSize = await getFileSize(absolutePathInput);
+        const realPurity = Math.max(1, (fileSize / 10) * purity);
+
+        const command = `ffmpeg -y -i "${absolutePathInput}" -bsf:v noise=amount=${realPurity} "${absolutePathOutput}"`;
+        await execPromise(command);
+    }
+
     // ai generate Ohhj my god hes vibe coding
     static async mixAudio(absolutePathInput, absolutePathInput2, absolutePathOutput, volumeAdjustment = 1) {
         // my security checks so random shit doesnt get passed into CLI
