@@ -173,11 +173,22 @@ class FFmpegUtil {
         // Logic:
         // [1:a]volume=${volumeAdjustment2}[louder2] -> Take input 2, adjust volume, name the result "louder2"
         // [0:a][louder2]amix=inputs=2 -> Mix input 1 and our "louder2" stream
-        const filter = `[1:a]volume=${volumeAdjustment}[louder2];[0:a][louder2]amix=inputs=2:duration=longest`;
+        const filter = `[1:a]volume=${Number(volumeAdjustment)}[louder2];[0:a][louder2]amix=inputs=2:duration=longest`;
 
         // We wrap paths in double quotes to prevent errors with spaces in filenames.
         // amix=inputs=2 combines the streams.
         const command = `ffmpeg -y -i "${absolutePathInput}" -i "${absolutePathInput2}" -filter_complex "${filter}" "${absolutePathOutput}"`;
+        await execPromise(command);
+    }
+    // ai generate Ohhj my god hes vibe coding
+    static async adjustVolume(absolutePathInput, absolutePathOutput, volumeAdjustment = 1) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        // We wrap paths in double quotes to prevent errors with spaces in filenames.
+        const command = `ffmpeg -y -i "${absolutePathInput}" -af "volume=${Number(volumeAdjustment)}" "${absolutePathOutput}"`;
         await execPromise(command);
     }
     

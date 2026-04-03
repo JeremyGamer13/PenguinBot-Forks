@@ -112,12 +112,14 @@ class Command {
         }
 
         const speechMethodsAllowed = [
-            // speech
+            // speech (def: normal)
             "normal", "robotic",
-            // semitones
+            // semitones (def: mid)
             "high", "raise", "mid", "drop", "low",
             // volume
             "louder", "quieter",
+            // tracks (def: vocals)
+            "instrumental", "vocals", "simultaneous"
         ];
         if (!args[0]) return message.reply(`listing methods, add \`normal\` to your message to silence:`
             + "\n" + `\`\`${speechMethodsAllowed.map(m => JSON.stringify(m)).join(", ")}\`\``
@@ -128,6 +130,7 @@ class Command {
         let aiSpeechMethod = "rmvpe";
         let aiSemitones = 0;
         let volumeAdjustment = 1;
+        let tracksSelection = "vocals";
         for (const method of args) {
             if (!speechMethodsAllowed.includes(method)) return message.reply("Fuck are you talkin bout i cant do that");
             switch (method) {
@@ -162,6 +165,17 @@ class Command {
                     break;
                 case "quieter":
                     volumeAdjustment -= 0.1;
+                    break;
+
+                // tracks
+                case "instrumental":
+                    tracksSelection = "instrumental";
+                    break;
+                case "vocals":
+                    tracksSelection = "vocals";
+                    break;
+                case "simultaneous":
+                    tracksSelection = "simultaneous";
                     break;
             }
         }
@@ -206,32 +220,55 @@ class Command {
             }
 
             // generate
-            await replyMessage.edit("Continuing process, Splitting audio with demucs...");
-            const [outputPathInst, outputPathVocals] = await Demucs.splitVocals(inputPath, tempDir);
+            let selectedTrack = tracksSelection === "simultaneous" ? inputPath : null;
+            let backingTrack = null;
+            if (!selectedTrack) {
+                await replyMessage.edit("Continuing process, Splitting audio with demucs...");
+                const [outputPathInst, outputPathVocals] = await Demucs.splitVocals(inputPath, tempDir);
 
-            // convert to OGG for later when we merge them
-            await replyMessage.edit("Converting to OGG... (because wav files are Fat)");
-            const outputPathOggInst = path.join(tempDir, "instrumental.ogg");
-            const outputPathOggVocals = path.join(tempDir, "vocals.ogg");
-            await FFmpegUtil.convertToSafeOgg(outputPathInst, outputPathOggInst);
-            await FFmpegUtil.convertToSafeOgg(outputPathVocals, outputPathOggVocals);
+                // convert to OGG for later when we merge them
+                await replyMessage.edit("Converting to OGG... (because wav files are Fat)");
+                const outputPathOggInst = path.join(tempDir, "instrumental.ogg");
+                const outputPathOggVocals = path.join(tempDir, "vocals.ogg");
+                await FFmpegUtil.convertToSafeOgg(outputPathInst, outputPathOggInst);
+                await FFmpegUtil.convertToSafeOgg(outputPathVocals, outputPathOggVocals);
+
+                if (tracksSelection === "instrumental") {
+                    selectedTrack = outputPathOggInst;
+                    backingTrack = outputPathOggVocals;
+                } else {
+                    selectedTrack = outputPathOggVocals;
+                    backingTrack = outputPathOggInst;
+                }
+            }
 
             // have my AI voice cover it
-            const outputPathAICover = path.join(tempDir, "ai_cover_jeremy_voice_only.ogg");
-            await replyMessage.edit("Covering with AI jeremygamer13 (this may take a bit)"
+            const outputPathAICover = path.join(tempDir, "ai_cover_jeremy_only.ogg");
+            await replyMessage.edit(`Covering ${tracksSelection} with AI jeremygamer13 (this may take a bit)`
                 + "\n" + `Speech: ${aiSpeechMethod}; semitones: ${aiSemitones}`);
-            await RVC.infer(outputPathOggVocals, env.get("COVER_PATH_MODEL"), env.get("COVER_PATH_INDEX"), outputPathAICover, aiSpeechMethod, aiSemitones);
+            await RVC.infer(selectedTrack, env.get("COVER_PATH_MODEL"), env.get("COVER_PATH_INDEX"), outputPathAICover, aiSpeechMethod, aiSemitones);
 
-            // merge audio
-            const outputMixedPath = path.join(tempDir, `ai_cover_jeremy_merged.ogg`);
-            await replyMessage.edit(`Mixing instrumental with AI vocals (basically the opposite of liar macaron)`
-                + `\n` + `settings: volume: ${volumeAdjustment}x`);
-            await FFmpegUtil.mixAudio(outputPathOggInst, outputPathAICover, outputMixedPath, volumeAdjustment);
+            // if simultaneous, just adjust volume. If not simultaneous, merge audio
+            let finalAudio = null;
+            if (tracksSelection === "simultaneous") {
+                const outputRemuxedPath = path.join(tempDir, `ai_cover_jeremy_remuxed.ogg`);
+                await replyMessage.edit(`adjusting volume`
+                    + `\n` + `settings: volume: ${volumeAdjustment}x`);
+                await FFmpegUtil.adjustVolume(outputPathAICover, outputRemuxedPath, volumeAdjustment);
+                finalAudio = outputRemuxedPath;
+            } else {
+                const outputMixedPath = path.join(tempDir, `ai_cover_jeremy_merged.ogg`);
+                await replyMessage.edit(`Mixing with AI ${tracksSelection}`
+                    + " " + `(${tracksSelection === "instrumental" ? "liar macaron reference" : "basically the opposite of liar macaron"})`
+                    + `\n` + `settings: volume: ${volumeAdjustment}x`);
+                await FFmpegUtil.mixAudio(backingTrack, outputPathAICover, outputMixedPath, volumeAdjustment);
+                finalAudio = outputMixedPath;
+            }
 
             await replyMessage.edit({
                 content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"
                     + "\n" + `-# Generated by <@${message.author.id}>`,
-                files: [outputMixedPath]
+                files: [finalAudio]
             });
         });
     }
