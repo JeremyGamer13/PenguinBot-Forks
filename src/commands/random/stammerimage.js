@@ -8,9 +8,9 @@ class Command {
         this.name = "stammerimage";
         this.description = "remap the colors from first to second";
         this.attributes = {
-            permission: 0,
+            permission: 4,
             lockedToCommands: true,
-            unlisted: false,
+            unlisted: true,
         };
 
         this.alias = ["imagestammer", "istammer", "stammeri"];
