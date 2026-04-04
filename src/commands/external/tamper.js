@@ -79,14 +79,14 @@ class Command {
             const stutterLoopLength = stutterLength / stutterLoopCount;
             const videoLength = await FFmpegUtil.probe.length(inputPath);
             
-            // add the timestamps for each stutter. see later comments for the initial value reasoning
-            let stutterNext = stutterLength + (tamperLevel * videoLength);
+            // add the timestamps for each stutter.
+            // this allows for barely any stutters on more pure videos, and more stutters on less pure videos
+            let stutterNext = stutterLength + ((tamperLevel * videoLength) / 2);
             const stuttersAt = [];
             while (stutterNext < videoLength && (stutterNext + stutterLength) < videoLength) {
                 stuttersAt.push(stutterNext);
 
                 stutterNext += stutterLength * 2; // we can't overlap them well
-                // this allows for barely any stutters on more pure videos, and more stutters on less pure videos
                 stutterNext += tamperLevel * videoLength;
             }
 
