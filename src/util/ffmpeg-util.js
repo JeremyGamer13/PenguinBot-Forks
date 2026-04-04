@@ -76,6 +76,43 @@ class FFmpegUtil {
     }
     // ai generate Oh my god hes vibe coding
     /**
+     * Probes a file for its audio sample rate.
+     * @param {string} absolutePath - Path to the audio/video file.
+     * @returns {Promise<number>} - The sample rate as an integer.
+     */
+    static async probeSampleRate(absolutePath) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePath)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePath)) throw new Error("Cannot probe non-existent path");
+
+        // -v error: omit unnecessary logs
+        // -select_streams a:0: target the first audio stream
+        // -show_entries: only grab the sample_rate
+        // -of json: format output for easy parsing
+        // seems to work fine so yea just keep this bud
+        const command = `ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of json "${absolutePath}"`;
+
+        try {
+            const { stdout } = await execPromise(command);
+            const data = JSON.parse(stdout);
+
+            // Check if the stream exists and has a sample_rate
+            const sampleRateStr = data.streams?.[0]?.sample_rate;
+            const sampleRate = parseInt(sampleRateStr, 10); // why does AI love to use parseInt when Number exists gng
+
+            // Validation: Throw error if result is NaN or missing
+            if (isNaN(sampleRate) || !isFinite(sampleRate)) {
+                throw new Error(`Invalid or missing sample rate`);
+            }
+
+            return sampleRate;
+        } catch (error) {
+            // Re-throw with more context if it's a CLI execution error
+            throw new Error(`FFprobe failed: ${error.message}`);
+        }
+    }
+    // ai generate Oh my god hes vibe coding
+    /**
      * Checks if a file contains at least one video stream.
      * @param {string} absolutePath - The absolute path to the file.
      * @returns {Promise<boolean>} - Resolves to true if video data exists.
@@ -175,7 +212,7 @@ class FFmpegUtil {
         const fileSize = await getFileSize(absolutePathInput);
         const realPurity = Math.max(1, (fileSize / 10) * purity);
 
-        const command = `ffmpeg -y -i "${absolutePathInput}" -bsf:v noise=amount=${realPurity} "${absolutePathOutput}"`;
+        const command = `ffmpeg -y -i "${absolutePathInput}" -bsf:v noise=amount=${realPurity} -c:a copy "${absolutePathOutput}"`;
         await execPromise(command);
     }
 
@@ -314,6 +351,64 @@ class FFmpegUtil {
             '-b:a 128k',
             `"${absolutePathOutput}"`
         ].join(' ');
+        await execPromise(command);
+    }
+
+    /**
+     * @param {string} absolutePathInput 
+     * @param {string} absolutePathIntermediate must be a .txt file that is used to store the command
+     * @param {string} absolutePathOutput 
+     * @param {number} loopCount how many loops should be in  a stutter (ex, 4 = repeat `loopLength` seconds of the same audio 4 times)
+     * @param {number} loopLength how long loops should be in  a stutter (ex, 0.25 = repeat 0.25 seconds of the same audio `loopCount` times)
+     * @param {Array<number>} stutters what offsets should we stutter at (ex, [1,2,3] = stutter 1 second in, 2 seconds in, and 3 seconds in).
+     * This **must** be sorted and aligned properly or issues **will** occur.
+     */
+    static async stutter(absolutePathInput, absolutePathIntermediate, absolutePathOutput, loopCount, loopLength, stutters) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathIntermediate)) throw new Error("Path must be absolute");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+        if (!Array.isArray(stutters)) throw new Error("Stutters should be array");
+
+        const sampleRate = await this.probeSampleRate(absolutePathInput);
+        const loopSamples = sampleRate * loopLength;
+        const loopDrift = loopCount * loopLength;
+
+        // first, make the aloop arguments
+        let stutterDrift = 0;
+        const stutterArguments = [];
+        const stutterEnds = [];
+        for (const time of stutters) {
+            const shiftedStartTime = time + stutterDrift;
+            // make the loop effect argument. note we lose time at each loop that we need to make up later.
+            // using start=-1:time=x because it just lets me put start seconds into time and works fine
+            const loopArg = `aloop=loop=${Number(loopCount)}:size=${Number(loopSamples)}:start=-1:time=${Number(shiftedStartTime)}`;
+            stutterDrift += loopDrift;
+            stutterArguments.push(loopArg);
+
+            // this denotes, if a stutter was at 1s in, that stutter ends at 1.5. go to 1.5 and trim `loopDrift` from the audio to realign it.
+            stutterEnds.push(shiftedStartTime + stutterDrift);
+        }
+
+        // secondly, trim out the excess created by each aloop
+        const selectConditions = [];
+        for (const stutterEnd of stutterEnds) {
+            const startTrim = stutterEnd;
+            const endTrim = stutterEnd + loopDrift;
+            selectConditions.push(`not(between(t,${startTrim},${endTrim}))`);
+        }
+
+        // now do all of that (we actually have to save to a file because this command can get gigantic)
+        const filterArguments = [...stutterArguments, `aselect='${selectConditions.join("*")}'`, "asetpts=N/SR/TB"];
+        await new Promise((resolve, reject) => {
+            fs.writeFile(absolutePathIntermediate, filterArguments.join(","), (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        const command = `ffmpeg -y -i "${absolutePathInput}" -filter_script:a "${absolutePathIntermediate}" -c:v copy "${absolutePathOutput}"`;
         await execPromise(command);
     }
 }
