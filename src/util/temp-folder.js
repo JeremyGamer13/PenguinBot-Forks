@@ -12,6 +12,8 @@ class TempFolder {
 
         /** @private Should only be read with tempFolderInstance.tempDir */
         this._tempDir = tempDir;
+
+        this._destroyed = false;
     }
     get tempDir() {
         return this._tempDir;
@@ -25,12 +27,9 @@ class TempFolder {
     static makeTempName(prefix) {
         return `${prefix || "temp"}-${crypto.randomBytes(10).toString("hex")}`;
     }
-    /** @private */
-    _makeDeadName() {
-        return `_dead-${crypto.randomBytes(10).toString("hex")}`;
-    }
 
     create() {
+        if (this._destroyed) throw new Error("TempFolder instance is already dead");
         // mkdir recursive doesnt need to check if exists
         return new Promise((resolve, reject) => {
             fs.mkdir(this._tempDir, { recursive: true }, (err) => {
@@ -40,15 +39,18 @@ class TempFolder {
         });
     }
     destroy() {
-        // make sure this process doesnt get interrupted (the cleanup)
-        if (!fs.existsSync(this._tempDir)) return;
-        const uniqueDeathName = this._makeDeadName();
-        const deathPath = path.join(tempFolderPath, uniqueDeathName + "/");
-        fs.renameSync(this._tempDir, deathPath);
+        if (!this._tempDir) throw new Error("Invalid tempDir");
+        if (!path.isAbsolute(this._tempDir)) throw new Error("Invalid tempDir");
+        if (!this._tempDir.startsWith(tempFolderPath)) throw new Error("Temp path leads outside of temp folder");
+        if (path.resolve(this._tempDir.toLowerCase()) === path.resolve(tempFolderPath.toLowerCase())) throw new Error("Invalid tempDir");
 
-        // we dont need to do this on sync
+        if (!fs.existsSync(this._tempDir)) return;
+
+        this._destroyed = true;
         return new Promise((resolve, reject) => {
-            fs.rm(deathPath, { recursive: true, force: true }, (err) => {
+            // NOTE: Scary!
+            // long delay since these folders dont really matter much
+            fs.rm(this._tempDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 1000 }, (err) => {
                 if (err) return reject(err);
                 resolve();
             });
