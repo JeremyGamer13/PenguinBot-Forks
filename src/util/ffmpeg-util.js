@@ -171,7 +171,7 @@ class FFmpegUtilCommands {
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
 
         const filter = Array.isArray(builderOrBuilders) ? builderOrBuilders.join(",") : builderOrBuilders;
-        const command = `ffmpeg -y -i "${absolutePathInput}" -af "${filter}" "${absolutePathOutput}"`;
+        const command = `ffmpeg -y -i "${absolutePathInput}" ${filter ? `-af "${filter}"` : ""} "${absolutePathOutput}"`;
         await execPromise(command);
     }
 
