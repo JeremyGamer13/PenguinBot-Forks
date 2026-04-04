@@ -35,15 +35,11 @@ const compatibleVideo = [
     "x-pn-realvideo", "x-sgi-movie", "x-yuv4mpegpipe"
 ];
 
-class FFmpegUtil {
-    // not really exec calls
-    static isCompatibleAudio(mimeEnding) {
-        return compatibleAudio.includes(mimeEnding);
-    }
-    static isCompatibleVideo(mimeEnding) {
-        return compatibleVideo.includes(mimeEnding);
-    }
+class FFmpegUtilBuilders {
 
+}
+
+class FFmpegUtilProbe {
     // ffprobe light
     // ai generate Oh my god hes vibe coding
     /**
@@ -51,7 +47,7 @@ class FFmpegUtil {
      * @param {string} absolutePath - The full path to the file.
      * @returns {Promise<number>} - The duration in seconds.
      */
-    static async probeLength(absolutePath) {
+    static async length(absolutePath) {
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePath)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePath)) throw new Error("Cannot probe non-existent path");
@@ -80,7 +76,7 @@ class FFmpegUtil {
      * @param {string} absolutePath - Path to the audio/video file.
      * @returns {Promise<number>} - The sample rate as an integer.
      */
-    static async probeSampleRate(absolutePath) {
+    static async sampleRate(absolutePath) {
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePath)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePath)) throw new Error("Cannot probe non-existent path");
@@ -117,7 +113,7 @@ class FFmpegUtil {
      * @param {string} absolutePath - The absolute path to the file.
      * @returns {Promise<boolean>} - Resolves to true if video data exists.
      */
-    static async probeIsVideo(absolutePath) {
+    static async isVideo(absolutePath) {
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePath)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePath)) throw new Error("Cannot probe non-existent path");
@@ -154,7 +150,8 @@ class FFmpegUtil {
 
     // ffprobe heavy
 
-    
+}
+class FFmpegUtilCommands {
     // ffmpeg light
     static async convertToSafeOgg(absolutePathInput, absolutePathOutput) {
         // my security checks so random shit doesnt get passed into CLI
@@ -188,7 +185,7 @@ class FFmpegUtil {
     }
 
     static async convertToSafeVideoOrAudio(absolutePathInput, makeAbsolutePathOutput) {
-        if (await this.probeIsVideo(absolutePathInput)) {
+        if (await FFmpegUtilProbe.isVideo(absolutePathInput)) {
             const outputPath = makeAbsolutePathOutput("mp4");
             await this.convertToSafeMp4(absolutePathInput, outputPath);
             return outputPath;
@@ -210,7 +207,7 @@ class FFmpegUtil {
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
 
         const fileSize = await getFileSize(absolutePathInput);
-        const realPurity = Math.max(1, (fileSize / 10) * purity);
+        const realPurity = Math.max(5, (fileSize / 10) * purity); // min of 1 just breaks everything so use 5
 
         const command = `ffmpeg -y -i "${absolutePathInput}" -bsf:v noise=amount=${realPurity} -c:a copy "${absolutePathOutput}"`;
         await execPromise(command);
@@ -262,7 +259,7 @@ class FFmpegUtil {
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
 
         const currentSizeBytes = await getFileSize(absolutePathInput);
-        const durationSeconds = await this.probeLength(absolutePathInput);
+        const durationSeconds = await FFmpegUtilProbe.length(absolutePathInput);
 
         // 1. Calculate the required bitrate in bits per second (bps)
         // Formula: (Target Bytes * 8) / Duration
@@ -319,7 +316,7 @@ class FFmpegUtil {
         if (!fs.existsSync(absolutePathBacking)) throw new Error("Cannot add non-existent path");
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
 
-        const durationSeconds = await this.probeLength(absolutePathInput);
+        const durationSeconds = await FFmpegUtilProbe.length(absolutePathInput);
 
         // 1. Bitrate Math (identical to previous version)
         // We stick with the 0.9 buffer to account for the muxing overhead
@@ -371,7 +368,7 @@ class FFmpegUtil {
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
         if (!Array.isArray(stutters)) throw new Error("Stutters should be array");
 
-        const sampleRate = await this.probeSampleRate(absolutePathInput);
+        const sampleRate = await FFmpegUtilProbe.sampleRate(absolutePathInput);
         const loopSamples = sampleRate * loopLength;
         const loopDrift = loopCount * loopLength;
 
@@ -410,6 +407,20 @@ class FFmpegUtil {
 
         const command = `ffmpeg -y -i "${absolutePathInput}" -filter_script:a "${absolutePathIntermediate}" -c:v copy "${absolutePathOutput}"`;
         await execPromise(command);
+    }
+}
+
+class FFmpegUtil {
+    static builders = FFmpegUtilBuilders;
+    static commands = FFmpegUtilCommands;
+    static probe = FFmpegUtilProbe;
+
+    // not really exec calls
+    static isCompatibleAudio(mimeEnding) {
+        return compatibleAudio.includes(mimeEnding);
+    }
+    static isCompatibleVideo(mimeEnding) {
+        return compatibleVideo.includes(mimeEnding);
     }
 }
 

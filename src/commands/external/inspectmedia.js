@@ -38,8 +38,8 @@ class Command {
             const replyMessage = await message.reply("Downloading contents...");
             const [rawInputPath] = await downloadAttachments([attachment], (i) => `input${i}.${endingType}`, tempDir);
             // check length
-            const length = await FFmpegUtil.probeLength(rawInputPath);
-            const isVideo = await FFmpegUtil.probeIsVideo(rawInputPath);
+            const length = await FFmpegUtil.probe.length(rawInputPath);
+            const isVideo = await FFmpegUtil.probe.isVideo(rawInputPath);
 
             await replyMessage.edit({
                 content: "Currently looking at `" + attachment.name + "`"

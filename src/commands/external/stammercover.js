@@ -58,12 +58,12 @@ class Command {
             const [rawPath1, rawPath2] = await downloadAttachments([attachment1, attachment2], (i) => `input${i}.bin`, tempDir);
             // convert to safe types (path2 will always be an audio file)
             await replyMessage.edit("Converting contents...");
-            const path1 = await FFmpegUtil.convertToSafeVideoOrAudio(rawPath1, (fileType) => path.join(tempDir, `inputsafe1.${fileType}`));
+            const path1 = await FFmpegUtil.commands.convertToSafeVideoOrAudio(rawPath1, (fileType) => path.join(tempDir, `inputsafe1.${fileType}`));
             const path2 = path.join(tempDir, `inputsafe2.ogg`);
-            await FFmpegUtil.convertToSafeOgg(rawPath2, path2);
+            await FFmpegUtil.commands.convertToSafeOgg(rawPath2, path2);
             // check length
-            const length1 = await FFmpegUtil.probeLength(path1);
-            const length2 = await FFmpegUtil.probeLength(path2);
+            const length1 = await FFmpegUtil.probe.length(path1);
+            const length2 = await FFmpegUtil.probe.length(path2);
             if (length1 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
             if (length2 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
 
@@ -75,7 +75,7 @@ class Command {
             // STAMMER
             // generate
             const finalExt = `${path.extname(path1)}`;
-            const isVideo = await FFmpegUtil.probeIsVideo(path1);
+            const isVideo = await FFmpegUtil.probe.isVideo(path1);
             await replyMessage.edit(`Generating stammer output... (seconds per frame: ${secondsPerFrame})`
                 + `\n` + `(SOURCE: ${attachment1.name}, MODIFIER: ${attachment2.name} (VOCALS ONLY))`
                 + `\n` + `will output as ${isVideo ? "video" : "audio"}`);
@@ -93,7 +93,7 @@ class Command {
                 await replyMessage.edit(`Compressing and merging instrumental with output; target ~${compressTarget / 1e+6}mb (currently ${currentSizeBytes / 1e+6}mb)`);
 
                 const outputCompressedPath = path.join(tempDir, `compressedoutput.${finalExt}`);
-                await FFmpegUtil.dynamicallyCompressToMp4WithBackingTrack(outputStammerPath, outputPathInst, outputCompressedPath, compressTarget);
+                await FFmpegUtil.commands.dynamicallyCompressToMp4WithBackingTrack(outputStammerPath, outputPathInst, outputCompressedPath, compressTarget);
                 finalOutputPath = outputCompressedPath;
             }
             // If we are audio then we merge the audio now, and convert to ogg
@@ -101,13 +101,13 @@ class Command {
                 // merge audio
                 const outputMixedPath = path.join(tempDir, `mixedaudio.${finalExt}`);
                 await replyMessage.edit(`Mixing instrumental with stammer vocals`);
-                await FFmpegUtil.mixAudio(outputStammerPath, outputPathInst, outputMixedPath);
+                await FFmpegUtil.commands.mixAudio(outputStammerPath, outputPathInst, outputMixedPath);
 
                 // convert to ogg
                 // ok now we convert that to ogg because its too big
                 await replyMessage.edit("Converting to OGG... (because wav files are Fat)");
                 const outputPathOgg = path.join(tempDir, "mixedstammer.ogg");
-                await FFmpegUtil.convertToSafeOgg(outputMixedPath, outputPathOgg);
+                await FFmpegUtil.commands.convertToSafeOgg(outputMixedPath, outputPathOgg);
                 finalOutputPath = outputPathOgg;
             }
 

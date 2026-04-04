@@ -202,9 +202,9 @@ class Command {
             // convert to safe type
             await replyMessage.edit("Converting contents...");
             const inputPath = path.join(tempDir, `inputsafe.ogg`);
-            await FFmpegUtil.convertToSafeOgg(rawInputPath, inputPath);
+            await FFmpegUtil.commands.convertToSafeOgg(rawInputPath, inputPath);
             // check length
-            const length = await FFmpegUtil.probeLength(inputPath);
+            const length = await FFmpegUtil.probe.length(inputPath);
             if (length > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me an NVIDIA RTX 4090 🎉");
 
             // see if we need approval
@@ -230,8 +230,8 @@ class Command {
                 await replyMessage.edit("Converting to OGG... (because wav files are Fat)");
                 const outputPathOggInst = path.join(tempDir, "instrumental.ogg");
                 const outputPathOggVocals = path.join(tempDir, "vocals.ogg");
-                await FFmpegUtil.convertToSafeOgg(outputPathInst, outputPathOggInst);
-                await FFmpegUtil.convertToSafeOgg(outputPathVocals, outputPathOggVocals);
+                await FFmpegUtil.commands.convertToSafeOgg(outputPathInst, outputPathOggInst);
+                await FFmpegUtil.commands.convertToSafeOgg(outputPathVocals, outputPathOggVocals);
 
                 if (tracksSelection === "instrumental") {
                     selectedTrack = outputPathOggInst;
@@ -254,14 +254,14 @@ class Command {
                 const outputRemuxedPath = path.join(tempDir, `ai_cover_jeremy_remuxed.ogg`);
                 await replyMessage.edit(`adjusting volume`
                     + `\n` + `settings: volume: ${volumeAdjustment}x`);
-                await FFmpegUtil.adjustVolume(outputPathAICover, outputRemuxedPath, volumeAdjustment);
+                await FFmpegUtil.commands.adjustVolume(outputPathAICover, outputRemuxedPath, volumeAdjustment);
                 finalAudio = outputRemuxedPath;
             } else {
                 const outputMixedPath = path.join(tempDir, `ai_cover_jeremy_merged.ogg`);
                 await replyMessage.edit(`Mixing with AI ${tracksSelection}`
                     + " " + `(${tracksSelection === "instrumental" ? "liar macaron reference" : "basically the opposite of liar macaron"})`
                     + `\n` + `settings: volume: ${volumeAdjustment}x`);
-                await FFmpegUtil.mixAudio(backingTrack, outputPathAICover, outputMixedPath, volumeAdjustment);
+                await FFmpegUtil.commands.mixAudio(backingTrack, outputPathAICover, outputMixedPath, volumeAdjustment);
                 finalAudio = outputMixedPath;
             }
 

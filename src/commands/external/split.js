@@ -41,9 +41,9 @@ class Command {
             // convert to safe type
             await replyMessage.edit("Converting contents...");
             const inputPath = path.join(tempDir, `inputsafe.ogg`);
-            await FFmpegUtil.convertToSafeOgg(rawInputPath, inputPath);
+            await FFmpegUtil.commands.convertToSafeOgg(rawInputPath, inputPath);
             // check length
-            const length = await FFmpegUtil.probeLength(inputPath);
+            const length = await FFmpegUtil.probe.length(inputPath);
             if (length > 10 * 60) return replyMessage.edit("Files must be within 10 minutes long OR you can buy me 64 gigabytes of ram 🎉");
 
             // generate
@@ -54,8 +54,8 @@ class Command {
             await replyMessage.edit("Converting to OGG... (because wav files are Fat)");
             const outputPathOggInst = path.join(tempDir, "instrumental.ogg");
             const outputPathOggVocals = path.join(tempDir, "vocals.ogg");
-            await FFmpegUtil.convertToSafeOgg(outputPathInst, outputPathOggInst);
-            await FFmpegUtil.convertToSafeOgg(outputPathVocals, outputPathOggVocals);
+            await FFmpegUtil.commands.convertToSafeOgg(outputPathInst, outputPathOggInst);
+            await FFmpegUtil.commands.convertToSafeOgg(outputPathVocals, outputPathOggVocals);
 
             await replyMessage.edit({
                 content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"

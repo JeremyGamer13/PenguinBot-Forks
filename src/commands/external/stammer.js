@@ -55,17 +55,17 @@ class Command {
             const [rawPath1, rawPath2] = await downloadAttachments([attachment1, attachment2], (i) => `input${i}.bin`, tempDir);
             // convert to safe types
             await replyMessage.edit("Converting contents...");
-            const path1 = await FFmpegUtil.convertToSafeVideoOrAudio(rawPath1, (fileType) => path.join(tempDir, `inputsafe1.${fileType}`));
-            const path2 = await FFmpegUtil.convertToSafeVideoOrAudio(rawPath2, (fileType) => path.join(tempDir, `inputsafe2.${fileType}`));
+            const path1 = await FFmpegUtil.commands.convertToSafeVideoOrAudio(rawPath1, (fileType) => path.join(tempDir, `inputsafe1.${fileType}`));
+            const path2 = await FFmpegUtil.commands.convertToSafeVideoOrAudio(rawPath2, (fileType) => path.join(tempDir, `inputsafe2.${fileType}`));
             // check length
-            const length1 = await FFmpegUtil.probeLength(path1);
-            const length2 = await FFmpegUtil.probeLength(path2);
+            const length1 = await FFmpegUtil.probe.length(path1);
+            const length2 = await FFmpegUtil.probe.length(path2);
             if (length1 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
             if (length2 > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me 64 gigabytes of ram 🎉");
 
             // generate
             const finalExt = `${path.extname(path1)}`;
-            const isVideo = await FFmpegUtil.probeIsVideo(path1);
+            const isVideo = await FFmpegUtil.probe.isVideo(path1);
             await replyMessage.edit(`Generating stammer output... (seconds per frame: ${secondsPerFrame})`
                 + `\n` + `(SOURCE: ${attachment1.name}, MODIFIER: ${attachment2.name})`
                 + `\n` + `will output as ${finalExt}`);
@@ -82,7 +82,7 @@ class Command {
                 await replyMessage.edit(`Compressing output to ~${compressTarget / 1e+6}mb (currently ${currentSizeBytes / 1e+6}mb)`);
 
                 const outputCompressedPath = path.join(tempDir, `compressed${finalExt}`);
-                await FFmpegUtil.dynamicallyCompressToMp4(outputPath, outputCompressedPath, compressTarget);
+                await FFmpegUtil.commands.dynamicallyCompressToMp4(outputPath, outputCompressedPath, compressTarget);
                 finalOutputPath = outputCompressedPath;
             }
 

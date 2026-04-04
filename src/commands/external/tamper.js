@@ -11,7 +11,7 @@ const downloadAttachments = require('../../util/download-attachments');
 class Command {
     constructor() {
         this.name = "tamper";
-        this.description = "Corrupt a video file cool way";
+        this.description = "Corrupt a video or audio file cool way";
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,
@@ -23,9 +23,9 @@ class Command {
     async handle(message, args, util) {
         // get attachements
         const attachment = message.attachments.first();
-        if (!attachment) throw new Error("Add an Video");
+        if (!attachment) throw new Error("Add an Video or audio");
         const endingType = util.getAttachmentType(attachment);
-        if (!FFmpegUtil.isCompatibleVideo(endingType)) throw new Error('Please use a valid  video format.');
+        if (!FFmpegUtil.isCompatibleVideo(endingType) && !FFmpegUtil.isCompatibleAudio(endingType)) throw new Error('Please use a valid video or audio format.');
         // check atachemtn size
         if (attachment.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");
         // level
@@ -42,12 +42,12 @@ class Command {
             const replyMessage = await message.reply("Downloading contents...");
             const [rawInputPath] = await downloadAttachments([attachment], (i) => `input${i}.${endingType}`, tempDir);
             // check ttype
-            const isVideo = await FFmpegUtil.probeIsVideo(rawInputPath);
-            if (!isVideo) return replyMessage.edit("must be video");
+            const isVideo = await FFmpegUtil.probe.isVideo(rawInputPath);
+            const safeFileType = isVideo ? "mp4" : "ogg";
             // convert to safe type
             await replyMessage.edit("Converting contents...");
-            const inputPath = path.join(tempDir, `inputsafe.mp4`);
-            await FFmpegUtil.convertToSafeMp4(rawInputPath, inputPath);
+            const inputPath = path.join(tempDir, `inputsafe.${safeFileType}`);
+            await FFmpegUtil.commands.convertToSafeMp4(rawInputPath, inputPath);
 
             // generate
             // stutter the audio (since it's less file size)
@@ -55,7 +55,7 @@ class Command {
             const stutterLoopCount = Math.round(2 + (14 * (1 - tamperLevel))); // how many loops in a stutter (2-16)
             const stutterLength = 0.5; // how long the whole stutter should be
             const stutterLoopLength = stutterLength / stutterLoopCount;
-            const videoLength = await FFmpegUtil.probeLength(inputPath);
+            const videoLength = await FFmpegUtil.probe.length(inputPath);
             
             // add the timestamps for each stutter. see later comments for the initial value reasoning
             let stutterNext = stutterLength + (tamperLevel * videoLength);
@@ -70,25 +70,30 @@ class Command {
 
             // actually do the stutters
             const scriptPathStutter = path.join(tempDir, `stutterscript.txt`);
-            const outputPathStuttered = path.join(tempDir, `stuttered.mp4`);
+            const outputPathStuttered = path.join(tempDir, `stuttered.${safeFileType}`);
             await replyMessage.edit("Stuttering the audio stream");
-            await FFmpegUtil.stutter(inputPath, scriptPathStutter, outputPathStuttered, stutterLoopCount, stutterLoopLength, stuttersAt);
+            await FFmpegUtil.commands.stutter(inputPath, scriptPathStutter, outputPathStuttered, stutterLoopCount, stutterLoopLength, stuttersAt);
 
-            // tamper with the video
-            const outputPathTampered = path.join(tempDir, `tampered.mp4`);
-            await replyMessage.edit("Tampering with the video stream");
-            await FFmpegUtil.tamper(outputPathStuttered, outputPathTampered, tamperLevel);
+            // if video then we need to tamper & compress
+            let finalFileOutput = outputPathStuttered;
+            if (isVideo) {
+                // tamper with the video
+                const outputPathTampered = path.join(tempDir, `tampered.${safeFileType}`);
+                await replyMessage.edit("Tampering with the video stream");
+                await FFmpegUtil.commands.tamper(outputPathStuttered, outputPathTampered, tamperLevel);
 
-            // compress
-            const compressTarget = 4 * 1e+6; // 4mb
-            const outputPathCompressed = path.join(tempDir, `tampered_compressed.mp4`);
-            await replyMessage.edit("Compressing tampered MP4 to 4 MB... (normal remuxing might be too big)");
-            await FFmpegUtil.dynamicallyCompressToMp4(outputPathTampered, outputPathCompressed, compressTarget);
+                // compress
+                const compressTarget = 4 * 1e+6; // 4mb
+                const outputPathCompressed = path.join(tempDir, `tampered_compressed.${safeFileType}`);
+                await replyMessage.edit("Compressing tampered video to 4 MB... (normal remuxing might be too big)");
+                await FFmpegUtil.commands.dynamicallyCompressToMp4(outputPathTampered, outputPathCompressed, compressTarget);
+                finalFileOutput = outputPathCompressed;
+            }
 
             await replyMessage.edit({
                 content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds"
                     + "\n" + `-# Generated by <@${message.author.id}>`,
-                files: [outputPathCompressed]
+                files: [finalFileOutput]
             });
         });
     }
