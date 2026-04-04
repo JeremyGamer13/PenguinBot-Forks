@@ -47,10 +47,32 @@ class Command {
             // convert to safe type
             await replyMessage.edit("Converting contents...");
             const inputPath = path.join(tempDir, `inputsafe.${safeFileType}`);
-            await FFmpegUtil.commands.convertToSafeMp4(rawInputPath, inputPath);
+            if (isVideo) await FFmpegUtil.commands.convertToSafeMp4(rawInputPath, inputPath);
+            else await FFmpegUtil.commands.convertToSafeOgg(rawInputPath, inputPath);
 
-            // generate
-            // stutter the audio (since it's less file size)
+            // generate, audio first  (since it's less file size)
+            // add effects depending on the level
+            // remember tamperLevel is closer to 1 for more pure.
+            const audioEffects = [];
+            if (tamperLevel <= 0.75) audioEffects.push(FFmpegUtil.builders.audioEcho(1, 1, 10, 1));
+
+            if (tamperLevel <= 0.50) audioEffects.push(FFmpegUtil.builders.audioEcho(1, 1, 15, 1));
+            if (tamperLevel <= 0.50) audioEffects.push(FFmpegUtil.builders.audioVolume(0.6));
+
+            if (tamperLevel <= 0.25) audioEffects.push(FFmpegUtil.builders.audioEcho(1, 1, 20, 1));
+            if (tamperLevel <= 0.25) audioEffects.push(FFmpegUtil.builders.audioVolume(0.6));
+
+            if (tamperLevel <= 0.15) audioEffects.push(FFmpegUtil.builders.audioEcho(1, 1, 25, 1));
+            if (tamperLevel <= 0.15) audioEffects.push(FFmpegUtil.builders.audioVolume(0.6));
+
+            if (tamperLevel <= 0.05) audioEffects.push(FFmpegUtil.builders.audioEcho(1, 1, 30, 1));
+            if (tamperLevel <= 0.05) audioEffects.push(FFmpegUtil.builders.audioVolume(0.6));
+
+            const outputPathEffects = path.join(tempDir, `echo.${safeFileType}`);
+            await replyMessage.edit("Adding effects to the audio stream");
+            await FFmpegUtil.commands.useBuilderAudioFilter(inputPath, audioEffects, outputPathEffects);
+
+            // stutter the audio
             // settings for the stutters. remember tamperLevel is closer to 1 for more pure.
             const stutterLoopCount = Math.round(2 + (14 * (1 - tamperLevel))); // how many loops in a stutter (2-16)
             const stutterLength = 0.5; // how long the whole stutter should be
@@ -72,7 +94,7 @@ class Command {
             const scriptPathStutter = path.join(tempDir, `stutterscript.txt`);
             const outputPathStuttered = path.join(tempDir, `stuttered.${safeFileType}`);
             await replyMessage.edit("Stuttering the audio stream");
-            await FFmpegUtil.commands.stutter(inputPath, scriptPathStutter, outputPathStuttered, stutterLoopCount, stutterLoopLength, stuttersAt);
+            await FFmpegUtil.commands.stutter(outputPathEffects, scriptPathStutter, outputPathStuttered, stutterLoopCount, stutterLoopLength, stuttersAt);
 
             // if video then we need to tamper & compress
             let finalFileOutput = outputPathStuttered;

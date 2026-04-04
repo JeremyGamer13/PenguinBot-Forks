@@ -36,7 +36,17 @@ const compatibleVideo = [
 ];
 
 class FFmpegUtilBuilders {
-
+    static audioEcho(inGain, outGain, delay, decay) {
+        const safeInGain = Math.min(Math.max(0, Number(inGain)), 1);
+        const safeOutGain = Math.min(Math.max(0, Number(outGain)), 1);
+        const safeDelay = Math.min(Math.max(0, Number(delay)), 90000);
+        const safeDecay = Math.min(Math.max(0, Number(decay)), 1);
+        return `aecho=${safeInGain}:${safeOutGain}:${safeDelay}:${safeDecay}`;
+    }
+    static audioVolume(volume) {
+        const safeVolume = Math.min(Math.max(0, Number(volume)), 999999);
+        return `volume=${safeVolume}`;
+    }
 }
 
 class FFmpegUtilProbe {
@@ -152,6 +162,19 @@ class FFmpegUtilProbe {
 
 }
 class FFmpegUtilCommands {
+    // use the builders
+    /** **WARNING:** this actually just dumps the arguments into the CLI so ONLY use the builders with this */
+    static async useBuilderAudioFilter(absolutePathInput, builderOrBuilders, absolutePathOutput) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        const filter = Array.isArray(builderOrBuilders) ? builderOrBuilders.join(",") : builderOrBuilders;
+        const command = `ffmpeg -y -i "${absolutePathInput}" -af "${filter}" "${absolutePathOutput}"`;
+        await execPromise(command);
+    }
+
     // ffmpeg light
     static async convertToSafeOgg(absolutePathInput, absolutePathOutput) {
         // my security checks so random shit doesnt get passed into CLI
@@ -207,7 +230,7 @@ class FFmpegUtilCommands {
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
 
         const fileSize = await getFileSize(absolutePathInput);
-        const realPurity = Math.max(5, (fileSize / 10) * purity); // min of 1 just breaks everything so use 5
+        const realPurity = Math.max(100, (fileSize / 10) * purity); // min of 1 just breaks everything so use 100
 
         const command = `ffmpeg -y -i "${absolutePathInput}" -bsf:v noise=amount=${realPurity} -c:a copy "${absolutePathOutput}"`;
         await execPromise(command);
