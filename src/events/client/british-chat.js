@@ -48,7 +48,7 @@ class BotEvent {
         CommandUtility.state = state;
 
         // british chat
-        if (false && message.channel.id === "1488692670665855027") {
+        if (true && message.channel.id === "1488692670665855027") {
             if (message.author.id === "462098932571308033" && message.content.startsWith("!")) return;
 
             const mention = message.mentions.users.first();
