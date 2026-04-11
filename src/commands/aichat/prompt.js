@@ -30,7 +30,7 @@ class Command {
 
         if (role !== "user") {
             AIChatHelper.client.informChatWithRole(chatId, role, args.join(" ") || "Keep going");
-            console.log(AIChatHelper.client.exportChat(chatId));
+            console.log(AIChatHelper.client.getChat(chatId));
             return message.reply("Done, ask with 'user' role to generate");
         }
 

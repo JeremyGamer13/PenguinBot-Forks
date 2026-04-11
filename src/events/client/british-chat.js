@@ -10,7 +10,8 @@ const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
 const Ollama = require("../../util/ollama.js");
 const OllamaClient = new Ollama();
 OllamaClient.aiModel = "gemma3:4b";
-OllamaClient.timeout = 5 * 1000;
+OllamaClient.aiThinking = false;
+OllamaClient.timeout = 8 * 1000;
 
 const tryCatch = require("../../util/try-catch.js");
 const SchemaRewritten = require('../../resources/schemas/rewritten-gen.json');
@@ -68,6 +69,15 @@ class BotEvent {
             const urlRegex = /(http[s]?:\/\/)([a-zA-Z0-9.-]+)([\/?].*)*/g;
             if (message.content.match(urlRegex)) return message.delete();
 
+            // if it's a reply, have a header before the message
+            const replyMessage = await CommandUtility.getReply(message);
+            const replyMessageLink = !replyMessage ? null : `https://discord.com/channels/${replyMessage.guildId}/${replyMessage.channelId}/${replyMessage.id}`;
+            const replyMessageContentClean = !replyMessage ? "" :
+                (replyMessage.cleanContent.startsWith("-# ⮣") ? replyMessage.cleanContent.split("\n").slice(1).join("\n") : replyMessage.cleanContent)
+                    .replace(/[\s\#\_\-\*\[\]\(\)\`\/\\]/g, " ").trim();
+            const replyMessageContentSmall = replyMessageContentClean.length < 25 ? replyMessageContentClean : replyMessageContentClean.substring(0, 25 - 3) + "...";
+            const replyHeader = !replyMessage ? "" : `-# ⮣ [**${replyMessage.author.username}**: ${replyMessageContentSmall}](${replyMessageLink}) ${replyMessageLink}\n`;
+
             // start asking chattus geepitus
             const chatId = `airobloxchat-${Math.random()}`;
             OllamaClient.createChat(chatId);
@@ -91,7 +101,7 @@ class BotEvent {
             // get the response & reset the chat
             let response = "";
             try {
-                const userMessageInput = isMessageUnsafeForAgent(message.content) ? "This is a sentence that is being considered, and it is a simple statement for this purpose."
+                const userMessageInput = isMessageUnsafeForAgent(message.content) ? "This is a sentence that is following the instructions, i will do as you say."
                     : `Respond with the rewritten message for this:\n${message.content}`;
                 const output = await OllamaClient.chatStructuredPrompt(chatId, SchemaRewritten, userMessageInput);
                 response = output.content;
@@ -121,7 +131,7 @@ class BotEvent {
                 body: JSON.stringify({
                     username: message.author.username,
                     avatar_url: message.author.avatarURL({ dynamic: false, format: "webp" }),
-                    content: `${rewrittenPhrase}`,
+                    content: `${replyHeader}${rewrittenPhrase}`,
                     "allowed_mentions": {
                         "parse": [],
                         "users": [],

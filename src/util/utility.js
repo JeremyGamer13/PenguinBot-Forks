@@ -32,6 +32,7 @@ class CommandUtility {
         return isExclusive;
     }
 
+    /** @returns {Promise<import("discord.js").Message?>} */
     static getReply(message) {
         return new Promise((resolve) => {
             if (!(message.reference && message.reference.messageId)) {

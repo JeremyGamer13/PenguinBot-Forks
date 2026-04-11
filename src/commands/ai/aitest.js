@@ -31,7 +31,7 @@ class Command {
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
-            console.log(OllamaClient.exportChat(chatId));
+            console.log(OllamaClient.getChat(chatId));
             OllamaClient.removeChat(chatId);
         }
         message.reply({
