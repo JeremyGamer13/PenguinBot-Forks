@@ -34,6 +34,8 @@
     "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",
     "node-fetch": "^2.6.13",
+    "penguinmod": "github:PenguinMod/PenguinMod-ApiModule",
+    "omggif": "^1.0.10",
     "os-utils": "^0.0.14",
     "sharp": "^0.34.5",
     "slash": "^5.1.0",
