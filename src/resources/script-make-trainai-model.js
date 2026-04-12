@@ -32,11 +32,11 @@ for (const key in databaseResult) {
         modelTrainingContent.push(`${authorName}: "${message.trim().replace(/\n/g, " ").replaceAll('"', "'")}"`);
     }
 }
-// const uniqueModelTrainingContent = [...new Set(modelTrainingContent)];
-const uniqueModelTrainingContent = modelTrainingContent;
+const uniqueModelTrainingContent = [...new Set(modelTrainingContent)];
+// const uniqueModelTrainingContent = modelTrainingContent;
 uniqueModelTrainingContent.sort(() => Math.random() - 0.5);
 
-const contextSize = 2048 + uniqueModelTrainingContent.join(" ").replace(/\s/g, " ").split(" ").length;
+const contextSize = 2048 + (uniqueModelTrainingContent.join(" ").replace(/\s/g, " ").split(" ").length);
 const modelFileBase = `
 FROM ${baseModel}
 # [higher is more creative, lower is more coherent]
