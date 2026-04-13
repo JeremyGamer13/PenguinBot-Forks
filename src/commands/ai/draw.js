@@ -1,4 +1,4 @@
-const Ollama = require("../../util/ollama");
+const OllamaClients = require("../../util/ollama-clients");
 
 const makePng = require('../../util/make-png');
 const isCompatibleImage = require('../../util/compatible-images');
@@ -40,10 +40,6 @@ class Command {
             imageBuffer = await makePng(attachmentBuffer);
         }
 
-        const OllamaClient = new Ollama();
-        OllamaClient.timeout = 5 * 60 * 1000;
-        OllamaClient.aiModel = "gemma3:4b";
-
         const userMessageInput = `Please draw me a picture, here is what i want:`
             + (userMessage ? userMessage : (attachment ? "Make it look like the picture i gave you" : "Do whatever you wanna draw"))
 
@@ -51,8 +47,8 @@ class Command {
 
         // start asking chattus geepitus
         const chatId = `aidraw-${Math.random()}`;
-        OllamaClient.createChat(chatId);
-        OllamaClient.informChat(chatId,
+        OllamaClients.processorIO.createChat(chatId);
+        OllamaClients.processorIO.informChat(chatId,
             `You are a drawing bot.`
             + `\n` + `Using the JSON schema, you can draw images that the user asks for.`
             + `\n` + `The image starts as a white canvas for you to draw over.`
@@ -67,12 +63,12 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            const output = await OllamaClient.chatStructuredPrompt(chatId, SchemaSBPicGeneration, userMessageInput, imageBuffer);
+            const output = await OllamaClients.processorIO.chatStructuredPrompt(chatId, SchemaSBPicGeneration, userMessageInput, imageBuffer);
             response = output.content;
         } catch (err) {
             return replyMessage.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
-            OllamaClient.removeChat(chatId);
+            OllamaClients.processorIO.removeChat(chatId);
         }
 
         // we need to parse this response

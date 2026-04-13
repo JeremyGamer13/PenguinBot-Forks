@@ -7,9 +7,7 @@ const env = require("../../util/env-util.js");
 const isInTestMode = process.argv[2] === 'test';
 const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
 
-const Ollama = require("../../util/ollama.js");
-const OllamaClient = new Ollama();
-OllamaClient.aiModel = "gemma3:1b";
+const OllamaClients = require("../../util/ollama-clients.js");
 
 const SchemaPunCheck = require('../../resources/schemas/pun-check.json');
 const Brainrots = require("../../resources/brainrots.json");
@@ -62,8 +60,8 @@ class BotEvent {
 
             // start asking chattus geepitus
             const chatId = `aibrainrotcheck-${Math.random()}`;
-            OllamaClient.createChat(chatId);
-            OllamaClient.informChat(chatId,
+            OllamaClients.messageRewriter.createChat(chatId);
+            OllamaClients.messageRewriter.informChat(chatId,
                 `You are a pun checker.`
                 + `\n` + `Return true if the message is a good pun of any of the following character's names:`
                 + `\n` + Brainrots.join(", ")
@@ -73,12 +71,12 @@ class BotEvent {
             let response = "";
             try {
                 const userMessageInput = `Is this a good pun of one of those names: ${message.content}`;
-                const output = await OllamaClient.chatStructuredPrompt(chatId, SchemaPunCheck, userMessageInput);
+                const output = await OllamaClients.messageRewriter.chatStructuredPrompt(chatId, SchemaPunCheck, userMessageInput);
                 response = output.content;
             } catch (err) {
                 return message.delete();
             } finally {
-                OllamaClient.removeChat(chatId);
+                OllamaClients.messageRewriter.removeChat(chatId);
             }
 
             // we need to parse this response

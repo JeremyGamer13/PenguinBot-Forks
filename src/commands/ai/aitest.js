@@ -1,5 +1,4 @@
-const Ollama = require("../../util/ollama");
-const OllamaClient = new Ollama();
+const OllamaClients = require("../../util/ollama-clients");
 
 const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json')
 
@@ -16,8 +15,8 @@ class Command {
     async invoke(message, args, util) {
         // start asking chattus geepitus
         const chatId = `aitest-${Math.random()}`;
-        OllamaClient.createChat(chatId);
-        OllamaClient.informChat(chatId, `You are a bot`
+        OllamaClients.genericIO.createChat(chatId);
+        OllamaClients.genericIO.informChat(chatId, `You are a bot`
             + `\n` + `You can draw pictures using the JSON schema`);
 
         // test schema
@@ -26,13 +25,13 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            const output = await OllamaClient.chatStructuredPrompt(chatId, schema, args.join(" "));
+            const output = await OllamaClients.genericIO.chatStructuredPrompt(chatId, schema, args.join(" "));
             response = output.content;
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
-            console.log(OllamaClient.getChat(chatId));
-            OllamaClient.removeChat(chatId);
+            console.log(OllamaClients.genericIO.getChat(chatId));
+            OllamaClients.genericIO.removeChat(chatId);
         }
         message.reply({
             content: response.trim(),

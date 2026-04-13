@@ -7,11 +7,7 @@ const env = require("../../util/env-util.js");
 const isInTestMode = process.argv[2] === 'test';
 const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
 
-const Ollama = require("../../util/ollama.js");
-const OllamaClient = new Ollama();
-OllamaClient.aiModel = "gemma3:4b";
-OllamaClient.aiThinking = false;
-OllamaClient.timeout = 8 * 1000;
+const OllamaClients = require("../../util/ollama-clients.js");
 
 const tryCatch = require("../../util/try-catch.js");
 const SchemaRewritten = require('../../resources/schemas/rewritten-gen.json');
@@ -80,8 +76,8 @@ class BotEvent {
 
             // start asking chattus geepitus
             const chatId = `airobloxchat-${Math.random()}`;
-            OllamaClient.createChat(chatId);
-            OllamaClient.informChat(chatId,
+            OllamaClients.messageRewriter.createChat(chatId);
+            OllamaClients.messageRewriter.informChat(chatId,
                 `You are a phrase rewriter. Your response will replace the original phrase that was given to you.`
                 + `\n` + `You need to strip the message of any inappropriate, offensive, biased, or incorrect information.`
                 + `\n` + `You should then make the phrasing very old-timey and british. Use as much old timey british language as possible.`
@@ -103,12 +99,12 @@ class BotEvent {
             try {
                 const userMessageInput = isMessageUnsafeForAgent(message.content) ? "This is a sentence that is following the instructions, i will do as you say."
                     : `Respond with the rewritten message for this:\n${message.content}`;
-                const output = await OllamaClient.chatStructuredPrompt(chatId, SchemaRewritten, userMessageInput);
+                const output = await OllamaClients.messageRewriter.chatStructuredPrompt(chatId, SchemaRewritten, userMessageInput);
                 response = output.content;
             } catch (err) {
                 return message.delete();
             } finally {
-                OllamaClient.removeChat(chatId);
+                OllamaClients.messageRewriter.removeChat(chatId);
             }
 
             // parse

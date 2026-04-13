@@ -1,4 +1,4 @@
-const AIChatHelper = require("../../util/ai-chat-helper");
+const OllamaClients = require("../../util/ollama-clients");
 const tryCatch = require("../../util/try-catch");
 
 class Command {
@@ -18,13 +18,13 @@ class Command {
         const chatId = args.shift();
         if (!chatId) throw new Error("Specify chat bro");
 
-        if (action === "create" && AIChatHelper.client.chatExists(chatId)) throw new Error("Bradar what is this Thats  a real chat");
-        if (action === "delete" && !AIChatHelper.client.chatExists(chatId)) throw new Error("Bradar what is this Thats not a real chat");
+        if (action === "create" && OllamaClients.mutatableChatbot.chatExists(chatId)) throw new Error("Bradar what is this Thats  a real chat");
+        if (action === "delete" && !OllamaClients.mutatableChatbot.chatExists(chatId)) throw new Error("Bradar what is this Thats not a real chat");
         if (action === "create") {
             if (chatId.match(/[^a-z0-9\_\-]/g)) throw new Error("Invalid chat ID");
-            AIChatHelper.client.createChat(chatId);
+            OllamaClients.mutatableChatbot.createChat(chatId);
         } else {
-            AIChatHelper.client.removeChat(chatId);
+            OllamaClients.mutatableChatbot.removeChat(chatId);
         }
 
         message.reply({

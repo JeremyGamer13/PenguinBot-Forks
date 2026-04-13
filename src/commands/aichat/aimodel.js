@@ -1,21 +1,5 @@
-const AIChatHelper = require("../../util/ai-chat-helper");
+const OllamaClients = require("../../util/ollama-clients");
 const tryCatch = require("../../util/try-catch");
-
-const availableModels = [
-    "gemma4:e4b",
-    "gemma4:e2b",
-    "custom-penguinmod-server-v1",
-    "gemma3:270m",
-    "qwen3-vl:2b",
-    "qwen3-vl:8b",
-    "qwen3-vl:4b",
-    "gemma3:12b",
-    "qwen3:8b",
-    "deepseek-r1:8b",
-    "qwen3:4b",
-    "gemma3:1b",
-    "gemma3:4b",
-];
 
 class Command {
     constructor() {
@@ -30,9 +14,9 @@ class Command {
 
     async invoke(message, args, util) {
         const model = args.shift();
-        if (!availableModels.includes(model)) throw new Error("Cant use that model man");
+        if (!OllamaClients.AVAILABLE_MODELS.includes(model)) throw new Error("Cant use that model man");
         
-        AIChatHelper.client.aiModel = model;
+        OllamaClients.mutatableChatbot.aiModel = model;
 
         message.reply({
             content: `swapped to \`${model}\``,

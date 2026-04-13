@@ -1,5 +1,4 @@
-const Ollama = require("../../util/ollama");
-const OllamaClient = new Ollama();
+const OllamaClients = require("../../util/ollama-clients");
 
 const makePng = require('../../util/make-png');
 const isCompatibleImage = require('../../util/compatible-images');
@@ -35,8 +34,8 @@ class Command {
 
         // start asking chattus geepitus
         const chatId = `aidescribeimage-${Math.random()}`;
-        OllamaClient.createChat(chatId);
-        OllamaClient.informChat(chatId,
+        OllamaClients.genericIO.createChat(chatId);
+        OllamaClients.genericIO.informChat(chatId,
             `Scan the image that the user provides for any content.`
             + `\n` + `Please respond with only the content that was seen in the image.`
             + `\n` + `Return all of the content found in the image in plain-text format and nothing else.`
@@ -47,12 +46,12 @@ class Command {
         // get the response & reset the chat
         let response = "";
         try {
-            const output = await OllamaClient.chatPrompt(chatId, "Please describe the image.", imageBuffer);
+            const output = await OllamaClients.genericIO.chatPrompt(chatId, "Please describe the image.", imageBuffer);
             response = output.content;
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
-            OllamaClient.removeChat(chatId);
+            OllamaClients.genericIO.removeChat(chatId);
         }
         message.reply({
             content: response.trim(),

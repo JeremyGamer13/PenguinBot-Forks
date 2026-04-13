@@ -1,8 +1,4 @@
-const Ollama = require("../../util/ollama");
-const OllamaClient = new Ollama();
-OllamaClient.aiModel = "custom-penguinmod-server-v1";
-OllamaClient.aiThinking = false;
-OllamaClient.timeout = 60 * 1000;
+const OllamaClients = require("../../util/ollama-clients");
 
 const tryCatch = require("../../util/try-catch");
 const isMessageUnsafeForAgent = tryCatch(() => require('../../util/ai-unsafe')) || (() => false);
@@ -29,7 +25,7 @@ class Command {
         this.processing = true;
 
         const chatId = `aipenguingpt-${Math.random()}`;
-        OllamaClient.createChat(chatId);
+        OllamaClients.penguinGPT.createChat(chatId);
 
         const userMessage = args.join(" ");
         const userMessageUnderstood = (isMessageUnsafeForAgent(userMessage) ? "Shut the fuck up Fuck you i hjate you i hate you fuck you 😁"
@@ -39,12 +35,12 @@ class Command {
         let response = "";
         try {
             await message.channel.sendTyping();
-            const output = await OllamaClient.chatPrompt(chatId, userMessageUnderstood);
+            const output = await OllamaClients.penguinGPT.chatPrompt(chatId, userMessageUnderstood);
             response = output.content;
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
-            OllamaClient.removeChat(chatId);
+            OllamaClients.penguinGPT.removeChat(chatId);
             this.processing = false;
         }
         message.reply({

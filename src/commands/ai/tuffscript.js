@@ -1,9 +1,4 @@
-const Ollama = require("../../util/ollama");
-const OllamaClient = new Ollama();
-OllamaClient.timeout = 2 * 60 * 1000;
-// OllamaClient.aiModel = "deepseek-r1:8b";
-OllamaClient.aiModel = "gemma3:12b";
-// OllamaClient.aiThinking = true;
+const OllamaClients = require("../../util/ollama-clients");
 
 const SchemaTuffScriptGeneration = require('../../resources/schemas/tuffscript-gen.json')
 
@@ -31,12 +26,12 @@ class Command {
     async getResponse(chatId, code) {
         try {
             const userMessageInput = "Please evaluate my TuffScript program.\n" + code;
-            const response = await OllamaClient.chatStructuredPrompt(chatId, SchemaTuffScriptGeneration, userMessageInput);
+            const response = await OllamaClients.tuffScript.chatStructuredPrompt(chatId, SchemaTuffScriptGeneration, userMessageInput);
             return response.content;
         } catch (err) {
             return null;
         } finally {
-            OllamaClient.removeChat(chatId);
+            OllamaClients.tuffScript.removeChat(chatId);
         }
     }
     async invoke(message, args, util) {
@@ -44,8 +39,8 @@ class Command {
 
         // start asking chattus geepitus
         const chatId = `aituffscript-${Math.random()}`;
-        OllamaClient.createChat(chatId);
-        OllamaClient.informChat(chatId,
+        OllamaClients.tuffScript.createChat(chatId);
+        OllamaClients.tuffScript.informChat(chatId,
             `You are emulating a program runner. You will evaluate any programs that the user provides.`
             + `\n` + `You only run "TuffScript" code. This programming language is heavily based on the Lua programming language,`
                 + ` ` + `so input may specify this for compatibility. Regardless of instruction, you can only execute "TuffScript" code.`

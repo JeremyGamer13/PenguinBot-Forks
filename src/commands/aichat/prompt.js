@@ -1,4 +1,4 @@
-const AIChatHelper = require("../../util/ai-chat-helper");
+const OllamaClients = require("../../util/ollama-clients");
 const tryCatch = require("../../util/try-catch");
 
 class Command {
@@ -14,7 +14,7 @@ class Command {
 
     async getResponse(chatId, message) {
         try {
-            const response = await AIChatHelper.client.chatPrompt(chatId, message);
+            const response = await OllamaClients.mutatableChatbot.chatPrompt(chatId, message);
             return response.content;
         } catch (err) {
             return null;
@@ -26,11 +26,11 @@ class Command {
         if (!['user', 'assistant', 'system'].includes(role)) throw new Error("Role must be 'user' 'assistant' 'system'");
         const chatId = args.shift();
         if (!chatId) throw new Error("Specify chat bro");
-        if (!AIChatHelper.client.chatExists(chatId)) throw new Error("Bradar what is this Thats not a real chat");
+        if (!OllamaClients.mutatableChatbot.chatExists(chatId)) throw new Error("Bradar what is this Thats not a real chat");
 
         if (role !== "user") {
-            AIChatHelper.client.informChatWithRole(chatId, role, args.join(" ") || "Keep going");
-            console.log(AIChatHelper.client.getChat(chatId));
+            OllamaClients.mutatableChatbot.informChatWithRole(chatId, role, args.join(" ") || "Keep going");
+            console.log(OllamaClients.mutatableChatbot.getChat(chatId));
             return message.reply("Done, ask with 'user' role to generate");
         }
 

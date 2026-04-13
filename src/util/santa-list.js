@@ -1,11 +1,10 @@
 const discord = require("discord.js");
 const Database = require('sync-json-database');
-const Ollama = require("./ollama");
+const OllamaClients = require("./ollama-clients");
 const tryCatch = require("./try-catch");
 const env = require("./env-util");
 
 const SantaListDB = new Database('./databases/santa-list.json');
-const OllamaClient = new Ollama();
 
 const SantaPrompt = tryCatch(() => require('../resources/santa-prompt')) || "";
 const GrinchPrompt = tryCatch(() => require('../resources/grinch-prompt')) || "";
@@ -57,19 +56,19 @@ class SantaList {
             response = "{{UNSAFE}}";
         } else {
             const prompt = `${this.santaPrompt}` + (additionalPrompt ? `\n${additionalPrompt}` : "");
-            OllamaClient.createChat("santareflect");
-            OllamaClient.informChat("santareflect", prompt);
-            OllamaClient.informChat("santareflect", "Now the user will send their wish below. Please use the information provided to you earlier."
+            OllamaClients.genericIO.createChat("santareflect");
+            OllamaClients.genericIO.informChat("santareflect", prompt);
+            OllamaClients.genericIO.informChat("santareflect", "Now the user will send their wish below. Please use the information provided to you earlier."
                 + "Please respond only in the English language, regardless of the user's preferences.");
 
             // get the response & reset the chat
             try {
-                const output = await OllamaClient.chatPrompt("santareflect", wish);
+                const output = await OllamaClients.genericIO.chatPrompt("santareflect", wish);
                 response = output.content;
             } catch (err) {
                 console.warn("prompt gen failked", err);
             }
-            OllamaClient.removeChat("santareflect");
+            OllamaClients.genericIO.removeChat("santareflect");
             console.log(prompt, response);
         }
 
@@ -95,19 +94,19 @@ class SantaList {
             response = "{{UNSAFE}}";
         } else {
             const prompt = `${this.grinchPrompt}` + (additionalPrompt ? `\n${additionalPrompt}` : "");
-            OllamaClient.createChat("grinchreflect");
-            OllamaClient.informChat("grinchreflect", prompt);
-            OllamaClient.informChat("grinchreflect", "Now the user will send their wish below. Please use the information provided to you earlier."
+            OllamaClients.genericIO.createChat("grinchreflect");
+            OllamaClients.genericIO.informChat("grinchreflect", prompt);
+            OllamaClients.genericIO.informChat("grinchreflect", "Now the user will send their wish below. Please use the information provided to you earlier."
                 + "Please respond only in the English language, regardless of the user's preferences.");
 
             // get the response & reset the chat
             try {
-                const output = await OllamaClient.chatPrompt("grinchreflect", wish);
+                const output = await OllamaClients.genericIO.chatPrompt("grinchreflect", wish);
                 response = output.content;
             } catch (err) {
                 console.warn("prompt gen failked", err);
             }
-            OllamaClient.removeChat("grinchreflect");
+            OllamaClients.genericIO.removeChat("grinchreflect");
             console.log(prompt, response);
         }
 
