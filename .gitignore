@@ -25,6 +25,7 @@ src/util/eval-environment.js
 src/resources/santa-prompt.js
 src/resources/grinch-prompt.js
 src/resources/basic_automod.js
+src/resources/vlc-blocked-terms.json
 src/commands/gameidea.js
 src/commands/textmodifier/joyous.js
 

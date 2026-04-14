@@ -3,6 +3,8 @@ const glob = require("glob");
 const env = require("../../util/env-util");
 const configuration = require("../../config");
 
+const VLCPoller = require("../../util/vlc-poller");
+
 class BotEvent {
     constructor(client) {
         this.listener = "ready";
@@ -88,6 +90,16 @@ class BotEvent {
         // log when commands cant load
         if (failed) {
             mainChannel.send(`Some commands failed to load.\n\n${errors}`.substring(0, 2000));
+        }
+
+        // extra stuff
+        // vlc boy
+        if (env.getBool("VLC_MEDIA_ENABLED")) {
+            try {
+                VLCPoller.initialize(client, statusText);
+            } catch (err) {
+                console.warn("vlc thing failed", err);
+            }
         }
     }
 }
