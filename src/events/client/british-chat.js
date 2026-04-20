@@ -42,8 +42,6 @@ class BotEvent {
             || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
         ) return;
 
-        CommandUtility.state = state;
-
         // british chat
         if (true && message.channel.id === "1488692670665855027") {
             if (message.author.id === "462098932571308033" && message.content.startsWith("!")) return;

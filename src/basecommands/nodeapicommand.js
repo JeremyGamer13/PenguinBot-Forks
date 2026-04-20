@@ -1,4 +1,5 @@
 const jgNodeUtils = require("jg-node-utils");
+const env = require("../util/env-util");
 
 class NodeAPICommand {
     constructor() {
@@ -21,7 +22,7 @@ class NodeAPICommand {
         if (!canDo) return message.reply("no");
         if (this.cooldownUsers[message.author.id] > Date.now()) return message.reply("no too much");
         
-        const url = `${process.env.JGNODEAPI_URL}${this.makeUrl(message, args)}`;
+        const url = `${env.get("JGNODEAPI_URL")}${this.makeUrl(message, args)}`;
         // TODO: make this configurable and clone it to the other bot
         this.cooldownUsers[message.author.id] = Date.now() + 15000;
 

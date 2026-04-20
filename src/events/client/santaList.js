@@ -39,8 +39,6 @@ class BotEvent {
             || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
         ) return;
 
-        CommandUtility.state = state;
-
         // Santa list!!!!!!
         const checkMsg = message.content.toLowerCase().trim().replace(/[^a-z0-9]/g, "");
         const checkStarters = ["iwish", "iwant", "willi", "santaiwish", "santaiwant", "santawilli"];

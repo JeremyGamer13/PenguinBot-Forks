@@ -24,93 +24,13 @@ class Command {
         };
 
         this.client = client;
-
-        this.cooldownUsers = {};
     }
 
     reject(message) {
         return message.reply("no");
     }
 
-    requestApproval(replyMessage, message, args, inputPath) {
-        return new Promise(async (resolve) => {
-            const requestChannel = await this.client.channels.cache.get("1488362939130974258");
-            if (!requestChannel) throw new Error("Couldnt find the logging channel? What the fuck");
-
-            const messageLink = `https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`;
-            const rows = [
-                new discord.MessageActionRow().addComponents([
-                    new discord.MessageButton({
-                        customId: 'accept',
-                        style: 'PRIMARY',
-                        label: "Allow",
-                    }),
-                    new discord.MessageButton({
-                        customId: 'deny',
-                        style: 'DANGER',
-                        label: "Deny",
-                    }),
-                ]),
-            ];
-
-            const requestDetails = `AI cover request Coming from <@${message.author.id}> at ${messageLink}`
-                + `\n` + `Settings: \`\`${JSON.stringify(args)}\`\``
-            const requestMessage = await requestChannel.send({
-                content: `# Request`
-                    + `\n` + requestDetails
-                    + `\n` + `<@462098932571308033>`,
-                components: rows,
-                files: [inputPath]
-            });
-
-            let completedInteraction = false;
-            const col = requestMessage.createMessageComponentCollector({
-                filter: i => i.user.id === "462098932571308033",
-                time: 10 * 60 * 1000
-            });
-            col.on('collect', async (i) => {
-                if (i.customId === "accept") {
-                    completedInteraction = true;
-                    resolve(true);
-
-                    requestMessage.edit({
-                        content: `# Request APPROVED`
-                            + `\n` + requestDetails
-                    });
-                } else {
-                    // let them know
-                    await replyMessage.edit("Your request was denied."
-                        + "\n" + "-# haha L");
-                    
-                    completedInteraction = true;
-                    resolve(false);
-
-                    requestMessage.edit({
-                        content: `# Request DENIED`
-                            + `\n` + requestDetails
-                    });
-                }
-            })
-            col.on('end', async () => {
-                if (completedInteraction) return;
-
-                // let them know
-                await replyMessage.edit("Your request was Taking Too Long. So i killed it"
-                    + "\n" + "-# haha L");
-                resolve(false);
-
-                requestMessage.edit({
-                    content: `# Request took too damn long`
-                        + `\n` + requestDetails
-                });
-            });
-        });
-    }
     async handle(message, args, util) {
-        if (util.getPermissionLevel(message) < 4) {
-            // if (this.cooldownUsers[message.author.id] > Date.now()) return message.reply("no too much");
-        }
-
         const speechMethodsAllowed = [
             // speech (def: normal)
             "normal", "robotic",
@@ -190,7 +110,6 @@ class Command {
 
         // actually start doing stuff
         const startTime = Date.now();
-        this.cooldownUsers[message.author.id] = Date.now() + 5 * 60 * 60;
 
         const jobName = TempFolder.makeTempName("cover");
         const temporaryFolder = new TempFolder(jobName);
@@ -215,7 +134,10 @@ class Command {
                     + "\n" + "- You may be denied if im not currently active or the bot is about to shut down for the day"
                     + "\n" + "- You may be denied if the audio has no vocals"
                     + "\n" + "- Genuinely offensive/inappropriate content will be denied AND result in a **permanent ban** from the server!");
-                const accepted = await this.requestApproval(replyMessage, message, args, inputPath);
+
+                const requestDetails = `AI song cover request`
+                    + `\n` + `Settings: \`\`${JSON.stringify(args)}\`\``
+                const accepted = await util.requestApproval(replyMessage, message, requestDetails, [inputPath]);
                 if (!accepted) return; // rejects will be handled by requestApproval
             }
 

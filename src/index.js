@@ -1,7 +1,7 @@
 const nodeprocess = require('process');
 const discord = require("discord.js");
 
-const CommandUtility = new (require("./util/utility.js"))();
+const CommandUtility = require("./util/utility.js");
 const BaseEventHandler = require('./handleEvents.js');
 const env = require("./util/env-util.js");
 
@@ -49,6 +49,7 @@ const state = {
     santaListLastAddedTo: 0,
 };
 CommandUtility.state = state;
+CommandUtility.client = client;
 
 // login
 client.login(isInTestMode ? env.get("TEST_TOKEN") : env.get("TOKEN")).catch((e) => {

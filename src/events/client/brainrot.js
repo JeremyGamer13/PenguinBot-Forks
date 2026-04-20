@@ -41,8 +41,6 @@ class BotEvent {
             || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
         ) return;
 
-        CommandUtility.state = state;
-
         // BRAINRrot
         if (false && message.channel.id === "1488684785776726078") {
             const mention = message.mentions.users.first();

@@ -38,8 +38,6 @@ class BotEvent {
             message.channel.id === configuration.channels.spam
             || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
         ) return;
-
-        CommandUtility.state = state;
     
         // handle the case where they are not using a cmd but we can still do stuff
         if (!message.content.startsWith(prefix)) {

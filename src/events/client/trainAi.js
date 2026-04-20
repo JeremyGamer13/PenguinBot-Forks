@@ -39,8 +39,6 @@ class BotEvent {
             || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
         ) return;
 
-        CommandUtility.state = state;
-
         // train ai
         if (true && message.channel.id === "1490146686776119497") {
             if (message.content.startsWith("!")) return;

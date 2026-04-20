@@ -36,8 +36,6 @@ class BotEvent {
             || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
         ) return;
 
-        CommandUtility.state = state;
-
         // no talking
         if (false && message.channel.id === "1488734908242329622") {
             return message.delete();

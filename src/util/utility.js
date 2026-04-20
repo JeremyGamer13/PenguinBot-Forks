@@ -1,3 +1,4 @@
+const discord = require("discord.js");
 const Database = require('sync-json-database');
 const DisabledInteractionsDB = new Database('./databases/disabled-interactions.json');
 
@@ -14,6 +15,7 @@ const automodKeywords = tryCatch(() => require('../resources/basic_automod')) ||
  */
 class CommandUtility {
     static state = {};
+    static client = null;
 
     // used as a cleaner way to access values in the main bot process
     static request(value) {
@@ -153,6 +155,87 @@ class CommandUtility {
             if (users.size < maxLimit)
                 return allUsers;
         }
+    }
+    /**
+     * jg: Request approva in a channel to do thing
+     * @param {import("discord.js").Message} replyMessage a message the bot sent to ask for approval
+     * @param {import("discord.js").Message} incomingMessage a message the bot received (the command message probably)
+     * @param {string} requestDetails Any deails about the request
+     * @param {(string | Buffer<ArrayBufferLike>)[]?} files Any files attached to the request for review
+     * @returns {Promise<boolean>}
+     */
+    static requestApproval(replyMessage, incomingMessage, requestDetails, files) {
+        return new Promise(async (resolve) => {
+            const requestChannel = await this.client.channels.cache.get("1488362939130974258");
+            if (!requestChannel) throw new Error("Couldnt find the logging channel?");
+            
+            const messageLink = this.makeMessageLink(incomingMessage);
+            const rows = [
+                new discord.MessageActionRow().addComponents([
+                    new discord.MessageButton({
+                        customId: 'accept',
+                        style: 'PRIMARY',
+                        label: "Allow",
+                    }),
+                    new discord.MessageButton({
+                        customId: 'deny',
+                        style: 'DANGER',
+                        label: "Deny",
+                    }),
+                ]),
+            ];
+
+            const middleSection = `**<@${incomingMessage.author.id}>:** ${requestDetails}`;
+            const requestMessage = await requestChannel.send({
+                content: `# Request: ${messageLink} ⌛`
+                    + `\n` + middleSection
+                    + `\n` + `<@462098932571308033>`,
+                components: rows,
+                files
+            });
+
+            let completedInteraction = false;
+            const col = requestMessage.createMessageComponentCollector({
+                filter: i => i.user.id === "462098932571308033",
+                time: 10 * 60 * 1000
+            });
+            col.on('collect', async (i) => {
+                if (i.customId === "accept") {
+                    completedInteraction = true;
+                    resolve(true);
+
+                    i.update({
+                        content: `# Request: ${messageLink} ✅ APPROVED`
+                            + `\n` + middleSection
+                    });
+                } else {
+                    // let them know
+                    await replyMessage.edit("Your request was denied."
+                        + "\n" + "-# haha L");
+
+                    completedInteraction = true;
+                    resolve(false);
+
+                    i.update({
+                        content: `# Request: ${messageLink} ❌ DENIED`
+                            + `\n` + middleSection
+                    });
+                }
+            })
+            col.on('end', async () => {
+                if (completedInteraction) return;
+
+                // let them know
+                await replyMessage.edit("Your request was Taking Too Long. So i killed it"
+                    + "\n" + "-# haha L");
+                resolve(false);
+
+                requestMessage.edit({
+                    content: `# Request: ${messageLink} ❌ took too damn long`
+                        + `\n` + middleSection
+                });
+            });
+        });
     }
 
     static interactionsBlocked(userOrId) {
