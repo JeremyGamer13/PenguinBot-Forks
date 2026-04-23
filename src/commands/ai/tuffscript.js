@@ -19,7 +19,7 @@ class Command {
         this.attributes = {
             permission: 4,
             lockedToCommands: false,
-            adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897', '1370544305608855637', '694587798598058004'],
+            jgOllamaClientsInvolved: ["tuffScript"],
         };
     }
 

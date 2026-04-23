@@ -32,11 +32,21 @@ for (const key in databaseResult) {
         modelTrainingContent.push(`${authorName}: "${message.trim().replace(/\n/g, " ").replaceAll('"', "'")}"`);
     }
 }
+// make training content less big fat
 const uniqueModelTrainingContent = [...new Set(modelTrainingContent)];
 // const uniqueModelTrainingContent = modelTrainingContent;
 uniqueModelTrainingContent.sort(() => Math.random() - 0.5);
 
-const contextSize = 2048 + (uniqueModelTrainingContent.join(" ").replace(/\s/g, " ").split(" ").length);
+const maximumContextSize = 24000;
+const getPredictedTokenRequirements = () => {
+    const contextSize = 2048 + (uniqueModelTrainingContent.join(" ").replace(/\s/g, " ").split(" ").length * 2);
+    return contextSize;
+};
+while (getPredictedTokenRequirements() > maximumContextSize) {
+    uniqueModelTrainingContent.splice(Math.floor(Math.random() * uniqueModelTrainingContent.length), 1);
+}
+
+const contextSize = getPredictedTokenRequirements();
 const modelFileBase = `
 FROM ${baseModel}
 # [higher is more creative, lower is more coherent]

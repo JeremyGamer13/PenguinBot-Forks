@@ -8,6 +8,7 @@ const execPromise = nodeUtil.promisify(childProcess.exec);
 
 class Stammer {
     static async process(absolutePathCarrier, absolutePathModulator, absolutePathOutput, secondsPerFrame) {
+        if (!env.getBool("STAMMER_ENABLED")) throw new Error("stammer is disabled on this system");
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePathCarrier)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePathCarrier)) throw new Error("Carrier cannot be non-existent path");

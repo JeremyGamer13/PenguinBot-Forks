@@ -43,7 +43,7 @@ class BotEvent {
         const checkMsg = message.content.toLowerCase().trim().replace(/[^a-z0-9]/g, "");
         const checkStarters = ["iwish", "iwant", "willi", "santaiwish", "santaiwant", "santawilli"];
         const checkMoreAreYouDumbs = ["iwishfor", "williget", "santaiwishfor", "santawilliget"];
-        if (false && message.channel.id === "1444881035719606373" && checkStarters.some(starter => checkMsg.startsWith(starter))) {
+        if (false && message.channel.id === configuration.channels.funkySantaList && checkStarters.some(starter => checkMsg.startsWith(starter))) {
             if (message.attachments.size > 0) return message.reply("no attachments gng");
             if (checkStarters.includes(checkMsg) || checkMoreAreYouDumbs.includes(checkMsg)) return message.reply("are you dumb");
             // if (SantaList.has(message.author.id)) return message.reply("your fate has been decided");

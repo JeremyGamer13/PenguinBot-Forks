@@ -28,6 +28,10 @@ class BotEvent {
      * @returns 
      */
     async invoke(client, state, message) {
+        // see if this feature is enabled
+        if (!env.getBool("OLLAMA_ENABLED")) return;
+        if (!configuration.funkyCapabilities.ollamaClients.messageRewriter) return;
+
         // ignore bots
         if (!message.author) return;
         if (message.author.bot) return;
@@ -43,8 +47,8 @@ class BotEvent {
         ) return;
 
         // british chat
-        if (true && message.channel.id === "1488692670665855027") {
-            if (message.author.id === "462098932571308033" && message.content.startsWith("!")) return;
+        if (true && message.channel.id === configuration.channels.funkyBritishChat) {
+            if (message.author.id === env.get("OWNER") && message.content.startsWith("!")) return;
 
             const mention = message.mentions.users.first();
             if (mention) {

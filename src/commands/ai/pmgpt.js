@@ -10,6 +10,7 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
+            jgOllamaClientsInvolved: ["penguinGPT"],
         };
 
         this.alias = ["penguingpt", "pmai", "penguinai", "penguinmodgpt", "penguinmodai"];

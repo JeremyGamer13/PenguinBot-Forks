@@ -3,7 +3,6 @@ const path = require("path");
 const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
-const Stammer = require('../../util/stammer');
 const getFileSize = require('../../util/file-size');
 const FFmpegUtil = require('../../util/ffmpeg-util');
 const TempFolder = require('../../util/temp-folder');

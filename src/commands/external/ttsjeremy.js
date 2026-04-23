@@ -15,10 +15,7 @@ class Command {
         this.description = "Jeremy gamer 14 will Text to speech (ai cover of gtts)";
         this.attributes = {
             unlisted: true,
-            adminInclusive: [
-                '694587798598058004', // ddededodediamante
-                '567307285324496897', // jwklong
-            ],
+            jgAiCoverCommand: true,
             permission: 4,
         };
 
@@ -48,7 +45,9 @@ class Command {
 
             // see if we need approval
             let replyMessage = null;
-            if (message.guildId !== "746156168560508950") {
+            const canCheckTestServers = env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS");
+            const wasMessageSentInTestServer = !canCheckTestServers ? false : message.guildId === "746156168560508950";
+            if (!wasMessageSentInTestServer) {
                 replyMessage = await message.reply("# me and ishowspeed need to approve your TTS"
                     + "\n" + "Please wait for your TTS to be accepted."
                     + "\n" + "- You may be denied if im already processing a TTS (im too lazy to add a real queue thing)"
@@ -82,8 +81,8 @@ class Command {
         });
     }
     async invoke(message, args, util) {
+        if (!env.getBool("RVC_ENABLED")) throw new Error("RVC is disabled on this system");
         const canDo = util.request("heavyExternalStuff");
-        console.log(canDo);
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

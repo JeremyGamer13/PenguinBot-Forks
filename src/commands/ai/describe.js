@@ -1,5 +1,6 @@
 const OllamaClients = require("../../util/ollama-clients");
 
+const configuration = require("../../config");
 const makePng = require('../../util/make-png');
 const isCompatibleImage = require('../../util/compatible-images');
 
@@ -10,11 +11,13 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
-            adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897'],
+            jgOllamaClientsInvolved: ["genericIO"],
         };
     }
 
     async invoke(message, args, util) {
+        if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
+
         const attachment = message.attachments.first();
         if (!attachment) return message.reply("From what i can see I can describe this as Fucking nothing because you didnt post a picture 🎉");
         const endingType = util.getAttachmentType(attachment);

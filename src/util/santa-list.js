@@ -6,6 +6,7 @@ const env = require("./env-util");
 
 const SantaListDB = new Database('./databases/santa-list.json');
 
+const configuration = require("../config");
 const SantaPrompt = tryCatch(() => require('../resources/santa-prompt')) || "";
 const GrinchPrompt = tryCatch(() => require('../resources/grinch-prompt')) || "";
 const isMessageUnsafeForAgent = tryCatch(() => require('./ai-unsafe')) || (() => false);
@@ -50,6 +51,9 @@ class SantaList {
      * @returns {Promise<{ reflection:string, status:"nice"|"naughty"|"indecisive"|"unsafe" }>}
      */
     static async santaReflectsOn(wish, additionalPrompt) {
+        if (!env.getBool("OLLAMA_ENABLED")) throw new Error("Ollama not available");
+        if (!configuration.funkyCapabilities.ollamaClients.genericIO) throw new Error("AI model not available");
+        
         // make a chat, tell it the instructions, and then get the response
         let response = "";
         if (isMessageUnsafeForAgent(wish)) {
@@ -88,6 +92,9 @@ class SantaList {
      * @returns {Promise<{ reflection:string, status:"nice"|"naughty"|"indecisive"|"unsafe" }>}
      */
     static async grinchReflectsOn(wish, additionalPrompt) {
+        if (!env.getBool("OLLAMA_ENABLED")) throw new Error("Ollama not available");
+        if (!configuration.funkyCapabilities.ollamaClients.genericIO) throw new Error("AI model not available");
+        
         // make a chat, tell it the instructions, and then get the response
         let response = "";
         if (isMessageUnsafeForAgent(wish)) {

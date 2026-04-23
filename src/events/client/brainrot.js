@@ -27,6 +27,10 @@ class BotEvent {
      * @returns 
      */
     async invoke(client, state, message) {
+        // see if this feature is enabled
+        if (!env.getBool("OLLAMA_ENABLED")) return;
+        if (!configuration.funkyCapabilities.ollamaClients.messageRewriter) return;
+
         // ignore bots
         if (!message.author) return;
         if (message.author.bot) return;
@@ -42,7 +46,7 @@ class BotEvent {
         ) return;
 
         // BRAINRrot
-        if (false && message.channel.id === "1488684785776726078") {
+        if (false && message.channel.id === configuration.channels.funkyBrainrot) {
             const mention = message.mentions.users.first();
             if (mention) {
                 message.reply(`<@${message.author.id}> dont ping people or you'll cause ghost pings & get muted <:bfdi:1274604457979674737>`);

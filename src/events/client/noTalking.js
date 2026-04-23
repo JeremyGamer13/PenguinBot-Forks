@@ -37,7 +37,7 @@ class BotEvent {
         ) return;
 
         // no talking
-        if (false && message.channel.id === "1488734908242329622") {
+        if (false && message.channel.id === configuration.channels.funkyNoTalking) {
             return message.delete();
         }
     }

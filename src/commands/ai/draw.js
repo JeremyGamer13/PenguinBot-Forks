@@ -1,5 +1,6 @@
 const OllamaClients = require("../../util/ollama-clients");
 
+const configuration = require("../../config");
 const makePng = require('../../util/make-png');
 const isCompatibleImage = require('../../util/compatible-images');
 
@@ -13,7 +14,7 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
-            unlisted: false,
+            jgOllamaClientsInvolved: ["processorIO"],
         };
     }
 
@@ -24,6 +25,8 @@ class Command {
         let imageBuffer = null;
         if (!attachment && !userMessage) return message.reply("Hey bud i need some fucking instructions<:idk_man:1136888365082492941>");
         if (attachment) {
+            if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
+
             const endingType = util.getAttachmentType(attachment);
             if (!isCompatibleImage(endingType)) {
                 return message.reply('Please use a valid image format.');

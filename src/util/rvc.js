@@ -19,6 +19,7 @@ class RVC {
      * @returns {Promise<void>} absolutePathOutput will be the result
      */
     static async infer(absolutePathInput, absoluteModelPath, absoluteIndexPath, absolutePathOutput, f0method = "rmvpe", semitones = 0) {
+        if (!env.getBool("RVC_ENABLED")) throw new Error("RVC is disabled on this system");
         if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePathInput)) throw new Error("Input cannot be non-existent path");
         if (!path.isAbsolute(absoluteModelPath)) throw new Error("Path must be absolute");

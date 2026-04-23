@@ -3,24 +3,6 @@ const env = require("./env-util");
 
 const ollamaUrl = env.get("OLLAMA_URL");
 class OllamaClients {
-    // values
-    /** Any models you want people to be able to use on the bot */
-    static AVAILABLE_MODELS = [
-        "custom-penguinmod-server-v1",
-        "gemma4:e4b",
-        "gemma4:e2b",
-        "gemma3:12b",
-        "gemma3:4b",
-        "gemma3:1b",
-        "gemma3:270m",
-        "qwen3-vl:8b",
-        "qwen3-vl:4b",
-        "qwen3-vl:2b",
-        "qwen3:8b",
-        "qwen3:4b",
-        "deepseek-r1:8b",
-    ];
-
     /*
         NOTE: TRY NOT TO USE TOO MANY UNIQUE MODELS
         if heavy models are at play with light models, then

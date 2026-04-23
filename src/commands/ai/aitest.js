@@ -9,6 +9,7 @@ class Command {
         this.attributes = {
             permission: 4,
             unlisted: true,
+            jgOllamaClientsInvolved: ["genericIO"],
         };
     }
 

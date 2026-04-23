@@ -7,8 +7,9 @@ class Command {
         this.description = "tyea";
         this.attributes = {
             permission: 4,
+            jgAiChatCommand: true,
             unlisted: true,
-            adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897', '694587798598058004', '715193626430406770'],
+            jgOllamaClientsInvolved: ["mutatableChatbot"],
         };
     }
 

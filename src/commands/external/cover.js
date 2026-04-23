@@ -16,10 +16,7 @@ class Command {
         this.description = "Jeremy gamer 14 will cover your song (ai cover)";
         this.attributes = {
             unlisted: true,
-            adminInclusive: [
-                '694587798598058004', // ddededodediamante
-                '567307285324496897', // jwklong
-            ],
+            jgAiCoverCommand: true,
             permission: 4,
         };
 
@@ -127,7 +124,9 @@ class Command {
             if (length > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me an NVIDIA RTX 4090 🎉");
 
             // see if we need approval
-            if (message.guildId !== "746156168560508950") {
+            const canCheckTestServers = env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS");
+            const wasMessageSentInTestServer = !canCheckTestServers ? false : message.guildId === "746156168560508950";
+            if (!wasMessageSentInTestServer) {
                 await replyMessage.edit("# me and ishowspeed need to approve your audio"
                     + "\n" + "Please wait for your audio to be accepted."
                     + "\n" + "- You may be denied if im already processing a song (im too lazy to add a real queue thing)"
@@ -136,7 +135,7 @@ class Command {
                     + "\n" + "- Genuinely offensive/inappropriate content will be denied AND result in a **permanent ban** from the server!");
 
                 const requestDetails = `AI song cover request`
-                    + `\n` + `Settings: \`\`${JSON.stringify(args)}\`\``
+                    + `\n` + `Settings: \`\`${JSON.stringify(args)}\`\``;
                 const accepted = await util.requestApproval(replyMessage, message, requestDetails, [inputPath]);
                 if (!accepted) return; // rejects will be handled by requestApproval
             }
@@ -195,6 +194,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
+        if (!env.getBool("RVC_ENABLED")) throw new Error("RVC is disabled on this system");
         const canDo = util.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 

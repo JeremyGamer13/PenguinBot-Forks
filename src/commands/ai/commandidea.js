@@ -7,7 +7,7 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
-            adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897'],
+            jgOllamaClientsInvolved: ["lightText"],
         };
     }
 

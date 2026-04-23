@@ -1,20 +1,23 @@
 const OllamaClients = require("../../util/ollama-clients");
 const tryCatch = require("../../util/try-catch");
 
+const configuration = require("../../config");
+
 class Command {
     constructor() {
         this.name = "aimodel";
         this.description = "tyea";
         this.attributes = {
             permission: 4,
+            jgAiChatCommand: true,
             unlisted: true,
-            adminInclusive: ['860531746294726736', '790782926785609728', '567307285324496897', '694587798598058004', '715193626430406770'],
+            jgOllamaClientsInvolved: ["mutatableChatbot"],
         };
     }
 
     async invoke(message, args, util) {
         const model = args.shift();
-        if (!OllamaClients.AVAILABLE_MODELS.includes(model)) throw new Error("Cant use that model man");
+        if (!configuration.funkyCapabilities.availableOllamaModels.includes(model)) throw new Error("Cant use that model man");
         
         OllamaClients.mutatableChatbot.aiModel = model;
 

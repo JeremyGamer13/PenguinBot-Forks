@@ -15,6 +15,7 @@ class Demucs {
      * @returns {Promise<[string, string]>} instrumental path, vocals path
      */
     static async splitVocals(absolutePathInput, tempDir) {
+        if (!env.getBool("DEMUCS_ENABLED")) throw new Error("Demucs is disabled on this system");
         if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePathInput)) throw new Error("Input cannot be non-existent path");
         if (!path.isAbsolute(tempDir)) throw new Error("Path must be absolute");

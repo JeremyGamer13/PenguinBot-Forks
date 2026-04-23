@@ -19,7 +19,7 @@ class NodeAPICommand {
     }
     async invoke(message, args, util) {
         const canDo = util.request("nodeApiStuff");
-        if (!canDo) return message.reply("no");
+        if (!canDo) return message.reply("disabled (this command is probably for discord screenshare)");
         if (this.cooldownUsers[message.author.id] > Date.now()) return message.reply("no too much");
         
         const url = `${env.get("JGNODEAPI_URL")}${this.makeUrl(message, args)}`;

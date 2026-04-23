@@ -345,6 +345,36 @@ class CommandUtility {
                 return true;
             }
         }
+        // jg: ai chat perm
+        if (command.attributes.jgAiChatCommand === true) {
+            let canBeUsed = configuration.permissions.trustedAiChatUsers.includes(message.author.id);
+            if (!canBeUsed) {
+                this._commandBlockReject(command, message, split, "Only trustedAiChatUsers can run this command.");
+                return true;
+            }
+        }
+        // jg: ai cover perm
+        if (command.attributes.jgAiCoverCommand === true) {
+            let canBeUsed = configuration.permissions.ethicalCoverUsers.includes(message.author.id);
+            if (!canBeUsed) {
+                this._commandBlockReject(command, message, split, "Only ethicalCoverUsers can run this command.");
+                return true;
+            }
+        }
+        // jg: ollama capability
+        if (command.attributes.jgOllamaClientsInvolved) {
+            let canBeUsed = env.getBool("OLLAMA_ENABLED");
+            for (const aiModel of command.attributes.jgOllamaClientsInvolved) {
+                if (configuration.funkyCapabilities.ollamaClients[aiModel] !== true) {
+                    canBeUsed = false;
+                    break;
+                }
+            }
+            if (!canBeUsed) {
+                this._commandBlockReject(command, message, split, "This command uses **local AI models** not available or enabled on this system at this moment.");
+                return true;
+            }
+        }
         if (Array.isArray(command.attributes.lockedToChannels) && this.getPermissionLevel(message) < 3) {
             // check which channel we are in
             const lockedChannels = command.attributes.lockedToChannels;

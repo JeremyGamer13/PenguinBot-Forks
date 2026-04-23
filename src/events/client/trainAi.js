@@ -40,7 +40,7 @@ class BotEvent {
         ) return;
 
         // train ai
-        if (true && message.channel.id === "1490146686776119497") {
+        if (configuration.funkyCapabilities.funkyTrainAIEnabled && message.channel.id === configuration.channels.funkyTrainAI) {
             if (message.content.startsWith("!")) return;
             // dont learn pings
             const mention = message.mentions.users.first();
