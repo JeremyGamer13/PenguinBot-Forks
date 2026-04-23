@@ -166,7 +166,7 @@ class CommandUtility {
      */
     static requestApproval(replyMessage, incomingMessage, requestDetails, files) {
         return new Promise(async (resolve) => {
-            const requestChannel = await this.client.channels.cache.get("1488362939130974258");
+            const requestChannel = await this.client.channels.cache.get(configuration.channels.aiRequests);
             if (!requestChannel) throw new Error("Couldnt find the logging channel?");
             
             const messageLink = this.makeMessageLink(incomingMessage);
