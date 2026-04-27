@@ -17,14 +17,10 @@ class Command {
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,
-            permission: 4,
+            permission: 0,
         };
 
         this.client = client;
-    }
-
-    reject(message) {
-        return message.reply("no");
     }
 
     async handle(message, args, util) {

@@ -22,7 +22,7 @@ class VLCMediaPlayer {
     static cleanUpName(name) {
         if (!name) return "";
         return name
-            .replace(/^(JP_Song|JP_SongMashup)\s+/, "")
+            .replace(/^(JP_Song|JP_SongMashup|Vocaloid Song \-|Vocaloid Song Mashup \-)\s+/, "")
             .replace(/\.[a-z0-9]+$/i, "")
             .replace(/\s*\[.*?\]\s*/g, "")
             .trim();

@@ -16,16 +16,12 @@ class Command {
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,
-            permission: 4,
+            permission: 0,
         };
 
         this.client = client;
 
         this.alias = ["jtts", "ttsj", "jeremytts",                       "jspeak", "speakj", "jeremyspeak", "speakjeremy"];
-    }
-
-    reject(message) {
-        return message.reply("no");
     }
 
     async handle(message, args, util) {
