@@ -5,7 +5,6 @@ const configuration = require("../../config.js");
 const env = require("../../util/env-util.js");
 
 const isInTestMode = process.argv[2] === 'test';
-const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
 
 class BotEvent {
     constructor(client) {

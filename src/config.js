@@ -13,6 +13,7 @@ const configuration = {
         // Note that the .env variables are available here if you use stuff like {{NAME}}, avoid using something like {{TOKEN}} or {{PENGUINMOD_PASSWORD}}
         normal: "a game probably",
         testing: "a game probably",
+        personal: "my {{DEVICE_LABEL}} is ON",
     },
 
     // The bot has many auto responses, toggled using the RESPOND_TO_KEYWORDS env. They will only be usable in these channels:

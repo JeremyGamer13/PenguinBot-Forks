@@ -16,6 +16,7 @@ class BotEvent {
     async invoke(client, state) {
         require('dotenv').config();
         const isInTestMode = state.isInTestMode;
+        const isInPersonalMode = state.isInPersonalMode;
 
         // log we are online
         console.log(client.user.tag + " is online!");
@@ -69,7 +70,8 @@ class BotEvent {
         }
 
         // set our status
-        const baseStatusText = isInTestMode ? configuration.status.testing : configuration.status.normal;
+        const baseStatusText = isInTestMode ? configuration.status.testing
+            : (isInPersonalMode ? configuration.status.personal : configuration.status.normal);
         const statusText = baseStatusText.replace(/{{[^}]+}}/g, (text) => env.get(text.replace(/[{}]/g, "")))
         client.user.setPresence({
             status: "online",
@@ -80,11 +82,12 @@ class BotEvent {
         });
         
         // log
+        const extraSection = ` (device: ${env.get("DEVICE_LABEL")}, personal: ${isInPersonalMode})`;
         const mainChannel = await client.channels.cache.get(configuration.channels.botTestingChannel);
         mainChannel.send({
             content: isInTestMode ?
-                'Bot has restarted in test mode. Certain features will not be enabled.' :
-                'Bot has restarted.'
+                `Bot has restarted in test mode. Certain features will not be enabled.${extraSection}` :
+                `Bot has restarted.${extraSection}`
         });
 
         // log when commands cant load

@@ -6,7 +6,9 @@ const configuration = require("../../config");
 const env = require("../../util/env-util");
 
 const isInTestMode = process.argv[2] === 'test';
-const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
+const isInPersonalMode = process.argv[2] === 'personal';
+const prefix = isInTestMode ? env.get("PREFIX_TEST")
+    : (isInPersonalMode ? env.get("PREFIX_PERSONAL") : env.get("PREFIX"));
 
 const SantaList = require("../../util/santa-list.js");
 

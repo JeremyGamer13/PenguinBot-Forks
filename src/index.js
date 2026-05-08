@@ -45,6 +45,7 @@ const state = {
     slash: {},
     prefix,
     isInTestMode,
+    isInPersonalMode,
     panelForcedDisabled: true,
     preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
 
@@ -58,7 +59,8 @@ CommandUtility.state = state;
 CommandUtility.client = client;
 
 // login
-const token = isInTestMode ? env.get("TOKEN_TEST") : env.get("TOKEN");
+const token = isInTestMode ? env.get("TOKEN_TEST")
+    : (isInPersonalMode ? env.get("TOKEN_PERSONAL") : env.get("TOKEN"));
 client.login(token).catch((e) => {
     console.error('Login Error;', e);
     throw e; // we really only console.error to say where the error was

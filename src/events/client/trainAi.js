@@ -8,7 +8,9 @@ const Database = require('sync-json-database');
 const TrainingDatabase = new Database('./databases/train-ai.json');
 
 const isInTestMode = process.argv[2] === 'test';
-const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
+const isInPersonalMode = process.argv[2] === 'personal';
+const prefix = isInTestMode ? env.get("PREFIX_TEST")
+    : (isInPersonalMode ? env.get("PREFIX_PERSONAL") : env.get("PREFIX"));
 
 class BotEvent {
     constructor(client) {

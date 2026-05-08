@@ -1,12 +1,15 @@
 const childProcess = require("child_process");
 
 const isInTestMode = process.argv[2] === 'test';
+const isInPersonalMode = process.argv[2] === 'personal';
 
 const spawnProcess = () => {
     const args = ['--max-old-space-size=4096', 'src/index.js'];
 
     if (isInTestMode) {
         args.push('test');
+    } else if (isInPersonalMode) {
+        args.push('personal');
     }
     const botProcess = childProcess.spawn('node', args);
     botProcess.stdout.on('data', (data) => {
