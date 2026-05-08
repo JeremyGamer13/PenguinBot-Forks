@@ -50,7 +50,7 @@ const state = {
     preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
 
     // JG: Random thihngs
-    nodeApiStuff: false,
+    nodeApiStuff: isInPersonalMode,
     heavyExternalStuff: true,
     santaListProcessing: false,
     santaListLastAddedTo: 0,
