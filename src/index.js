@@ -6,8 +6,13 @@ const BaseEventHandler = require('./handleEvents.js');
 const env = require("./util/env-util.js");
 
 const isInTestMode = process.argv[2] === 'test';
+const isInPersonalMode = process.argv[2] === 'personal';
 if (isInTestMode) {
     console.log('Launched in test mode');
+} else if (isInPersonalMode) {
+    console.log('Launched in personal mode');
+} else {
+    console.log('Launched in public mode');
 }
 
 // create client with stuff
@@ -32,7 +37,8 @@ nodeprocess.on('uncaughtException', (err) => {
 });
 
 // add state stuff
-const prefix = isInTestMode ? env.get("PREFIX_TEST") : env.get("PREFIX");
+const prefix = isInTestMode ? env.get("PREFIX_TEST")
+    : (isInPersonalMode ? env.get("PREFIX_PERSONAL") : env.get("PREFIX"));
 const state = {
     commands: {},
     services: {}, // commands can add to this object themselves
