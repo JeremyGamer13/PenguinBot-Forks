@@ -167,7 +167,8 @@ class CommandUtility {
      */
     static requestApproval(replyMessage, incomingMessage, requestDetails, files) {
         if (this.state.isInPersonalMode)
-            return new Promise((resolve) => resolve(incomingMessage.guildId === "1104194940172521524" || incomingMessage.guildId === "746156168560508950"));
+            return new Promise((resolve) => resolve(incomingMessage.guildId === "1104194940172521524"
+                || incomingMessage.guildId === "746156168560508950" || incomingMessage.guildId === "882334041318232075"));
         
         return new Promise(async (resolve) => {
             const requestChannel = await this.client.channels.cache.get(configuration.channels.aiRequests);
@@ -332,6 +333,12 @@ class CommandUtility {
             permission = 0;
             if (command.attributes.admin === true) permission = 3;
         }
+
+        // jg: skip perm check if personal & certain command type
+        if (this.state.isInPersonalMode && (command.attributes.jgAiChatCommand === true || command.attributes.jgAiCoverCommand === true)) {
+            return false;
+        }
+
         if (this.getPermissionLevel(message) < permission) {
             if (command.attributes.adminInclusive && this._inclusiveAllowsUser(message.author.id, message.member._roles, command.attributes.adminInclusive)) return;
             this._commandBlockReject(command, message, split, `You need a permission level of ${permission} to run this command, yours is currently ${this.getPermissionLevel(message)}.`);
