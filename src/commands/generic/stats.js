@@ -1,5 +1,7 @@
 const discord = require("discord.js");
+
 const os = require("os-utils");
+const env = require('../../util/env-util');
 
 const fetchCpuUsage = () => {
     return new Promise((resolve) => {
@@ -27,8 +29,9 @@ class Command {
         this.client = client;
     }
 
-    async invoke(message) {
+    async invoke(message, _, util) {
         message.channel.sendTyping();
+        const deviceLabel = env.get("DEVICE_LABEL");
         const { cpuUsage, waitTime:cpuFetchTime } = await fetchCpuUsage();
         
         const embed = new discord.MessageEmbed();
@@ -43,6 +46,13 @@ class Command {
             name: 'CPU Fetch Time',
             value: `${cpuFetchTime}ms`,
             inline: true
+        }, {
+            name: 'JG details',
+            value: `${deviceLabel}: (`
+                + `${util.request("isInPersonalMode") ? "personal" : "public"}`
+                + `, ` + `${util.request("isInTestMode") ? "testing" : "production"}`
+                + ")",
+            inline: false
         });
 
         const memUsage = Math.round((os.freemem() / os.totalmem()) * 100) + '%';
