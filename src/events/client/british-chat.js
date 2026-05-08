@@ -18,6 +18,8 @@ class BotEvent {
         this.once = false;
 
         this.client = client;
+
+        this.publicOnly = true;
     }
 
     /**

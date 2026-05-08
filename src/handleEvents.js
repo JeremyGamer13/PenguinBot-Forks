@@ -7,6 +7,8 @@ const createEventsWithArgs = (client, state, folder, eventFiles, ...eventArgs) =
         const event = new baseEvent(client);
 
         if (event.productionOnly && state.isInTestMode) continue;
+        if (event.publicOnly && state.isInPersonalMode) continue;
+        if (event.personalOnly && !state.isInPersonalMode) continue;
 
         if (event.once) {
             client.once(event.listener, (...args) => event.invoke(...eventArgs, ...args));

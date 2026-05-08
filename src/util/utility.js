@@ -30,6 +30,7 @@ class CommandUtility {
         return 0;
     }
     static isFromExclusive(message) {
+        if (this.state.isInPersonalMode) return true;
         const isExclusive = message.member._roles.some(v => configuration.permissions.exclusiveRoles.includes(v));
         return isExclusive;
     }
@@ -165,6 +166,9 @@ class CommandUtility {
      * @returns {Promise<boolean>}
      */
     static requestApproval(replyMessage, incomingMessage, requestDetails, files) {
+        if (this.state.isInPersonalMode)
+            return new Promise((resolve) => resolve(incomingMessage.guildId === "1104194940172521524" || incomingMessage.guildId === "746156168560508950"));
+        
         return new Promise(async (resolve) => {
             const requestChannel = await this.client.channels.cache.get(configuration.channels.aiRequests);
             if (!requestChannel) throw new Error("Couldnt find the logging channel?");
@@ -250,6 +254,8 @@ class CommandUtility {
     }
 
     static automodAllows(text, optCheckBypass, optReturnWord) {
+        if (this.state.isInPersonalMode) return true;
+
         text = String(text)
             .toLowerCase()
             .replaceAll(' ', '')
@@ -331,7 +337,7 @@ class CommandUtility {
             this._commandBlockReject(command, message, split, `You need a permission level of ${permission} to run this command, yours is currently ${this.getPermissionLevel(message)}.`);
             return true;
         }
-        if (command.attributes.exclusive === true) {
+        if (command.attributes.exclusive === true && !this.state.isInPersonalMode) {
             let canBeUsed = configuration.permissions.exclusiveUsers.includes(message.author.id);
             if (message.guild && message.guild.id === env.get("SERVER_ID")) {
                 canBeUsed = canBeUsed || this.isFromExclusive(message);
@@ -346,7 +352,7 @@ class CommandUtility {
             }
         }
         // jg: ai chat perm
-        if (command.attributes.jgAiChatCommand === true) {
+        if (command.attributes.jgAiChatCommand === true && !this.state.isInPersonalMode) {
             let canBeUsed = configuration.permissions.trustedAiChatUsers.includes(message.author.id);
             if (!canBeUsed) {
                 this._commandBlockReject(command, message, split, "Only trustedAiChatUsers can run this command.");
@@ -354,7 +360,7 @@ class CommandUtility {
             }
         }
         // jg: ai cover perm
-        if (command.attributes.jgAiCoverCommand === true) {
+        if (command.attributes.jgAiCoverCommand === true && !this.state.isInPersonalMode) {
             let canBeUsed = configuration.permissions.ethicalCoverUsers.includes(message.author.id);
             if (!canBeUsed) {
                 this._commandBlockReject(command, message, split, "Only ethicalCoverUsers can run this command.");
@@ -375,7 +381,7 @@ class CommandUtility {
                 return true;
             }
         }
-        if (Array.isArray(command.attributes.lockedToChannels) && this.getPermissionLevel(message) < 3) {
+        if (Array.isArray(command.attributes.lockedToChannels) && !this.state.isInPersonalMode && this.getPermissionLevel(message) < 3) {
             // check which channel we are in
             const lockedChannels = command.attributes.lockedToChannels;
             const canBeUsed = lockedChannels.includes(message.channel.id);
@@ -384,7 +390,7 @@ class CommandUtility {
                 return true;
             }
         }
-        if (command.attributes.lockedToCommands === true && this.getPermissionLevel(message) < 3) {
+        if (command.attributes.lockedToCommands === true && !this.state.isInPersonalMode && this.getPermissionLevel(message) < 3) {
             // check which channel we are in
             let canBeUsed = true;
             if (message.guild && (message.guild.id === env.get("SERVER_ID")
@@ -406,7 +412,7 @@ class CommandUtility {
                 return true;
             }
         }
-        if (command.attributes.lockedToHelp) {
+        if (command.attributes.lockedToHelp && !this.state.isInPersonalMode) {
             // check which channel we are in
             let canBeUsed = true;
             if (message.guild && (message.guild.id === env.get("SERVER_ID")
