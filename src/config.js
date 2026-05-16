@@ -133,6 +133,7 @@ const configuration = {
             '567307285324496897', // jwklong
             '1264445751723823245', // gen1x
             '1445330994742951988', // dotun
+            '1376566271558160504', // vedal
         ],
 
         // jg: User IDs allowed to talk directly to AI models without problem
