@@ -125,12 +125,14 @@ const configuration = {
         exclusiveRoles: [
         ],
 
-        // jg: User IDs that can use AI cover commands
+        // jg: User IDs that can use AI cover commands with approval (instant approval in personal mode)
         ethicalCoverUsers: [
             env.get("OWNER"),
             "462098932571308033", // jeremygamer13
             '694587798598058004', // ddededodediamante
             '567307285324496897', // jwklong
+            '1264445751723823245', // gen1x
+            '1445330994742951988', // dotun
         ],
 
         // jg: User IDs allowed to talk directly to AI models without problem
