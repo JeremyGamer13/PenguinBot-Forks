@@ -4,8 +4,16 @@ const path = require("path");
 const env = require("./env-util");
 
 class TTS {
-    static async speak(text, language = "en") {
-        const url = `${env.get("JGNODEAPI_URL")}/api/tts?text=${encodeURIComponent(text)}&lang=${language}`;
+    /**
+     * speak TTS and make an Buffer
+     * @param {string} text 
+     * @param {"google"|"espeak-ng"|"balabolka"} model 
+     * @param {string} language 
+     * @param {string?} name 
+     * @returns {Buffer}
+     */
+    static async speak(text, model = "google", language = "en", name) {
+        const url = `${env.get("JGNODEAPI_URL")}/api/tts?text=${encodeURIComponent(text)}&model=${encodeURIComponent(model)}&lang=${encodeURIComponent(language)}${name ? `&name=${encodeURIComponent(name)}` : ""}`;
         
         const result = await fetch(url);
         if (!result.ok) {

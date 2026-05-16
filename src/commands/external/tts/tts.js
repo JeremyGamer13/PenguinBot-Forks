@@ -1,5 +1,5 @@
 const discord = require("discord.js");
-const TTS = require("../../util/tts");
+const TTS = require("../../../util/tts");
 
 class Command {
     constructor() {
@@ -16,7 +16,7 @@ class Command {
 
     async invoke(message, args, util) {
         const speakText = args.join(" ");
-        const buffer = await TTS.speak(speakText);
+        const buffer = await TTS.speak(speakText, "google");
         const attachment = new discord.MessageAttachment(buffer, "speech.mp3");
 
         message.reply({

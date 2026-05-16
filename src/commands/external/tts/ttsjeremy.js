@@ -3,16 +3,16 @@ const path = require("path");
 const discord = require("discord.js");
 const childProcess = require("child_process");
 
-const RVC = require('../../util/rvc');
-const TTS = require('../../util/tts');
-const env = require("../../util/env-util");
-const FFmpegUtil = require('../../util/ffmpeg-util');
-const TempFolder = require('../../util/temp-folder');
+const RVC = require('../../../util/rvc');
+const TTS = require('../../../util/tts');
+const env = require("../../../util/env-util");
+const FFmpegUtil = require('../../../util/ffmpeg-util');
+const TempFolder = require('../../../util/temp-folder');
 
 class Command {
     constructor(client) {
         this.name = "ttsjeremy";
-        this.description = "Jeremy gamer 14 will Text to speech (ai cover of gtts)";
+        this.description = "Jeremy gamer 14 will Text to speech (ai cover of tts)";
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,
@@ -26,8 +26,8 @@ class Command {
 
     async handle(message, args, util) {
         const ttsText = args.join(" ");
-        if (ttsText.length > 1024) return message.reply("Thats too much and probably even more than the real google limit");
-        const ttsBuffer = await TTS.speak(ttsText);
+        if (ttsText.length > 1024) return message.reply("Thats Way too much");
+        const ttsBuffer = await TTS.speak(ttsText, "balabolka", "en", "Microsoft David Desktop");
 
         // actually start doing stuff
         const startTime = Date.now();
@@ -58,11 +58,11 @@ class Command {
 
             // have my AI voice cover it
             // create message if we didnt before
-            if (!replyMessage) { replyMessage = await message.reply(`Covering gTTS with AI jeremygamer13 (this may take a bit)`); }
-            else { await replyMessage.edit(`Covering gTTS with AI jeremygamer13 (this may take a bit)`); }
+            if (!replyMessage) { replyMessage = await message.reply(`Covering TTS with AI jeremygamer13 (this may take a bit)`); }
+            else { await replyMessage.edit(`Covering TTS with AI jeremygamer13 (this may take a bit)`); }
             // ok now do it
             const outputPathAICover = path.join(tempDir, "ai_tts_jeremy_only.mp3");
-            await RVC.infer(ttsInputPath, env.get("COVER_PATH_MODEL"), env.get("COVER_PATH_INDEX"), outputPathAICover, "rmvpe", -12);
+            await RVC.infer(ttsInputPath, env.get("COVER_PATH_MODEL"), env.get("COVER_PATH_INDEX"), outputPathAICover, "rmvpe", 0);
 
             // remux the audio to ogg because it might not actually be efficient mp3
             const outputRemuxedPath = path.join(tempDir, `ai_tts_jeremy_remuxed.ogg`);
