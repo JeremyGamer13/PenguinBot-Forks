@@ -8,12 +8,12 @@
         },
         "w": {
             "type": "integer",
-            "minimum": 0,
+            "minimum": 256,
             "maximum": 512
         },
         "h": {
             "type": "integer",
-            "minimum": 0,
+            "minimum": 256,
             "maximum": 512
         },
         "ops": {
