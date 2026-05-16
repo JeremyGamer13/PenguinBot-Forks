@@ -52,7 +52,7 @@ FROM ${baseModel}
 # [higher is more creative, lower is more coherent]
 PARAMETER temperature ${temperature}
 # this controls how many tokens the LLM can use as context to generate the next token
-PARAMETER num_ctx ${contextSize}
+PARAMETER num_ctx ${contextSize / 2}
 
 # sets a custom system message to specify the behavior of the chat assistant
 MESSAGE system """
