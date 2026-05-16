@@ -17,7 +17,7 @@ class Command {
             permission: 0,
         };
 
-        this.alias = ["vocals"];
+        this.alias = ["instrumental", "vocals"];
     }
 
     async handle(message, args, util) {
