@@ -10,18 +10,6 @@ class RVCModels {
 
     // NOTE: Generally `model` is a `.pth` file and `index` is the `.index` file that goes along with the `.pth` file
     // NOTE: Add these to getModelNames or they wont appear in listings. DO NOT USE THE `name` property, use the property name (the thing after `static`)
-    static Jeremy = {
-        name: "Jeremy",
-        model: "F:/Software/ApplioV3.6.2/logs/jeremy-v1/jeremy-v1_8e_5864s.pth",
-        index: "F:/Software/ApplioV3.6.2/logs/jeremy-v1/jeremy-v1.index",
-        usage: this.USAGE_APPROVAL,
-    };
-    static BonziBUDDY = {
-        name: "BonziBUDDY",
-        model: "F:/Software/ApplioV3.6.2/logs/bonzibuddy-v1/bonzibuddy-v1_3e_2472s.pth",
-        index: "F:/Software/ApplioV3.6.2/logs/bonzibuddy-v1/bonzibuddy-v1.index",
-        usage: this.USAGE_FREE,
-    };
     static eSpeakNG = {
         name: "eSpeak NG",
         model: "F:/Software/ApplioV3.6.2/logs/espeak-ng-v1/espeak-ng-v1_1e_962s.pth",
@@ -32,13 +20,11 @@ class RVCModels {
     // NOTE: Use the RVCModels property name, NOT the model.name!!
     static getModelNames() {
         return [
-            "Jeremy",
-            "BonziBUDDY",
             "eSpeakNG",
         ];
     }
 
-    static default = this.Jeremy;
+    static default = this.eSpeakNG;
 }
 
 module.exports = RVCModels;
