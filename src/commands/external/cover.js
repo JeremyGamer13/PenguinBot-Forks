@@ -4,6 +4,8 @@ const discord = require("discord.js");
 const childProcess = require("child_process");
 
 const RVC = require('../../util/rvc');
+const RVCModels = require('../../util/rvc-models');
+
 const env = require("../../util/env-util");
 const Demucs = require('../../util/demucs');
 const FFmpegUtil = require('../../util/ffmpeg-util');
@@ -13,7 +15,7 @@ const downloadAttachments = require('../../util/download-attachments');
 class Command {
     constructor(client) {
         this.name = "cover";
-        this.description = "Jeremy gamer 14 will cover your song (ai cover)";
+        this.description = "AI voice will redub the audio";
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,
@@ -34,17 +36,28 @@ class Command {
             // tracks (def: vocals)
             "instrumental", "vocals", "simultaneous"
         ];
+
+        const voiceModelOptions = RVCModels.getModelNames().map(name => `voice${name}`);
+        speechMethodsAllowed.unshift(...voiceModelOptions);
+
         if (!args[0]) return message.reply(`listing methods, add \`normal\` to your message to silence:`
             + "\n" + `\`\`${speechMethodsAllowed.map(m => JSON.stringify(m)).join(", ")}\`\``
             + "\n" + `these can be added in sequence (however some overwrite others), the default is "normal" + "mid" (you might wanna use "low" for accuracy)`
             + "\n" + `note that ANY AUDIO you upload WILL BE SAVED for the bot to MANUALLY approve / deny so dont upload bad stuff`);
         if (args.length > 256) return message.reply("yo thats too many settings bro calm down you do not need allat");
 
+        let voiceModel = RVCModels.default;
         let aiSpeechMethod = "rmvpe";
         let aiSemitones = 0;
         let volumeAdjustment = 1;
         let tracksSelection = "vocals";
         for (const method of args) {
+            if (method.startsWith("voice") && voiceModelOptions.includes(method)) {
+                const voiceName = method.slice(5);
+                voiceModel = RVCModels[voiceName];
+                continue;
+            }
+
             if (!speechMethodsAllowed.includes(method)) return message.reply("Fuck are you talkin bout i cant do that");
             switch (method) {
                 // speech
@@ -110,7 +123,6 @@ class Command {
             // download
             const replyMessage = await message.reply("Your files being downloaded  hold on");
             const [rawInputPath] = await downloadAttachments([attachment], (i) => `input${i}.bin`, tempDir);
-            console.log(rawInputPath);
             // convert to safe type
             await replyMessage.edit("Converting contents...");
             const inputPath = path.join(tempDir, `inputsafe.ogg`);
@@ -119,10 +131,13 @@ class Command {
             const length = await FFmpegUtil.probe.length(inputPath);
             if (length > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me an NVIDIA RTX 4090 🎉");
 
-            // see if we need approval
+            // see if we need approval or if we cant even use this model right now
+            if (voiceModel.usage === RVCModels.USAGE_PERSONAL && !util.request("isInPersonalMode"))
+                throw new Error("RVC Model unavailable outside of personal");
+
             const canCheckTestServers = env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS");
             const wasMessageSentInTestServer = !canCheckTestServers ? false : message.guildId === "746156168560508950";
-            if (!wasMessageSentInTestServer) {
+            if (voiceModel.usage !== RVCModels.USAGE_FREE && (!wasMessageSentInTestServer)) {
                 await replyMessage.edit("# me and ishowspeed need to approve your audio"
                     + "\n" + "Please wait for your audio to be accepted."
                     + "\n" + "- You may be denied if im already processing a song (im too lazy to add a real queue thing)"
@@ -159,22 +174,22 @@ class Command {
                 }
             }
 
-            // have my AI voice cover it
-            const outputPathAICover = path.join(tempDir, "ai_cover_jeremy_only.ogg");
-            await replyMessage.edit(`Covering ${tracksSelection} with AI jeremygamer13 (this may take a bit)`
+            // have  AI voice cover it
+            const outputPathAICover = path.join(tempDir, "ai_cover_only.ogg");
+            await replyMessage.edit(`Covering ${tracksSelection} with AI ${voiceModel.name} (this may take a bit)`
                 + "\n" + `Speech: ${aiSpeechMethod}; semitones: ${aiSemitones}`);
-            await RVC.infer(selectedTrack, env.get("COVER_PATH_MODEL"), env.get("COVER_PATH_INDEX"), outputPathAICover, aiSpeechMethod, aiSemitones);
+            await RVC.infer(selectedTrack, voiceModel.model, voiceModel.index, outputPathAICover, aiSpeechMethod, aiSemitones);
 
             // if simultaneous, just adjust volume. If not simultaneous, merge audio
             let finalAudio = null;
             if (tracksSelection === "simultaneous") {
-                const outputRemuxedPath = path.join(tempDir, `ai_cover_jeremy_remuxed.ogg`);
+                const outputRemuxedPath = path.join(tempDir, `ai_cover_remuxed.ogg`);
                 await replyMessage.edit(`adjusting volume`
                     + `\n` + `settings: volume: ${volumeAdjustment}x`);
                 await FFmpegUtil.commands.adjustVolume(outputPathAICover, outputRemuxedPath, volumeAdjustment);
                 finalAudio = outputRemuxedPath;
             } else {
-                const outputMixedPath = path.join(tempDir, `ai_cover_jeremy_merged.ogg`);
+                const outputMixedPath = path.join(tempDir, `ai_cover_merged.ogg`);
                 await replyMessage.edit(`Mixing with AI ${tracksSelection}`
                     + " " + `(${tracksSelection === "instrumental" ? "liar macaron reference" : "basically the opposite of liar macaron"})`
                     + `\n` + `settings: volume: ${volumeAdjustment}x`);

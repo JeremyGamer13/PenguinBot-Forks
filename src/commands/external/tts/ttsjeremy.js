@@ -4,6 +4,8 @@ const discord = require("discord.js");
 const childProcess = require("child_process");
 
 const RVC = require('../../../util/rvc');
+const RVCModels = require('../../../util/rvc-models');
+
 const TTS = require('../../../util/tts');
 const env = require("../../../util/env-util");
 const FFmpegUtil = require('../../../util/ffmpeg-util');
@@ -39,11 +41,15 @@ class Command {
             const ttsInputPath = path.join(tempDir, "tts_normal.mp3");
             fs.writeFileSync(ttsInputPath, ttsBuffer);
 
-            // see if we need approval
+            // see if we need approval or if we cant even use this model right now
+            const voiceModel = RVCModels.default;
+            if (voiceModel.usage === RVCModels.USAGE_PERSONAL && !util.request("isInPersonalMode"))
+                throw new Error("RVC Model unavailable outside of personal");
+
             let replyMessage = null;
             const canCheckTestServers = env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS");
             const wasMessageSentInTestServer = !canCheckTestServers ? false : message.guildId === "746156168560508950";
-            if (!wasMessageSentInTestServer) {
+            if (voiceModel.usage !== RVCModels.USAGE_FREE && (!wasMessageSentInTestServer)) {
                 replyMessage = await message.reply("# me and ishowspeed need to approve your TTS"
                     + "\n" + "Please wait for your TTS to be accepted."
                     + "\n" + "- You may be denied if im already processing a TTS (im too lazy to add a real queue thing)"
@@ -62,7 +68,7 @@ class Command {
             else { await replyMessage.edit(`Covering TTS with AI jeremygamer13 (this may take a bit)`); }
             // ok now do it
             const outputPathAICover = path.join(tempDir, "ai_tts_jeremy_only.mp3");
-            await RVC.infer(ttsInputPath, env.get("COVER_PATH_MODEL"), env.get("COVER_PATH_INDEX"), outputPathAICover, "rmvpe", 0);
+            await RVC.infer(ttsInputPath, voiceModel.model, voiceModel.index, outputPathAICover, "rmvpe", 0);
 
             // remux the audio to ogg because it might not actually be efficient mp3
             const outputRemuxedPath = path.join(tempDir, `ai_tts_jeremy_remuxed.ogg`);
