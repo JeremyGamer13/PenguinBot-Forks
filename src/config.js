@@ -130,21 +130,25 @@ const configuration = {
             env.get("OWNER"),
             "462098932571308033", // jeremygamer13
             '694587798598058004', // ddededodediamante
+            '860531746294726736', // godslayerakp
+            '790782926785609728', // ianyourgod
             '567307285324496897', // jwklong
             '1264445751723823245', // gen1x
             '1445330994742951988', // dotun
             '1376566271558160504', // vedal
+            '983532566822916106', // lunair
+            '1470133853200060477', // ddededodediamanto
         ],
 
         // jg: User IDs allowed to talk directly to AI models without problem
         trustedAiChatUsers: [
             env.get("OWNER"),
             "462098932571308033", // jeremygamer13
-            '860531746294726736',
-            '790782926785609728',
-            '567307285324496897',
-            '694587798598058004',
-            '715193626430406770'
+            '694587798598058004', // ddededodediamante
+            '860531746294726736', // godslayerakp
+            '790782926785609728', // ianyourgod
+            '567307285324496897', // jwklong
+            '715193626430406770', // anonygoose
         ],
 
         // Channels checked for in the lockedToCommands property (excluding commands channel from above & threads within that channel)
