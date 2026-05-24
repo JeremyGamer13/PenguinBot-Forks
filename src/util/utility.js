@@ -76,7 +76,7 @@ class CommandUtility {
      * @returns {Buffer[]} at least 1 image buffer
      */
     static async getInputImagesForCommand(message, amount = 1, allowGif = false, allowBlocking = true) {
-        const isDonator = this.isFromExclusive(message);
+        const isDonator = true;
 
         // priority:
         // - Provided images

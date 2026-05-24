@@ -17,8 +17,8 @@ class Command {
     }
 
     async invoke(message, args, util) {
-        const [buffer1, buffer2] = await util.getInputImagesForCommand(message, 2, false, false);
-        if (!buffer1) return message.reply("Add a valid image to take the colors from");
+        const [buffer1, buffer2] = await util.getInputImagesForCommand(message, 2);
+        if (!buffer1) return;
         if (!buffer2) return message.reply("Add a valid image to cover the colors onto");
 
         const header = "Processing colors, please wait (more source colors = longer processing)";
