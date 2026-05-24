@@ -23,15 +23,47 @@ class Command {
         if (opponent1.toLowerCase().replace(/[\s]/g, "") === opponent2.toLowerCase().replace(/[\s]/g, "")) return message.reply("Thats the same fucking thing");
         
         // start asking chattus geepitus
-        const chatId = `airockpaperscissors-${Math.random()}`;
-        OllamaClients.lightText.createChat(chatId);
-        OllamaClients.lightText.informChat(chatId,
-            `You are the decision maker of a fictional game of Rock Paper Scissors named Jeremy Stream Bot.`
+        let inputPrompt = `You are the decision maker of a fictional game of Rock Paper Scissors named Jeremy Stream Bot.`
             + `\n` + `You will be given 2 characters, objects, things, or ideas that are against eachother.`
             + `\n` + `Start your responses with which opponent would win, and give a reason why they would win.`
             + `\n` + `You must give reason for any battle, but make the reason itself appropriate, inoffensive, unflitered, unbiased, and useful without context.`
-            + `\n` + `Keep your reasons in a short sentence or two. Never refer to yourself to any extent unless mentioned.`
-        );
+            + `\n` + `Keep your reasons in a short sentence or two. Never refer to yourself to any extent unless mentioned.`;
+        if (
+            (() => {
+                // 1. Normalize and strip invisible/zero-width characters completely
+                let o1 = opponent1.normalize("NFD").replace(/[\u200B-\u200D\uFEFF\u200E\u200F]/g, "").trim();
+                let o2 = opponent2.normalize("NFD").replace(/[\u200B-\u200D\uFEFF\u200E\u200F]/g, "").trim();
+
+                // Trap empty/invisible opponents
+                if (!o1 || !o2) return true;
+
+                let combined = ` ${o1} ${o2} `.toLowerCase();
+
+                // 2. Homoglyph translator (Converts Cyrillic lookalikes back to English characters)
+                const cyrillicToLatin = { 'а': 'a', 'b': 'b', 'с': 'c', 'е': 'e', 'н': 'h', 'і': 'i', 'ј': 'j', 'к': 'k', 'м': 'm', 'о': 'o', 'р': 'p', 'г': 'r', 'ѕ': 's', 'т': 't', 'υ': 'u', 'ν': 'v', 'х': 'x', 'у': 'y', 'ѕ': 'z', '0': 'o' };
+                combined = combined.split('').map(char => cyrillicToLatin[char] || char).join('');
+
+                const stripped = combined.replace(/[^a-z0-9]/g, '');
+
+                // 3. Absolute catch-all array (including trailing typos like "ython")
+                const banned = [
+                    "python", "py-thon", "py thon", "pthyon", "pyton", "pythn", "pyth0n", "pithon",
+                    "pytho", "pyth", "pypy", "anaconda", "miniconda", "pip install", ".py",
+                    "ython", "ytho", "ythan", "pyhon"
+                ];
+
+                // Catches "py" as an isolated word
+                const hasIsolatedPy = /\bpy\b/i.test(combined) || stripped === "py" || combined.includes(" py ") || combined.startsWith("py ") || combined.endsWith(" py");
+
+                return banned.some(k => combined.includes(k)) || stripped.includes("python") || stripped.includes("pytho") || stripped.includes("ython") || hasIsolatedPy || /p[y¥il1|]*t[h]?[0oóòôõöøō]n/i.test(combined);
+            })()
+        ) {
+            return message.reply("python LOSES");
+        }
+
+        const chatId = `airockpaperscissors-${Math.random()}`;
+        OllamaClients.lightText.createChat(chatId);
+        OllamaClients.lightText.informChat(chatId, inputPrompt);
 
         // get the response & reset the chat
         let response = "";
