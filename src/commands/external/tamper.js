@@ -30,6 +30,7 @@ class Command {
         if (attachment.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");
         // level
         const tamperLevel = 1 - (Number(args[0]) / 100);
+        const useStuttering = args[1] !== "noStutter";
         if (isNaN(tamperLevel) || !isFinite(tamperLevel)) throw new Error("Thats not a percentage");
         if (tamperLevel < 0 || tamperLevel > 1) throw new Error("Thats not in the range");
 
@@ -73,36 +74,39 @@ class Command {
             await FFmpegUtil.commands.useBuilderAudioFilter(inputPath, audioEffects, outputPathEffects);
 
             // stutter the audio
-            // settings for the stutters. remember tamperLevel is closer to 1 for more pure.
-            const stutterLoopCount = Math.round(2 + (14 * (1 - tamperLevel))); // how many loops in a stutter (2-16)
-            const stutterLength = 0.5; // how long the whole stutter should be
-            const stutterLoopLength = stutterLength / stutterLoopCount;
-            const videoLength = await FFmpegUtil.probe.length(inputPath);
-            
-            // add the timestamps for each stutter.
-            // this allows for barely any stutters on more pure videos, and more stutters on less pure videos
-            let stutterNext = stutterLength + ((tamperLevel * videoLength) / 2);
-            const stuttersAt = [];
-            while (stutterNext < videoLength && (stutterNext + stutterLength) < videoLength) {
-                stuttersAt.push(stutterNext);
+            let finalFileOutput = outputPathEffects;
+            if (useStuttering) {
+                // settings for the stutters. remember tamperLevel is closer to 1 for more pure.
+                const stutterLoopCount = Math.round(2 + (14 * (1 - tamperLevel))); // how many loops in a stutter (2-16)
+                const stutterLength = 0.5; // how long the whole stutter should be
+                const stutterLoopLength = stutterLength / stutterLoopCount;
+                const videoLength = await FFmpegUtil.probe.length(inputPath);
 
-                stutterNext += stutterLength * 2; // we can't overlap them well
-                stutterNext += tamperLevel * videoLength;
+                // add the timestamps for each stutter.
+                // this allows for barely any stutters on more pure videos, and more stutters on less pure videos
+                let stutterNext = stutterLength + ((tamperLevel * videoLength) / 2);
+                const stuttersAt = [];
+                while (stutterNext < videoLength && (stutterNext + stutterLength) < videoLength) {
+                    stuttersAt.push(stutterNext);
+
+                    stutterNext += stutterLength * 2; // we can't overlap them well
+                    stutterNext += tamperLevel * videoLength;
+                }
+
+                // actually do the stutters
+                const scriptPathStutter = path.join(tempDir, `stutterscript.txt`);
+                const outputPathStuttered = path.join(tempDir, `stuttered.${safeFileType}`);
+                await replyMessage.edit("Stuttering the audio stream");
+                await FFmpegUtil.commands.stutter(outputPathEffects, scriptPathStutter, outputPathStuttered, stutterLoopCount, stutterLoopLength, stuttersAt);
+                finalFileOutput = outputPathStuttered;
             }
 
-            // actually do the stutters
-            const scriptPathStutter = path.join(tempDir, `stutterscript.txt`);
-            const outputPathStuttered = path.join(tempDir, `stuttered.${safeFileType}`);
-            await replyMessage.edit("Stuttering the audio stream");
-            await FFmpegUtil.commands.stutter(outputPathEffects, scriptPathStutter, outputPathStuttered, stutterLoopCount, stutterLoopLength, stuttersAt);
-
             // if video then we need to tamper & compress
-            let finalFileOutput = outputPathStuttered;
             if (isVideo) {
                 // tamper with the video
                 const outputPathTampered = path.join(tempDir, `tampered.${safeFileType}`);
                 await replyMessage.edit("Tampering with the video stream");
-                await FFmpegUtil.commands.tamper(outputPathStuttered, outputPathTampered, tamperLevel);
+                await FFmpegUtil.commands.tamper(finalFileOutput, outputPathTampered, tamperLevel);
 
                 // compress
                 const compressTarget = 4 * 1e+6; // 4mb
