@@ -17,23 +17,9 @@ class Command {
 
     async invoke(message, args, util) {
         if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
-        
-        const attachment = message.attachments.first();
-        if (!attachment) return message.reply("😶");
-        const endingType = util.getAttachmentType(attachment);
-        if (!isCompatibleImage(endingType)) {
-            return message.reply('Please use a valid image format.');
-        }
 
-        if (attachment.size > 2 * 1000 * 1000) {
-            return message.reply("Images must be below 2 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
-        }
-
-        // we just expect this to work because realistically the command shouldnt work if this doesnt
-        const attachmentFetch = await fetch(attachment.url);
-        const attachmentArrayBuffer = await attachmentFetch.arrayBuffer();
-        const attachmentBuffer = Buffer.from(attachmentArrayBuffer);
-        const imageBuffer = await makePng(attachmentBuffer);
+        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        if (!imageBuffer) return;
 
         // start asking chattus geepitus
         const chatId = `aiemojifyimage-${Math.random()}`;

@@ -16,32 +16,10 @@ class Command {
         this.alias = ["imagestammer", "istammer", "stammeri"];
     }
 
-    async getAttachments(message, args, util) {
-        // check attachements
-        const attachment1 = message.attachments.first();
-        const attachment2 = message.attachments.last();
-        if (!attachment1) throw new Error("Add an image to take the colors from");
-        if (!attachment2) throw new Error("Add an image to cover the colors");
-        const endingType1 = util.getAttachmentType(attachment1);
-        const endingType2 = util.getAttachmentType(attachment2);
-        if (!isCompatibleImage(endingType1))
-            throw new Error('Please use a valid image format. (image 1)');
-        if (!isCompatibleImage(endingType2))
-            throw new Error('Please use a valid image format. (image 2)');
-        // check atachemtn size
-        if (attachment1.size > 2 * 1000 * 1000) throw new Error("Images must be below 2 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
-        if (attachment2.size > 2 * 1000 * 1000) throw new Error("Images must be below 2 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
-        // fetch both
-        const attachmentFetch1 = await fetch(attachment1.url);
-        const attachmentFetch2 = await fetch(attachment2.url);
-        const attachmentArrayBuffer1 = await attachmentFetch1.arrayBuffer();
-        const attachmentArrayBuffer2 = await attachmentFetch2.arrayBuffer();
-        const attachmentBuffer1 = Buffer.from(attachmentArrayBuffer1);
-        const attachmentBuffer2 = Buffer.from(attachmentArrayBuffer2);
-        return [attachmentBuffer1, attachmentBuffer2];
-    }
     async invoke(message, args, util) {
-        const [buffer1, buffer2] = await this.getAttachments(message, args, util);
+        const [buffer1, buffer2] = await util.getInputImagesForCommand(message, 2, false, false);
+        if (!buffer1) return message.reply("Add a valid image to take the colors from");
+        if (!buffer2) return message.reply("Add a valid image to cover the colors onto");
 
         // TODO: nvm revert the thing where i removed the ETA system because some combinations still cause huge lag
         const result = await StammerImage.remap(buffer1, buffer2);

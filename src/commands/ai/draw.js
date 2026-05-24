@@ -22,25 +22,15 @@ class Command {
         // get user input
         const userMessage = args.join(" ").trim();
         const attachment = message.attachments.first();
+        
         let imageBuffer = null;
         if (!attachment && !userMessage) return message.reply("Hey bud i need some fucking instructions<:idk_man:1136888365082492941>");
         if (attachment) {
             if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
 
-            const endingType = util.getAttachmentType(attachment);
-            if (!isCompatibleImage(endingType)) {
-                return message.reply('Please use a valid image format.');
-            }
-
-            if (attachment.size > 2 * 1000 * 1000) {
-                return message.reply("Images must be below 2 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
-            }
-
-            // we just expect this to work because realistically the command shouldnt work if this doesnt
-            const attachmentFetch = await fetch(attachment.url);
-            const attachmentArrayBuffer = await attachmentFetch.arrayBuffer();
-            const attachmentBuffer = Buffer.from(attachmentArrayBuffer);
-            imageBuffer = await makePng(attachmentBuffer);
+            const [imageInput] = await util.getInputImagesForCommand(message);
+            if (!imageInput) return;
+            imageBuffer = imageInput;
         }
 
         const userMessageInput = `Please draw me a picture, here is what i want:`
