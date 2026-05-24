@@ -1,5 +1,13 @@
 const sharp = require('sharp');
 
+const delay = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
+};
+
 class StammerImage {
     /**
      * The Stammer program takes the audio of the 1st input and recreates the 2nd input using it.
@@ -7,9 +15,10 @@ class StammerImage {
      * This essentially just remaps the colors of the 2nd image to use the closest 1st image colors
      * @param {Buffer} bufferCarrier should be something sharp accepts
      * @param {Buffer} bufferModulator should be something sharp accepts
+     * @param {() -> ()} processCallback palette swapping is throttled so use this for ETA
      * @returns {Promise<Buffer>} the mixed output
      */
-    static async remap(bufferCarrier, bufferModulator) {
+    static async remap(bufferCarrier, bufferModulator, processCallback) {
         const { data:carrierDataContainer, info:carrierInfo } = await sharp(bufferCarrier)
             .resize({ width: 1024, height: 1024, fit: "inside", withoutEnlargement: true })
             .raw()
@@ -20,8 +29,6 @@ class StammerImage {
             .toBuffer({ resolveWithObject: true });
         const carrierData = new Uint8ClampedArray(carrierDataContainer.buffer);
         const modulatorData = new Uint8ClampedArray(modulatorDataContainer.buffer);
-
-        console.log(carrierInfo, modulatorInfo);
 
         // ok so the faster approach than old implementation is to create a lookup table type of deal so we can palette swap
         // 1. get the decimal colors of the first image into a set,
@@ -60,6 +67,8 @@ class StammerImage {
         }
 
         // 3. palette swap
+        let i = 0;
+        console.log("stammerimage palette swap with color count", modulatorPalette.size, "(each one does", availableColors.size, ")");
         for (const colorDecimal of modulatorPalette.keys()) {
             const colorR = (colorDecimal & 0xff0000) >> 16;
             const colorG = (colorDecimal & 0x00ff00) >> 8;
@@ -87,6 +96,14 @@ class StammerImage {
             }
 
             modulatorPalette.set(colorDecimal, closestColor);
+            i++;
+
+            const segmentWaits = Math.max(500, Math.floor(2000000 / availableColors.size));
+            if (i % segmentWaits == 0) {
+                // console.log("stammerimage processing color", i, "of", modulatorPalette.size, "(each one does", availableColors.size, ")");
+                if (processCallback) processCallback(i, modulatorPalette.size, availableColors.size, segmentWaits);
+                await delay(1);
+            }
         }
         
         // now grab the colors
