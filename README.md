@@ -82,12 +82,15 @@ Check the Notes section for details on customizing PenguinBot to your liking.
     - The `facebookresearch` repo is no longer maintained, use https://github.com/adefossez/demucs
 - RVC AI dubs (used in commands) (requires python)
     - RVC uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
-        - On integrated GPUs you will have varied performance and speeds, I would recommend not setting this up on those devices
+        - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
     - RVC allows for controversial AI dubbing. Don't enable it if you don't want to.
     - You will need to provide your own `.pth` and `.index` voices for voice inference.
         - Making your own voices will (eventually) be covered here: https://github.com/JeremyGamer13/resources-jeremy-rvc-setup
         - You can find existing **(but likely unethically trained)** voices online at places like: https://voice-models.com/
     - RVC Configured via `.env` and `src/util/rvc-models.js`.
+        - For integrated GPUs/CPU you should change `rvc.py` to `rvc_cpu.py`. The `rvc.py` script is meant for NVIDIA GPUs using device cuda:0.
+            - the `rvc_cpu.py` script was designed for the intel 11th gen i3-1115G4 3.00 GHZ CPU
+        - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
     - Convoluted setup:
         - Install Python 3.10 specifically (other verisons dont seem to work well)
             - You may want to set it up so you can use `py -3.10` if you already have another version installed
@@ -95,7 +98,6 @@ Check the Notes section for details on customizing PenguinBot to your liking.
             - On NVIDIA GPUs you will want to use the CUDA versions of `torch` and other dependencies of `rvc-python`
             - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `rvc.py` or `rvc_cpu.py` to support these devices
             - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
-                - the `rvc_cpu.py` script was designed for the intel 11th gen i3-1115G4 3.00 GHZ CPU
 
 # Basic Commands Template
 ```js
