@@ -21,7 +21,8 @@ class NodeAPICommand {
         const canDo = util.request("nodeApiStuff");
         if (!canDo) return message.reply("disabled (this command is probably for discord screenshare)");
         if (this.cooldownUsers[message.author.id] > Date.now()) return message.reply("no too much");
-        
+
+        // TODO: Implement JGNODEAPI_TOKEN once added to jg_node_api
         const url = `${env.get("JGNODEAPI_URL")}${this.makeUrl(message, args)}`;
         // TODO: make this configurable
         this.cooldownUsers[message.author.id] = Date.now() + 15000;
