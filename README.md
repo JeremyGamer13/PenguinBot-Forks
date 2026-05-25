@@ -98,6 +98,7 @@ Check the Notes section for details on customizing PenguinBot to your liking.
             - On NVIDIA GPUs you will want to use the CUDA versions of `torch` and other dependencies of `rvc-python`
             - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `rvc.py` or `rvc_cpu.py` to support these devices
             - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
+            - Expect a ton of weird torch installation bugs and problems, especially when mixed with Demucs; things can get really messy and I dont have a solution to put here
 
 # Basic Commands Template
 ```js
