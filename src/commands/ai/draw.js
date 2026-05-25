@@ -1,3 +1,4 @@
+const discord = require("discord.js");
 const OllamaClients = require("../../util/ollama-clients");
 
 const configuration = require("../../config");
@@ -67,9 +68,12 @@ class Command {
         // we need to parse this response
         const parsed = JSON.parse(response);
         const image = drawSBPic(parsed);
+        // send sbpic also
+        const dataBuffer = Buffer.from(JSON.stringify(parsed, null, 4), "utf8");
+        const dataAttachment = new discord.MessageAttachment(dataBuffer, "sbpic.json");
         replyMessage.edit({
             content: parsed.desc.trim().substring(0, 2000),
-            files: [image],
+            files: [image, dataAttachment],
             allowedMentions: {
                 parse: [],
                 users: [],
