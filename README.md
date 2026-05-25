@@ -37,17 +37,64 @@ If you do not do this, many commands relating to managing the GitHub repository 
 1. Install Node.js, preferably v18 or v20. **Newer versions of Node may not be compatible out of the box with Canvas or other modules yet.**
 2. Install FFMPEG. Easiest way to check if it's setup properly is to run `ffmpeg` in a terminal with no arguments.
 3. Install Git
-4. Create a `cache`, `databases`, `temp`, and `memes` folder in the root folder for PenguinBot.
-5. Download the `assets` folder in the link found in the Notes section, and put it in the root folder for PenguinBot.
+4. Create a `cache`, `databases`, `temp`, folder in the root folder for PenguinBot.
+5. ~~Download the `assets` folder in the link found in the Notes section, and put it in the root folder for PenguinBot.~~ I dont know what to do for this here, good luck
 6. Install all of the node modules with `npm ci` or `npm i`
     - If you have `nvm` installed to switch between Node installations, you may need to rebuild canvas when switching versions by using `npm rebuild canvas`
 7. Duplicate `.env.template` and rename it to `.env`, then fill any of the information you can.
     - Certain keys are used only when the bot is ran with `npm run test`, notably the `TOKEN_TEST`.
 8. Run the bot with `npm run test` for development and `npm start` or `node permrun.js` for production.
     - If you want to run the bot once in development, use `node src/index.js test`. This is not recommended for production as the bot can be restarted via commands.
+    - use `node permrun.js personal` for personal mode
     - When the bot is online, you can use the `restart` command in Discord to restart the bot.
 
 Check the Notes section for details on customizing PenguinBot to your liking.
+
+## Additional setup
+- **You will need multiple versions of python installed for some external libraries.** Expect countless issues and bugs with python installation and setup if you do so.
+    - This document does not cover python installation bugs or quirks for my sanity.
+    - In my experience, certain `pytorch` installations may cause extreme stress on the network and device. Things may work fine after installation.
+- Setup [jg_node_api](https://github.com/JeremyGamer13/jg_node_api_public) and link it in .env
+    - This enables A LOT OF FEATURES like all of the stream overlays
+- To add more overlays
+    - Make sure to clone [jg_node_utils](https://github.com/JeremyGamer13/jg_node_utils)
+    - then find `link-jg-node-utils.js` in Jeremy Stream Bot, configure it to point to your jg_node_utils,
+    - then run it with Node
+    - then find `link-jg-node-utils.js` in jg_node_api, configure it to point to your jg_node_utils,
+    - then run it with Node
+    - Modify jg_node_utils to create your overlays & add assets in jg_node_api for the overlays to actually use
+- VLC Media Player Integration
+    - Modify .env to enable behavior
+    - Open VLC's "All" settings > Main interfaces > Lua > Lua HTTP, and add a Password. VLC will start listening on port 8080.
+        - Lua Telnet settings do NOT do anything for this, that is a different protocol
+        - If you do NOT want to use port 8080, then whenever you run VLC, you need to run it like so: `"C:\Program Files\VideoLAN\VLC\vlc.exe" --extraintf http --http-port [PORT]` with `[PORT]` being any port to run VLC on
+            - you may want to just edit any shortcuts to have that command directly
+- [Stammer](https://github.com/Firepal/stammer) tool (used in commands) (requires python)
+    - Configured via `.env`. Follow the instructions on their repo to download
+- [Ollama](https://ollama.com/) integration
+    - Ollama uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
+    - Configured via `.env`, `src/config.js`, and `src/util/ollama-clients.js`
+    - Cloud models will not be supported. Only local models are guaranteed to work
+- [Demucs](https://github.com/adefossez/demucs) library (used in commands) (requires python for installation)
+    - Demucs uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
+    - Configured via `.env`. I do not use `Anaconda` myself (the repo "recommends it") so i can't say if it works with Jeremy Stream Bot's setup
+    - Follow instructions on their repo for installation
+    - The `facebookresearch` repo is no longer maintained, use https://github.com/adefossez/demucs
+- RVC AI dubs (used in commands) (requires python)
+    - RVC uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
+        - On integrated GPUs you will have varied performance and speeds, I would recommend not setting this up on those devices
+    - RVC allows for controversial AI dubbing. Don't enable it if you don't want to.
+    - You will need to provide your own `.pth` and `.index` voices for voice inference.
+        - Making your own voices will (eventually) be covered here: https://github.com/JeremyGamer13/resources-jeremy-rvc-setup
+        - You can find existing **(but likely unethically trained)** voices online at places like: https://voice-models.com/
+    - RVC Configured via `.env` and `src/util/rvc-models.js`.
+    - Convoluted setup:
+        - Install Python 3.10 specifically (other verisons dont seem to work well)
+            - You may want to set it up so you can use `py -3.10` if you already have another version installed
+        - install rvc-python with `py -3.10 -m pip install rvc-python`
+            - On NVIDIA GPUs you will want to use the CUDA versions of `torch` and other dependencies of `rvc-python`
+            - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify `rvc.py`/`rvc_cpu.py` to support these devices (the `rvc_cpu.py` script is used when `RVC_NVIDIA=false` but can be modified to use a GPU instead of the CPU)
+            - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
 
 # Basic Commands Template
 ```js
