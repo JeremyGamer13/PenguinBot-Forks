@@ -43,6 +43,7 @@ class Command {
             const objects = await ObjectDetection.predict(imagePath, realArgs);
             
             // draw the boxes
+            // TODO: Resize the canvas to be much larger so boxes arent huge strokes
             const image = await loadImage(imageBuffer);
             const canvas = createCanvas(image.width, image.height);
             const ctx = canvas.getContext("2d");
