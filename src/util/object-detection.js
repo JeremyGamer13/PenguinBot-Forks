@@ -4,13 +4,11 @@ const nodeUtil = require("util");
 const childProcess = require("child_process");
 
 const env = require("./env-util");
-const execPromise = nodeUtil.promisify(childProcess.exec);
 
-// Is this name TUFF; Yes Twin
-class YOLOWorld {
+class ObjectDetection {
     /**
      * @typedef {Object.<string, number[][]>} PredictionResult
-     * Each box is [x1, y1, x2, y2]
+     * Each box is [x1, y1, x2, y2, score]
      */
     /**
      * Detect bounding boxes for specified objects/classes
@@ -19,16 +17,20 @@ class YOLOWorld {
      * @returns {Promise<PredictionResult>}
      */
     static predict(absolutePathInput, classes) {
-        if (!env.getBool("YOLOWORLD_ENABLED")) throw new Error("YOLO-World is disabled on this system");
+        if (!env.getBool("OBJDETECT_ENABLED")) throw new Error("ObjectDetection is disabled on this system");
         if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
         if (!fs.existsSync(absolutePathInput)) throw new Error("Input cannot be non-existent path");
 
-        const executable = env.get("YOLOWORLD_PYTHON_EXEC");
-        const pythonProgram = env.get("YOLOWORLD_PYTHON_CODE");
+        const executable = env.get("OBJDETECT_PYTHON_EXEC");
+        const pythonProgram = env.get("OBJDETECT_PYTHON_CODE");
         const serializedClasses = JSON.stringify(classes);
         return new Promise(async (resolve, reject) => {
-            const process = childProcess.spawn(executable, [pythonProgram, "--pt", env.get("YOLOWORLD_MODEL"), "--input", absolutePathInput], {
-                cwd: env.get("YOLOWORLD_PATH")
+            const process = childProcess.spawn(executable, [
+                pythonProgram,
+                "--input",
+                absolutePathInput
+            ], {
+                cwd: env.get("OBJDETECT_PATH")
             });
             process.stdin.setEncoding('utf8');
             process.stderr.setEncoding('utf8');
@@ -39,8 +41,8 @@ class YOLOWorld {
 
             let output = "";
             process.stdout.on("data", (data) => {
-                console.log("rmeovethislater,", data);
-                if (!data.trim().startsWith("{")) return; // verbose stuff from YOLO-World
+                console.log("REMOVETHIS LATER,", data);
+                if (!data.trim().startsWith("{")) return; // verbose output
                 output += data;
             });
             process.stderr.on("data", (err) => {
@@ -66,4 +68,4 @@ class YOLOWorld {
     }
 }
 
-module.exports = YOLOWorld;
+module.exports = ObjectDetection;

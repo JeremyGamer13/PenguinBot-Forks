@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const discord = require("discord.js");
-const YOLOWorld = require('../../util/yolo-world');
+const ObjectDetection = require('../../util/object-detection');
 const TempFolder = require('../../util/temp-folder');
 const { createCanvas, loadImage } = require('canvas');
 
@@ -40,7 +40,7 @@ class Command {
 
             // look at the image
             await message.channel.sendTyping();
-            const objects = await YOLOWorld.predict(imagePath, realArgs);
+            const objects = await ObjectDetection.predict(imagePath, realArgs);
             
             // draw the boxes
             const image = await loadImage(imageBuffer);

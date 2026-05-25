@@ -1,0 +1,63 @@
+import sys
+import json
+import argparse
+import torch
+from PIL import Image
+from transformers import AutoProcessor, AutoModelForZeroShotObjectDetection
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", required=True)
+    args = parser.parse_args()
+
+    # Read classes
+    input_data = sys.stdin.read()
+    classes = json.loads(input_data)
+    
+    # Grounding DINO prompt format
+    prompt = " . ".join(classes)
+    
+    # Load model and processor
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model_id = "IDEA-Research/grounding-dino-base"
+    
+    processor = AutoProcessor.from_pretrained(model_id)
+    model = AutoModelForZeroShotObjectDetection.from_pretrained(model_id).to(device)
+    
+    # Load and process image
+    image = Image.open(args.input).convert("RGB")
+    inputs = processor(images=image, text=prompt, return_tensors="pt").to(device)
+    
+    # Run inference
+    with torch.no_grad():
+        outputs = model(**inputs)
+    
+    # Post-process (no thresholds applied)
+    results = processor.post_process_grounded_object_detection(
+        outputs,
+        inputs.input_ids,
+        target_sizes=[image.size[::-1]]
+    )
+    
+    # Format output
+    # Mapping to PredictionResult: Object.<string, number[][]>
+    output = {}
+    
+    # Process every detected box without filtering
+    for box, score, label in zip(results[0]["boxes"], results[0]["scores"], results[0]["labels"]):
+        # The 'label' variable is already the string (e.g., 'burger')
+        # No need to use classes[label_idx]
+        phrase = str(label)
+        
+        abs_box = [int(coord) for coord in box.tolist()]
+        abs_box.append(float(score))
+        
+        if phrase not in output:
+            output[phrase] = []
+        output[phrase].append(abs_box)
+
+    sys.stdout.write(json.dumps(output))
+    sys.stdout.flush()
+
+if __name__ == "__main__":
+    main()
