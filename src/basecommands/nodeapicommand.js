@@ -23,7 +23,7 @@ class NodeAPICommand {
         if (this.cooldownUsers[message.author.id] > Date.now()) return message.reply("no too much");
         
         const url = `${env.get("JGNODEAPI_URL")}${this.makeUrl(message, args)}`;
-        // TODO: make this configurable and clone it to the other bot
+        // TODO: make this configurable
         this.cooldownUsers[message.author.id] = Date.now() + 15000;
 
         const result = await fetch(url);

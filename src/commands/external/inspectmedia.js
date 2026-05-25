@@ -13,7 +13,7 @@ class Command {
         this.name = "inspectmedia";
         this.description = "debug command";
         this.attributes = {
-            unlisted: false,
+            unlisted: true,
             lockedToCommands: true,
             permission: 0,
         };

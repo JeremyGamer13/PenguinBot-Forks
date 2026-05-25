@@ -58,6 +58,7 @@ class Command {
                 model = "balabolka";
                 name = "Adult Female #" + friendlyVoice.split("").pop();
                 break;
+            // TODO: Add support for Cepstral voices (specifically Shouty is one i really want)
             default:
                 return message.reply("bro thought");
         }

@@ -17,7 +17,7 @@ class Command {
         this.name = "cover";
         this.description = "AI voice will redub the audio";
         this.attributes = {
-            unlisted: true,
+            unlisted: false,
             jgAiCoverCommand: true,
             permission: 0,
         };
