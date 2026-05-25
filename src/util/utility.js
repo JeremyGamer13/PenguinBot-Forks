@@ -427,7 +427,10 @@ class CommandUtility {
         }
         // jg: ai cover perm
         if (command.attributes.jgAiCoverCommand === true && !this.state.isInPersonalMode) {
-            let canBeUsed = configuration.permissions.ethicalCoverUsers.includes(message.author.id);
+            const ethicalCoverUser = configuration.permissions.ethicalCoverUsers.includes(message.author.id);
+            const hasEthicalCoverRole = message.member._roles.some(v => configuration.permissions.ethicalCoverRoles.includes(v));
+
+            let canBeUsed = ethicalCoverUser || hasEthicalCoverRole;
             if (!canBeUsed) {
                 this._commandBlockReject(command, message, split, "Only ethicalCoverUsers can run this command.");
                 return true;

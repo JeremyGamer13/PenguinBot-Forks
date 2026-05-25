@@ -123,6 +123,8 @@ const configuration = {
 
         // Role IDs considered "exclusive", so Server booster & Donator
         exclusiveRoles: [
+            "1150383694842953778", // Donator
+            "1102050296265445436", // Server booster
         ],
 
         // jg: User IDs that can use AI cover commands with approval (instant approval in personal mode)
@@ -138,6 +140,13 @@ const configuration = {
             '1376566271558160504', // vedal
             '983532566822916106', // lunair
             '1470133853200060477', // ddededodediamanto
+        ],
+
+        // jg: Role IDs that can use AI cover commands with approval (instant approval in personal mode)
+        ethicalCoverRoles: [
+            // Super fucking evil Muwahahaha
+            "1150383694842953778", // Donator
+            "1102050296265445436", // Server booster
         ],
 
         // jg: User IDs allowed to talk directly to AI models without problem
