@@ -1,21 +1,12 @@
-import sys
-import argparse
-
 # Fuck python i hate python its so fucking shit
 # You dont deserve any respect python this is all vibecoded fuck off python genuinely fuck this shitty language
-import os
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-
-import torch
-from fairseq.data.dictionary import Dictionary
-
-# Tell Torch to allow fairseq objects to be loaded
-torch.serialization.add_safe_globals([Dictionary])
-# Limit RVC to only use 50% of your GPU's total VRAM
-# Adjust the 0.5 to whatever fraction you prefer (e.g., 0.7 for 70%)
-torch.cuda.set_per_process_memory_fraction(0.625, device=0)
-
+import sys
+import argparse
 from rvc_python.infer import RVCInference
+
+# Configuration for CPU
+# TODO: Maybe there is a way to limit system RAM usage?
+device = "cpu"
 
 parser = argparse.ArgumentParser(description="RVC Inference Wrapper")
 parser.add_argument("--input", required=True, help="Path to input vocal audio")
@@ -33,12 +24,11 @@ index_path = args.index
 source_audio = args.input
 output_path = args.output
 
-# https://github.com/daswer123/rvc-python/blob/main/rvc_python/infer.py#L181
-# because the ai didnt get this right so i just actually did this part
+# Load the model
 rvc = RVCInference(
-    device="cuda:0",
-    model_path=model_path,
-    index_path=index_path,
+    device=device,
+    model_path=args.model,
+    index_path=args.index,
 )
 rvc.set_params(
     f0method = args.method,
@@ -46,9 +36,6 @@ rvc.set_params(
     protect = 0.33,
     f0up_key = args.semitones
 )
-
-# Clear the cache to make room for the actual inference
-torch.cuda.empty_cache()
 
 # Perform the conversion
 rvc.infer_file(

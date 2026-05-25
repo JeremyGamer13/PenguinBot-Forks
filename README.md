@@ -93,8 +93,9 @@ Check the Notes section for details on customizing PenguinBot to your liking.
             - You may want to set it up so you can use `py -3.10` if you already have another version installed
         - install rvc-python with `py -3.10 -m pip install rvc-python`
             - On NVIDIA GPUs you will want to use the CUDA versions of `torch` and other dependencies of `rvc-python`
-            - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify `rvc.py`/`rvc_cpu.py` to support these devices (the `rvc_cpu.py` script is used when `RVC_NVIDIA=false` but can be modified to use a GPU instead of the CPU)
+            - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `rvc.py` or `rvc_cpu.py` to support these devices
             - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
+                - the `rvc_cpu.py` script was designed for the intel 11th gen i3-1115G4 3.00 GHZ CPU
 
 # Basic Commands Template
 ```js
