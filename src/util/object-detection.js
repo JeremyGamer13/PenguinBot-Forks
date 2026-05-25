@@ -6,6 +6,8 @@ const childProcess = require("child_process");
 const env = require("./env-util");
 
 class ObjectDetection {
+    // TODO: Grounding DINO seems to attach subterms to larger terms. We should probably scan each object individually and then save the specific terms that Grounding DINO extracted into the box data
+    // TODO: Return { box: [x1,y1,x2,y2], score:number, term:string } instead
     /**
      * @typedef {Object.<string, number[][]>} PredictionResult
      * Each box is [x1, y1, x2, y2, score]
