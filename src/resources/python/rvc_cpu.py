@@ -1,12 +1,16 @@
 # Fuck python i hate python its so fucking shit
 # You dont deserve any respect python this is all vibecoded fuck off python genuinely fuck this shitty language
 import sys
+import torch
 import argparse
 from rvc_python.infer import RVCInference
+from fairseq.data.dictionary import Dictionary
 
 # Configuration for CPU
 # TODO: Maybe there is a way to limit system RAM usage?
 device = "cpu"
+# Tell Torch to allow fairseq objects to be loaded
+torch.serialization.add_safe_globals([Dictionary])
 
 parser = argparse.ArgumentParser(description="RVC Inference Wrapper")
 parser.add_argument("--input", required=True, help="Path to input vocal audio")
