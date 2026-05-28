@@ -6,7 +6,7 @@ class Command {
         this.description = "install modules";
         this.attributes = {
             unlisted: true,
-            permission: 3,
+            permission: 4,
         };
     }
 
