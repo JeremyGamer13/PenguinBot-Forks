@@ -46,7 +46,7 @@ const state = {
     prefix,
     isInTestMode,
     isInPersonalMode,
-    panelForcedDisabled: true,
+    panelForcedDisabled: env.getBool("STATE_DEFAULT_PANELFORCEDDISABLED"),
     preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
 
     // JG: Random thihngs
