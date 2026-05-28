@@ -46,13 +46,14 @@ while (getPredictedTokenRequirements() > maximumContextSize) {
     uniqueModelTrainingContent.splice(Math.floor(Math.random() * uniqueModelTrainingContent.length), 1);
 }
 
+// NOTE: For some models, this should actually be halfed or it'll start regurgitating exactly from the dataset (though performance will suffer)
 const contextSize = getPredictedTokenRequirements();
 const modelFileBase = `
 FROM ${baseModel}
 # [higher is more creative, lower is more coherent]
 PARAMETER temperature ${temperature}
 # this controls how many tokens the LLM can use as context to generate the next token
-PARAMETER num_ctx ${contextSize / 2}
+PARAMETER num_ctx ${contextSize}
 
 # sets a custom system message to specify the behavior of the chat assistant
 MESSAGE system """

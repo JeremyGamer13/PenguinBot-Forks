@@ -28,6 +28,7 @@ const configuration = {
     funkyCapabilities: {
         availableOllamaModels: [
             "custom-penguinmod-server-v1",
+            "custom-penguinmod-server-v2",
             "gemma4:e4b",
             "gemma4:e2b",
             "gemma3:12b",
