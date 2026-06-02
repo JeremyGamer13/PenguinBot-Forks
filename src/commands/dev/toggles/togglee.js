@@ -1,7 +1,7 @@
 class Command {
     constructor() {
         this.name = "togglee";
-        this.description = "Enable or disable the External shit.";
+        this.description = "Enable or disable the External shits.";
         this.attributes = {
             unlisted: true,
             permission: 4,
@@ -11,11 +11,11 @@ class Command {
     invoke(message, args, util) {
         if (!args[0]) {
             util.state.heavyExternalStuff = !util.state.heavyExternalStuff;
-            message.reply(`enabled = ${util.state.heavyExternalStuff}`);
+            message.reply(`heavyExternalStuff = ${util.state.heavyExternalStuff}`);
             return;
         }
         util.state.heavyExternalStuff = String(args[0]).toLowerCase().trim() !== 'true';
-        message.reply(`enabled = ${util.state.heavyExternalStuff}`);
+        message.reply(`heavyExternalStuff = ${util.state.heavyExternalStuff}`);
     }
 }
 

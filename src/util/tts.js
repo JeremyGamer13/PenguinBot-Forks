@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const env = require("./env-util");
+const fetchNodeApi = require("./fetch-nodeapi");
 
 class TTS {
     /**
@@ -13,10 +14,8 @@ class TTS {
      * @returns {Buffer}
      */
     static async speak(text, model = "google", language = "en", name) {
-        // TODO: Implement JGNODEAPI_TOKEN once added to jg_node_api
-        const url = `${env.get("JGNODEAPI_URL")}/api/tts?text=${encodeURIComponent(text)}&model=${encodeURIComponent(model)}&lang=${encodeURIComponent(language)}${name ? `&name=${encodeURIComponent(name)}` : ""}`;
-        
-        const result = await fetch(url);
+        const endpoint = `/api/tts?text=${encodeURIComponent(text)}&model=${encodeURIComponent(model)}&lang=${encodeURIComponent(language)}${name ? `&name=${encodeURIComponent(name)}` : ""}`;
+        const result = await fetchNodeApi(endpoint);
         if (!result.ok) {
             const resultJson = await result.json();
             throw new Error(resultJson.error);

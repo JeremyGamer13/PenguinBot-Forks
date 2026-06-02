@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 
 const env = require("../../util/env-util");
-const fetchWithTimeout = require("../../util/fetch-timeout")
+const fetchNodeApi = require("../../util/fetch-nodeapi")
 
 class Command {
     constructor() {
@@ -22,9 +22,8 @@ class Command {
 
         const replyMessage = await message.reply("⌛ - downloading that to mp3 (im not adding other formats)");
 
-        // TODO: Implement JGNODEAPI_TOKEN once added to jg_node_api
-        const nodeApiUrl = `${env.get("JGNODEAPI_URL")}/api/ytdlp?v=${encodeURIComponent(downloadUrl)}`;
-        const result = await fetchWithTimeout(nodeApiUrl, {
+        const endpoint = `/api/ytdlp?v=${encodeURIComponent(downloadUrl)}`;
+        const result = await fetchNodeApi(endpoint, {
             timeout: 10 * 60 * 1000,
         });
         if (!result.ok) {

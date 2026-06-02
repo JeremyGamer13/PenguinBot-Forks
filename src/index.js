@@ -51,7 +51,9 @@ const state = {
 
     // JG: Random thihngs
     // TODO: Need to make a service that allows heavyExternalStuff to be turned off when the server is busy with more important programs (ie, my personal minecraft server)
-    nodeApiStuff: env.getBool("STATE_DEFAULT_NODEAPISTUFF_PERSONAL") ? isInPersonalMode : env.getBool("STATE_DEFAULT_NODEAPISTUFF"),
+    nodeApiOverlays: env.getBool("STATE_DEFAULT_NODEAPIOVERLAYS_PERSONAL") ? isInPersonalMode : env.getBool("STATE_DEFAULT_NODEAPIOVERLAYS"),
+    nodeApiAudios: env.getBool("STATE_DEFAULT_NODEAPIAUDIOS_PERSONAL") ? isInPersonalMode : env.getBool("STATE_DEFAULT_NODEAPIAUDIOS"),
+    nodeApiPresetCooldown: env.getNumber("STATE_DEFAULT_NODEAPIPRESETCOOLDOWN"),
     heavyExternalStuff: env.getBool("STATE_DEFAULT_HEAVYEXTERNALSTUFF"),
     santaListProcessing: false,
     santaListLastAddedTo: 0,

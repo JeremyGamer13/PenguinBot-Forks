@@ -1,13 +1,15 @@
-const NodeAPICommand = require("../../basecommands/nodeapicommand");
+const NodeAPIPreset = require("../../basecommands/nodeapipreset");
 
 const jgNodeUtils = require("jg-node-utils");
 
 function newCommand(presetFunc, preset) {
-    return class extends NodeAPICommand {
+    return class extends NodeAPIPreset {
         constructor() {
             super();
             this.preset = preset;
             this.presetFunc = presetFunc;
+
+            this.toggle = "nodeApiOverlays";
 
             this.name = preset.short;
             this.description = preset.description;
