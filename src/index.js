@@ -50,7 +50,6 @@ const state = {
     preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
 
     // JG: Random thihngs
-    // TODO: Need to make a service that allows heavyExternalStuff to be turned off when the server is busy with more important programs (ie, my personal minecraft server)
     nodeApiOverlays: env.getBool("STATE_DEFAULT_NODEAPIOVERLAYS_PERSONAL") ? isInPersonalMode : env.getBool("STATE_DEFAULT_NODEAPIOVERLAYS"),
     nodeApiAudios: env.getBool("STATE_DEFAULT_NODEAPIAUDIOS_PERSONAL") ? isInPersonalMode : env.getBool("STATE_DEFAULT_NODEAPIAUDIOS"),
     nodeApiPresetCooldown: env.getNumber("STATE_DEFAULT_NODEAPIPRESETCOOLDOWN"),
