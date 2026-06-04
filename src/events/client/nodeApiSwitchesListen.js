@@ -40,8 +40,10 @@ class BotEvent {
     async evaluateJLaptopSwitches(switches) {
         // NOTE: MinecraftWatchdog also fetches switches from jg_node_api so itll handle shutdowns on its own timing
         // battery
+        // NOTE: warn in this case because battery should always be above low or critical
         if (this.lastIsLowBattery !== switches.isLowBattery) {
             try {
+                console.warn("WARNING: BATTERY IS LOWER THAN EXPECTED");
                 if (switches.isLowBattery) {
                     await this.channel.send(`# <@${env.get("OWNER")}> BATTERY IS LOWER THAN EXPECTED`
                         + "\n" + `The automatic charging setup might be disconnected or device is being stressed heavily`);
@@ -55,6 +57,7 @@ class BotEvent {
         }
         if (this.lastIsCriticalBattery !== switches.isCriticalBattery) {
             if (switches.isCriticalBattery) {
+                console.warn("WARNING: BATTERY IS CRITICAL");
                 try {
                     await this.channel.send(`# <@${env.get("OWNER")}> BATTERY IS CRITICAL`
                         + "\n" + `- Battery critical so we are force shutting down`
@@ -69,10 +72,12 @@ class BotEvent {
         }
 
         // automatic scheduled shutdown
+        // NOTE: just log in this case because scheduled shutdowns are expected
         if (this.lastIsShuttingDownScheduled !== switches.isShuttingDownScheduled) {
             if (switches.isShuttingDownScheduled) {
+                console.log("NOTICE: Automatic Shutdown is scheduled on device");
                 try {
-                    await this.channel.send(`# <@${env.get("OWNER")}> Automatic Shutdown is scheduled on device`
+                    await this.channel.send(`# Automatic Shutdown is scheduled on device`
                         + "\n" + `- Expecting MinecraftWatchdog to deny new server starts`
                         + "\n" + `- Expecting Minecraft server to chat that server shutting down soon`);
                 } catch (err) {
@@ -83,9 +88,10 @@ class BotEvent {
         }
         if (this.lastIsShuttingDownSoon !== switches.isShuttingDownSoon) {
             if (switches.isShuttingDownSoon) {
+                console.log("NOTICE: Shutdown is happening very soon");
                 this.state.heavyExternalStuff = false;
                 try {
-                    await this.channel.send(`# <@${env.get("OWNER")}> Shutdown is happening very soon`
+                    await this.channel.send(`# Shutdown is happening very soon`
                         + "\n" + `- heavyExternalStuff = ${this.state.heavyExternalStuff}`
                         + "\n" + `- Expecting Minecraft server to shutdown gracefully`);
                 } catch (err) {
@@ -96,8 +102,9 @@ class BotEvent {
         }
         if (this.lastIsShuttingDownCritical !== switches.isShuttingDownCritical) {
             if (switches.isShuttingDownCritical) {
+                console.log("NOTICE: Shutdown critical so we are force shutting down");
                 try {
-                    await this.channel.send(`# <@${env.get("OWNER")}> Shutdown critical so we are force shutting down`);
+                    await this.channel.send(`# Shutdown critical so we are force shutting down`);
                 } catch (err) {
                     console.error(`ALERT FAILED: Shutdown critical so we are force shutting down`, err);
                 }
@@ -110,8 +117,16 @@ class BotEvent {
         if (this.lastIsPrimaryNetwork !== switches.isPrimaryNetwork) {
             // NOTE: We actually cant log to discord on lost primary network for obvious reasons
             // TODO: Maybe we should disable fetching to jg_node_api in this state (except /api/switches)? But that should still work fine on other networks since the URL is on localhost. It's not really clear what we should do in this case, maybe dont check at all.
-            if (!switches.isPrimaryNetwork)
+            if (!switches.isPrimaryNetwork) {
                 console.warn("WARNING: Lost primary network? Stated by jg_node_api. Likely lost connection to discord gateway");
+            } else {
+                console.log("NOTICE: Reconnected to primary network (likely sudden network loss?)");
+                try {
+                    await this.channel.send(`Reconnected to primary network (likely sudden network loss?)`);
+                } catch (err) {
+                    console.error(`ALERT FAILED: Reconnected to primary network (likely sudden network loss?)`, err);
+                }
+            }
             this.lastIsPrimaryNetwork = switches.isPrimaryNetwork;
         }
     }
