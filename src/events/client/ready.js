@@ -14,7 +14,6 @@ class BotEvent {
     }
 
     async invoke(client, state) {
-        require('dotenv').config();
         const isInTestMode = state.isInTestMode;
         const isInPersonalMode = state.isInPersonalMode;
 

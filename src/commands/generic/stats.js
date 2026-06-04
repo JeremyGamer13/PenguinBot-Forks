@@ -22,7 +22,7 @@ class Command {
         this.description = "Get internal server details about the bot.";
         this.attributes = {
             unlisted: false,
-            admin: false,
+            permission: 0,
             lockedToCommands: true,
         };
 

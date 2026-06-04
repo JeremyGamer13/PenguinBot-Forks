@@ -8,7 +8,7 @@ class Command {
         this.description = "Pull from branch";
         this.attributes = {
             unlisted: true,
-            adminInclusive: ['462098932571308033'],
+            permissionInclusive: ['462098932571308033'],
             permission: 4,
         };
     }

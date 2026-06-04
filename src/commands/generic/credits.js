@@ -6,7 +6,7 @@ class Command {
         this.description = "View creation credits for PenguinBot.";
         this.attributes = {
             unlisted: false,
-            admin: false,
+            permission: 0,
             lockedToCommands: true,
         };
 

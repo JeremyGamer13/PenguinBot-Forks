@@ -8,7 +8,7 @@ class SigmaCommand {
         this.description = "I feel so sigma!";
         this.attributes = {
             unlisted: false,
-            admin: false,
+            permission: 0,
             lockedToCommands: true,
         };
     }
@@ -28,7 +28,7 @@ class SigmaCommand {
         ctx.drawImage(userImage, 29, 169, 287, 287);
         
         // Convert the canvas to a Discord attachment
-        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'sigma.png');
+        const attachment = new Discord.MessageAttachment(canvas.toBuffer("image/png"), 'sigma.png');
 
         // Send the license image as a reply
         message.reply({ files: [attachment] });
