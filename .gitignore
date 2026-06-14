@@ -59,3 +59,4 @@ dump.txt
 scripts/*.bat
 .dev/*
 src/commands/.dev/*
+src/resources/**/__pycache__

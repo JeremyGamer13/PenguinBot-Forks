@@ -29,8 +29,8 @@ class Command {
     async handle(message, args, util) {
         const ttsText = args.join(" ");
         if (ttsText.length > 1024) return message.reply("Thats Way too much");
-        // TODO: Maybe at some point i should just use chatterbox or something to get direct Voice to TTS? With this method, we dont get funny slip-ups of the AI freaking out randomly
         const ttsBuffer = await TTS.speak(ttsText, "balabolka", "en", "Microsoft David Desktop");
+        // TODO: automod the text to see if we can even say this
 
         // actually start doing stuff
         const startTime = Date.now();
