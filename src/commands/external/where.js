@@ -39,44 +39,43 @@ class Command {
             });
 
             // look at the image
+            // TODO: Resize the image to be much larger so boxes arent huge strokes
             await message.channel.sendTyping();
             const objects = await ObjectDetection.predict(imagePath, realArgs);
             
             // draw the boxes
-            // TODO: Resize the canvas to be much larger so boxes arent huge strokes
             const image = await loadImage(imageBuffer);
             const canvas = createCanvas(image.width, image.height);
             const ctx = canvas.getContext("2d");
 
-            const fontSize = 32;
+            const fontSize = 18;
             const fontHeight = fontSize + 8;
-            ctx.font = `bold ${fontSize}px Arial`;
+            ctx.font = `${fontSize}px Arial`;
             ctx.drawImage(image, 0, 0);
             for (const objectName in objects) {
-                // stylings for this box
-                const boxColor = Math.round(objectName.split("").map(letter => letter.charCodeAt(0)).reduce((a, b) => a + b)) % 360;
-                const textMeasurements = ctx.measureText(objectName);
-
-                // actual box list
                 const boxes = objects[objectName];
                 for (const box of boxes) {
-                    const width = box[2] - box[0];
-                    const height = box[3] - box[1];
+                    const text = `${objectName}${box.term !== objectName ? ` (${box.term})` : ""}`;
+                    const boxColor = box.score * 200; // 0 = red (not confident at all), 0.5 = green (pretty confident), 1 = blue (ULTRA confident) 
+                    const textMeasurements = ctx.measureText(text);
+
+                    const width = box.box[2] - box.box[0];
+                    const height = box.box[3] - box.box[1];
 
                     // box
                     const strokeWidth = Math.min(4, width / 2, height / 2);
                     ctx.fillStyle = `hsl(${boxColor}, 100%, 50%)`;
-                    ctx.fillRect(box[0], box[1], width, strokeWidth);
-                    ctx.fillRect(box[0], box[1], strokeWidth, height);
-                    ctx.fillRect(box[0] + (width - strokeWidth), box[1], strokeWidth, height);
-                    ctx.fillRect(box[0], box[1] + (height - strokeWidth), width, strokeWidth);
+                    ctx.fillRect(box.box[0], box.box[1], width, strokeWidth);
+                    ctx.fillRect(box.box[0], box.box[1], strokeWidth, height);
+                    ctx.fillRect(box.box[0] + (width - strokeWidth), box.box[1], strokeWidth, height);
+                    ctx.fillRect(box.box[0], box.box[1] + (height - strokeWidth), width, strokeWidth);
 
                     // label (we dont care if this escapes the box)
-                    ctx.fillRect(box[0], box[1], textMeasurements.width, fontHeight);
+                    ctx.fillRect(box.box[0], box.box[1], textMeasurements.width, fontHeight);
 
                     // label text
                     ctx.fillStyle = "black";
-                    ctx.fillText(objectName, box[0], box[1] + fontSize);
+                    ctx.fillText(text, box.box[0], box.box[1] + fontSize);
                 }
             }
 

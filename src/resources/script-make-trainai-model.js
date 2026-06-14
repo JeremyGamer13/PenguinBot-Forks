@@ -37,7 +37,7 @@ const uniqueModelTrainingContent = [...new Set(modelTrainingContent)];
 // const uniqueModelTrainingContent = modelTrainingContent;
 uniqueModelTrainingContent.sort(() => Math.random() - 0.5);
 
-const maximumContextSize = 24000;
+const maximumContextSize = 35000;
 const getPredictedTokenRequirements = () => {
     const contextSize = 2048 + (uniqueModelTrainingContent.join(" ").replace(/\s/g, " ").split(" ").length * 2);
     return contextSize;

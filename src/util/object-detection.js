@@ -6,11 +6,14 @@ const childProcess = require("child_process");
 const env = require("./env-util");
 
 class ObjectDetection {
-    // TODO: Grounding DINO seems to attach subterms to larger terms. We should probably scan each object individually and then save the specific terms that Grounding DINO extracted into the box data
-    // TODO: Return { box: [x1,y1,x2,y2], score:number, term:string } instead
     /**
-     * @typedef {Object.<string, number[][]>} PredictionResult
-     * Each box is [x1, y1, x2, y2, score]
+     * @typedef {Object} PredictionBox
+     * @property {number[]} box [x1, y1, x2, y2]
+     * @property {number} score confidence of the ai model
+     * @property {string} term which specific term/subterm the AI model was hyper-focused on
+     */
+    /**
+     * @typedef {Object.<string, PredictionBox[]>} PredictionResult
      */
     /**
      * Detect bounding boxes for specified objects/classes
@@ -43,8 +46,10 @@ class ObjectDetection {
 
             let output = "";
             process.stdout.on("data", (data) => {
-                console.log("REMOVETHIS LATER,", data);
-                if (!data.trim().startsWith("{")) return; // verbose output
+                // verbose output
+                console.log(data);
+                if (!data.trim().startsWith("{")) return;
+
                 output += data;
             });
             process.stderr.on("data", (err) => {
@@ -57,11 +62,11 @@ class ObjectDetection {
             process.on("close", (code, signal) => {
                 if (code !== 0) return reject(signal);
 
-                const resultingBoxes = output.replace(/[\r\n]/g, " ").trim();
-                if (!resultingBoxes) return resolve({});
+                const resultingPrediction = output.replace(/[\r\n]/g, " ").trim();
+                if (!resultingPrediction) return resolve({});
                 try {
-                    const parsedBoxes = JSON.parse(resultingBoxes);
-                    resolve(parsedBoxes);
+                    const parsedPrediction = JSON.parse(resultingPrediction);
+                    resolve(parsedPrediction);
                 } catch (err) {
                     reject(err);
                 }
