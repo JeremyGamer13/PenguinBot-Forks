@@ -27,13 +27,16 @@ class ObjectDetection {
         if (!fs.existsSync(absolutePathInput)) throw new Error("Input cannot be non-existent path");
 
         const executable = env.get("OBJDETECT_PYTHON_EXEC");
+        const modelPath = env.get("OBJDETECT_PATH_MODEL");
         const pythonProgram = env.get("OBJDETECT_PYTHON_CODE");
         const serializedClasses = JSON.stringify(classes);
         return new Promise(async (resolve, reject) => {
             const process = childProcess.spawn(executable, [
                 pythonProgram,
                 "--input",
-                absolutePathInput
+                absolutePathInput,
+                "--model",
+                modelPath,
             ], {
                 cwd: env.get("OBJDETECT_PATH")
             });

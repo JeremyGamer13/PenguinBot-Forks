@@ -29,29 +29,34 @@ class Command {
         const jobName = TempFolder.makeTempName("where");
         const temporaryFolder = new TempFolder(jobName);
         await temporaryFolder.createAndDestroy(async (tempDir) => {
+            // resize the image (we reuse this canvas for later)
+            const resizedHeight = 1024;
+            const image = await loadImage(imageBuffer);
+            const aspectRatio = image.width / image.height;
+            const resizedWidth = Math.round(resizedHeight * aspectRatio);
+            if (resizedWidth > 8192) throw new Error("Image is wider than 4x the height");
+            
+            const canvas = createCanvas(resizedWidth, resizedHeight);
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
             // download
             const imagePath = path.join(tempDir, "image.png");
             await new Promise((resolve, reject) => {
-                fs.writeFile(imagePath, imageBuffer, (err) => {
+                fs.writeFile(imagePath, canvas.toBuffer("image/png"), (err) => {
                     if (err) return reject(err);
                     resolve();
                 });
             });
 
             // look at the image
-            // TODO: Resize the image to be much larger so boxes arent huge strokes
             await message.channel.sendTyping();
             const objects = await ObjectDetection.predict(imagePath, realArgs);
             
             // draw the boxes
-            const image = await loadImage(imageBuffer);
-            const canvas = createCanvas(image.width, image.height);
-            const ctx = canvas.getContext("2d");
-
             const fontSize = 18;
             const fontHeight = fontSize + 8;
             ctx.font = `${fontSize}px Arial`;
-            ctx.drawImage(image, 0, 0);
             for (const objectName in objects) {
                 const boxes = objects[objectName];
                 for (const box of boxes) {

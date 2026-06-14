@@ -1,3 +1,5 @@
+import os
+os.environ['HF_HUB_OFFLINE'] = '1'
 import sys
 import json
 import argparse
@@ -9,7 +11,10 @@ from thefuzz import process
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
+    parser.add_argument("--model", required=True)
     args = parser.parse_args()
+    
+    os.environ['HF_HOME'] = args.model
 
     # Read classes
     input_data = sys.stdin.read()
