@@ -116,10 +116,11 @@ class BotEvent {
         // network
         if (this.lastIsPrimaryNetwork !== switches.isPrimaryNetwork) {
             // NOTE: We actually cant log to discord on lost primary network for obvious reasons
-            // TODO: Maybe we should disable fetching to jg_node_api in this state (except /api/switches)? But that should still work fine on other networks since the URL is on localhost. It's not really clear what we should do in this case, maybe dont check at all.
+            // TODO: Maybe we should disable fetching to jg_node_api in this state (except /api/switches)? But that should still work fine on other networks since the URL is on localhost.
             if (!switches.isPrimaryNetwork) {
                 console.warn("WARNING: Lost primary network? Stated by jg_node_api. Likely lost connection to discord gateway");
             } else {
+                // TODO: This seems to not always log. I think there's some reconnect time that the bot is not accounting for.
                 console.log("NOTICE: Reconnected to primary network (likely sudden network loss?)");
                 try {
                     await this.channel.send(`Reconnected to primary network (likely sudden network loss?)`);
