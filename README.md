@@ -108,14 +108,15 @@ Check the Notes section for details on customizing PenguinBot to your liking.
     - You will need to provide your own `.pt` conditionals for voice inference.
         - You can generate these based off of a reference audio file in `src/resources/python/chatterbox/precalc.py`
     - Chatterbox Configured via `.env` and `src/util/chatterbox-conditionals.js`.
-        - There is no CPU version of the script currently. You will have to make your own.
+        - For integrated GPUs/CPU you should change `cuda.py` to `cpu.py`. The `cuda.py` script is meant for NVIDIA GPUs using device cuda:0.
+            - the `cpu.py` script was designed for the intel 11th gen i3-1115G4 3.00 GHZ CPU
         - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
     - Convoluted setup:
         - Install Python 3.10 specifically (other verisons dont seem to work well)
             - You may want to set it up so you can use `py -3.10` if you already have another version installed
         - install chatterbox-tts with `py -3.10 -m pip install chatterbox-tts`
             - On NVIDIA GPUs you will want to use the CUDA versions of `torch` and other dependencies of `chatterbox-tts`
-            - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `cuda.py` to support these devices
+            - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `cuda.py` or `cpu.py` to support these devices
             - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
             - Expect a ton of weird torch installation bugs and problems; things can get really messy and I dont have a solution to put here
         - Install the [model files](https://huggingface.co/ResembleAI/chatterbox/tree/main) and provide the path to them in .env

@@ -11,7 +11,6 @@ import math
 import argparse
 from pathlib import Path
 os.environ['HF_HUB_OFFLINE'] = '1'
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 # "type=int" why the fuck would a type be a function you indecisive dimwit
 parser = argparse.ArgumentParser(description="Chatterbox Wrapper")
@@ -81,10 +80,6 @@ import torch
 import torchaudio as ta
 # NOTE: I COULDNT GET THIS WORKING WITH the silent AI-generated disclosure/watermark chatterbox TTS usually adds, so PLEASE TRY TO GET THIS WORKING ON YOUR END!!!!! i will NOT explain how to remove it like i had to
 from chatterbox.tts import ChatterboxTTS, Conditionals
-# TODO: Mauybe make this a param or somethng for people who host it
-# Limit RVC to only use 0.625 of your GPU's total VRAM
-# Adjust the percent to whatever fraction you prefer (e.g., 0.7 for 70%)
-torch.cuda.set_per_process_memory_fraction(0.625, device=0)
 
 # This is the only cleanup we need to do because ChatterboxTTS replaces characters like ’ and … for us
 # maybe we shouold do more fleanup idk i dont care
@@ -187,14 +182,14 @@ def process_and_generate(text):
 
     # Initialize model
     print_if_appropriate("from_local")
-    model = ChatterboxTTS.from_local(INPUT_MODEL_PATH, device="cuda")
+    model = ChatterboxTTS.from_local(INPUT_MODEL_PATH, device="cpu")
     print_if_appropriate("------")
 
     # speak
     i = 0
     all_wavs = []
     for chunk in chunks:
-        with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
+        with torch.amp.autocast(device_type='cpu', dtype=torch.bfloat16):
             print_if_appropriate("------")
 
             # NOTE: print for user to see
@@ -216,7 +211,7 @@ def process_and_generate(text):
             # use conditionals
             closest_exaggeration_factor = max(0.0, min(2.0, round(chunk["params"]["exaggeration"], 1)))
             saved_conds_path = Path(INPUT_CONDITIONAL_SCHEME + str(closest_exaggeration_factor) + ".pt")
-            model.conds = Conditionals.load(saved_conds_path, map_location="cuda")
+            model.conds = Conditionals.load(saved_conds_path, map_location="cpu")
 
             # Gebnerate the audoi
             wav = model.generate(

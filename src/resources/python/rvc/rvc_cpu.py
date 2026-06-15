@@ -7,7 +7,6 @@ from rvc_python.infer import RVCInference
 from fairseq.data.dictionary import Dictionary
 
 # Configuration for CPU
-# TODO: Maybe there is a way to limit system RAM usage?
 device = "cpu"
 # Tell Torch to allow fairseq objects to be loaded
 torch.serialization.add_safe_globals([Dictionary])
