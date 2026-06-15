@@ -82,9 +82,9 @@ import torchaudio as ta
 from chatterbox.tts import ChatterboxTTS, Conditionals
 
 # start of stupid cpu shit patch thing for bfloat16 compat
-from chatterbox.models.s3gen.hifigan import HiFiGAN
+from chatterbox.models.s3gen.hifigan import HiFTGenerator
 # Save the original method
-original_istft = HiFiGAN._istft
+original_istft = HiFTGenerator._istft
 
 def patched_istft(self, magnitude, phase):
     # Perform the conversion to float32 before passing to the original method
@@ -96,7 +96,7 @@ def patched_istft(self, magnitude, phase):
     )
 
 # Apply the patch
-HiFiGAN._istft = patched_istft
+HiFTGenerator._istft = patched_istft
 # end of stupid cpu shit patch thing for bfloat16 compat
 
 # This is the only cleanup we need to do because ChatterboxTTS replaces characters like ’ and … for us
