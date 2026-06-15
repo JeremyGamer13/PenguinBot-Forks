@@ -81,6 +81,24 @@ import torchaudio as ta
 # NOTE: I COULDNT GET THIS WORKING WITH the silent AI-generated disclosure/watermark chatterbox TTS usually adds, so PLEASE TRY TO GET THIS WORKING ON YOUR END!!!!! i will NOT explain how to remove it like i had to
 from chatterbox.tts import ChatterboxTTS, Conditionals
 
+# start of stupid cpu shit patch thing for bfloat16 compat
+from chatterbox.models.s3gen.hifigan import HiFiGAN
+# Save the original method
+original_istft = HiFiGAN._istft
+
+def patched_istft(self, magnitude, phase):
+    # Perform the conversion to float32 before passing to the original method
+    # This prevents the BFloat16 error while keeping the rest of the library logic intact
+    return original_istft(
+        self, 
+        magnitude.to(torch.float32), 
+        phase.to(torch.float32) if phase is not None else None
+    )
+
+# Apply the patch
+HiFiGAN._istft = patched_istft
+# end of stupid cpu shit patch thing for bfloat16 compat
+
 # This is the only cleanup we need to do because ChatterboxTTS replaces characters like ’ and … for us
 # maybe we shouold do more fleanup idk i dont care
 def replace_emojis_with_em_dash(text):
