@@ -29,7 +29,7 @@ class Command {
         const ttsText = args.join(" ");
         if (ttsText.length <= 0) return message.reply("Fuck do you want me to do");
         if (ttsText.length > 512) return message.reply("Shut the fuck up");
-        // TODO: automod the text to see if we can even say this
+        if (!util.automodAllows(ttsText, true)) return message.reply("No");
 
         // actually start doing stuff
         const startTime = Date.now();
@@ -69,8 +69,9 @@ class Command {
             await Chatterbox.generate(ttsText, conditionalsVoice.conditionals, outputPathAITTS, async (currentChunk, chunkCount, currentText, currentTag) => {
                 if (updatedMessagePromise) return;
                 if (currentChunk % 2 !== 0) return; // skip odd chunks
-                // TODO: automod the sentence
-                updatedMessagePromise = replyMessage.edit(`(${currentChunk + 1}/${chunkCount}) Currently saying: \`${currentTag}\`; ${currentText}`);
+                
+                let displayText = util.automodAllows(currentText, true) ? `\`${currentText}\`` : "*(cannot show this segment out of context)*";
+                updatedMessagePromise = replyMessage.edit(`(${currentChunk + 1}/${chunkCount}) Currently saying: \`${currentTag}\`; ${displayText}`);
                 await updatedMessagePromise;
                 updatedMessagePromise = null;
             });
