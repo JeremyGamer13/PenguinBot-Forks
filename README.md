@@ -53,7 +53,9 @@ Check the Notes section for details on customizing PenguinBot to your liking.
 ## Additional setup
 - **You will need multiple versions of python installed for some external libraries.** Expect countless issues and bugs with python installation and setup if you do so.
     - This document does not cover python installation bugs or quirks for my sanity.
+    - I would recommend using a different package manager from `pip` (like `uv`) or use virtual environments.
     - In my experience, certain `pytorch` installations may cause extreme stress on the network and device. Things may work fine after installation.
+        - You can manually install torch WHLs for your GPU & python version through a better download manager, such as a browser
 - Setup [jg_node_api](https://github.com/JeremyGamer13/jg_node_api_public) and link it in .env
     - This enables A LOT OF FEATURES like all of the stream overlays
 - To add more overlays
@@ -99,6 +101,24 @@ Check the Notes section for details on customizing PenguinBot to your liking.
             - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `rvc.py` or `rvc_cpu.py` to support these devices
             - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
             - Expect a ton of weird torch installation bugs and problems, especially when mixed with Demucs; things can get really messy and I dont have a solution to put here
+- [Chatterbox](https://huggingface.co/ResembleAI/chatterbox) AI voice cloning TTS (used in commands) (requires python)
+    - Chatterbox uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
+        - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
+    - Chatterbox allows for controversial AI voice-cloning. Don't enable it if you don't want to.
+    - You will need to provide your own `.pt` conditionals for voice inference.
+        - You can generate these based off of a reference audio file in `src/resources/python/chatterbox/precalc.py`
+    - Chatterbox Configured via `.env` and `src/util/chatterbox-conditionals.js`.
+        - There is no CPU version of the script currently. You will have to make your own.
+        - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
+    - Convoluted setup:
+        - Install Python 3.10 specifically (other verisons dont seem to work well)
+            - You may want to set it up so you can use `py -3.10` if you already have another version installed
+        - install chatterbox-tts with `py -3.10 -m pip install chatterbox-tts`
+            - On NVIDIA GPUs you will want to use the CUDA versions of `torch` and other dependencies of `chatterbox-tts`
+            - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `cuda.py` to support these devices
+            - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
+            - Expect a ton of weird torch installation bugs and problems; things can get really messy and I dont have a solution to put here
+        - Install the [model files](https://huggingface.co/ResembleAI/chatterbox/tree/main) and provide the path to them in .env
 
 # Basic Commands Template
 ```js
