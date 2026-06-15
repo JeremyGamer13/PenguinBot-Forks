@@ -13,6 +13,7 @@ from fairseq.data.dictionary import Dictionary
 torch.serialization.add_safe_globals([Dictionary])
 # Limit RVC to only use 50% of your GPU's total VRAM
 # Adjust the 0.5 to whatever fraction you prefer (e.g., 0.7 for 70%)
+# TODO: Mauybe make this a param or somethng for people who host it
 torch.cuda.set_per_process_memory_fraction(0.625, device=0)
 
 from rvc_python.infer import RVCInference

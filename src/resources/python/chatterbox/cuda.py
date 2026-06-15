@@ -81,11 +81,10 @@ import torch
 import torchaudio as ta
 # TODO: I COULDNT GET THIS WORKING WITH the silent AI-generated disclosure/watermark chatterbox TTS usually adds, so PLEASE TRY TO GET THIS WORKING ON YOUR END!!!!! i will NOT explain how to remove it like i had to
 from chatterbox.tts import ChatterboxTTS, Conditionals
-# TODO: maybe this works on 0.5x (4GB ram)
 # TODO: Mauybe make this a param or somethng for people who host it
-# Limit RVC to only use 0.625x of your GPU's total VRAM
+# Limit RVC to only use 0.5 of your GPU's total VRAM
 # Adjust the percent to whatever fraction you prefer (e.g., 0.7 for 70%)
-torch.cuda.set_per_process_memory_fraction(0.625, device=0)
+torch.cuda.set_per_process_memory_fraction(0.5, device=0)
 
 # This is the only cleanup we need to do because ChatterboxTTS replaces characters like ’ and … for us
 # maybe we shouold do more fleanup idk i dont care

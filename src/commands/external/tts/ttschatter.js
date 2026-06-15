@@ -4,6 +4,7 @@ const discord = require("discord.js");
 const childProcess = require("child_process");
 
 const Chatterbox = require("../../../util/chatterbox");
+const ChatterboxConditionals = require("../../../util/chatterbox-conditionals");
 
 const env = require("../../../util/env-util");
 const FFmpegUtil = require('../../../util/ffmpeg-util');
@@ -36,17 +37,15 @@ class Command {
         const jobName = TempFolder.makeTempName("ttschatter");
         const temporaryFolder = new TempFolder(jobName);
         await temporaryFolder.createAndDestroy(async (tempDir) => {
-            // TODO: Add chatterbox-conditionals like how we have rvc-models
             // see if we need approval or if we cant even use this model right now
-            // const voiceModel = RVCModels.default;
-            // if (voiceModel.usage === RVCModels.USAGE_PERSONAL && !util.request("isInPersonalMode"))
-            //     throw new Error("RVC Model unavailable outside of personal");
+            const conditionalsVoice = ChatterboxConditionals.default;
+            if (conditionalsVoice.usage === ChatterboxConditionals.USAGE_PERSONAL && !util.request("isInPersonalMode"))
+                throw new Error("Conditionals unavailable outside of personal");
 
-            // TODO: Add chatterbox-conditionals like how we have rvc-models
             let replyMessage = null;
             const canCheckTestServers = env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS");
             const wasMessageSentInTestServer = !canCheckTestServers ? false : message.guildId === "746156168560508950";
-            const needToRequestApproval = /*voiceModel.usage !== RVCModels.USAGE_FREE &&*/ (!wasMessageSentInTestServer);
+            const needToRequestApproval = conditionalsVoice.usage !== ChatterboxConditionals.USAGE_FREE && (!wasMessageSentInTestServer);
             if (needToRequestApproval) {
                 replyMessage = await message.reply("# me and ishowspeed need to approve your Chatterbox"
                     + "\n" + "Please wait for your Chatterbox to be accepted."
@@ -104,7 +103,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        if (!env.getBool("RVC_ENABLED")) throw new Error("RVC is disabled on this system");
+        if (!env.getBool("CHATTERBOX_ENABLED")) throw new Error("Chatterbox is disabled on this system");
         const canDo = util.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 

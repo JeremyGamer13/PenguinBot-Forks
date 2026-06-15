@@ -6,16 +6,17 @@ const childProcess = require("child_process");
 const env = require("./env-util");
 
 class Chatterbox {
-    // TODO: Make conditionals defined in a chatterbox-conditionals file like rvc-models
     /**
      * Generate Chatterbox AI-voice-cloning TTS.
      * @param {string} text the text to speak
+     * @param {string} absolutePathConditionalsPrefix The path for conditionals, being a prefix for the actual path.
      * @param {string} absolutePathOutput will be deleted if it already exists to prevent any app/local-api issues
      * @param {((currentChunk: number, chunkCount: number, currentText: string, currentTag: string) => void) | null} progressCallback A callback to run when generation progress is given back.
      * @returns {Promise<string>} returns absolutePathOutput
      */
-    static generate(text, absolutePathOutput, progressCallback) {
+    static generate(text, absolutePathConditionalsPrefix, absolutePathOutput, progressCallback) {
         if (!env.getBool("CHATTERBOX_ENABLED")) throw new Error("Chatterbox is disabled on this system");
+        if (!path.isAbsolute(absolutePathConditionalsPrefix)) throw new Error("Path must be absolute");
         if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
 
         if (fs.existsSync(absolutePathOutput)) {
@@ -24,21 +25,19 @@ class Chatterbox {
 
         const executable = env.get("CHATTERBOX_PYTHON_EXEC");
         const modelPath = env.get("CHATTERBOX_PATH_MODEL");
-        const conditionalsPath = env.get("CHATTERBOX_PATH_CONDITIONALS");
         const pythonProgram = env.get("CHATTERBOX_PYTHON_CODE");
         return new Promise(async (resolve, reject) => {
             const process = childProcess.spawn(executable, [
                 pythonProgram,
-                // TODO: make these .env
                 "--max_length",
-                2048,
+                env.getNumber("CHATTERBOX_MAX_LENGTH"),
                 "--max_chunks",
-                64,
+                env.getNumber("CHATTERBOX_MAX_CHUNKS"),
                 "--silent",
                 "--model",
                 modelPath,
                 "--conditionals",
-                conditionalsPath,
+                absolutePathConditionalsPrefix,
                 "--output",
                 absolutePathOutput,
             ], {
