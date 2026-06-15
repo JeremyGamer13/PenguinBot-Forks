@@ -119,6 +119,17 @@ Check the Notes section for details on customizing PenguinBot to your liking.
             - On integrated GPUs/CPU you will have varied performance and speeds, I would recommend not setting this up on those devices
             - Expect a ton of weird torch installation bugs and problems; things can get really messy and I dont have a solution to put here
         - Install the [model files](https://huggingface.co/ResembleAI/chatterbox/tree/main) and provide the path to them in .env
+- [Object Detection with Grounding DINO](https://huggingface.co/IDEA-Research/grounding-dino-base) (used in commands) (requires python)
+    - Grounding DINO uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
+    - Configured via `.env`.
+    - Convoluted setup:
+        - Install Python 3.10 specifically (other verisons dont seem to work well)
+            - You may want to set it up so you can use `py -3.10` if you already have another version installed
+        - install the dependencies for the grounding dino script
+            - I Genuinely dont remember what the script requires or how to install the stuff correctly. Sorry.
+            - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `groundingdino_detector.py` to support these devices
+            - Expect a ton of weird torch installation bugs and problems; things can get really messy and I dont have a solution to put here
+        - Install the [model files](https://huggingface.co/IDEA-Research/grounding-dino-base/tree/main) and provide the path to them in .env
 
 # Basic Commands Template
 ```js
