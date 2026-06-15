@@ -131,6 +131,14 @@ Check the Notes section for details on customizing PenguinBot to your liking.
             - I am unsure of the configuration for AMD/Intel ARC GPUs as I do not have one. You may want to modify/duplicate `groundingdino_detector.py` to support these devices
             - Expect a ton of weird torch installation bugs and problems; things can get really messy and I dont have a solution to put here
         - Install the [model files](https://huggingface.co/IDEA-Research/grounding-dino-base/tree/main) and provide the path to them in .env
+- Remove Background with rembg (used in commands) (requires python)
+    - rembg uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
+        - Despite this warning, it's actually the least demanding AI thing on the repo so far. I run this on my CPU instead of my GPU.
+    - Configured via `.env`.
+    - Setup:
+        - Install Python (havent tested other versions)
+        - install `rembg` and `onnxruntime`
+            - On GPUs you *can* install `onnxruntime-gpu` instead, but it required some CUDA toolkit stuff that i didn't feel like figuring out
 
 # Basic Commands Template
 ```js
