@@ -13,7 +13,7 @@ const TempFolder = require('../../../util/temp-folder');
 class Command {
     constructor(client) {
         this.name = "ttschatter";
-        this.description = "Jeremy gamer 14 will Text to speech (ai chatterbox)";
+        this.description = "AI voice will Text to speech (ai chatterbox)";
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,
@@ -61,12 +61,12 @@ class Command {
 
             // have  AI voice speak it
             // create message if we didnt before
-            if (!replyMessage) { replyMessage = await message.reply(`Making TTS with AI jeremygamer13 (this may take a bit)`); }
-            else { await replyMessage.edit(`Making TTS with AI jeremygamer13 (this may take a bit)`); }
+            if (!replyMessage) { replyMessage = await message.reply(`Making TTS with AI ${conditionalsVoice.name} (this may take a bit)`); }
+            else { await replyMessage.edit(`Making TTS with AI ${conditionalsVoice.name} (this may take a bit)`); }
             // ok now do it
             let updatedMessagePromise = null;
-            const outputPathAITTS = path.join(tempDir, "ai_chatterbox_jeremy.wav");
-            await Chatterbox.generate(ttsText, outputPathAITTS, async (currentChunk, chunkCount, currentText, currentTag) => {
+            const outputPathAITTS = path.join(tempDir, "ai_chatterbox_voice.wav");
+            await Chatterbox.generate(ttsText, conditionalsVoice.conditionals, outputPathAITTS, async (currentChunk, chunkCount, currentText, currentTag) => {
                 if (updatedMessagePromise) return;
                 if (currentChunk % 2 !== 0) return; // skip odd chunks
                 // TODO: automod the sentence
@@ -78,7 +78,7 @@ class Command {
             // wait for message
             if (updatedMessagePromise) await updatedMessagePromise;
             // remux the audio to ogg because wav
-            const outputRemuxedPath = path.join(tempDir, `ai_chatterbox_jeremy_remuxed.ogg`);
+            const outputRemuxedPath = path.join(tempDir, `ai_chatterbox_voice_remuxed.ogg`);
             await replyMessage.edit(`remuxing audio`);
             await FFmpegUtil.commands.convertToSafeOgg(outputPathAITTS, outputRemuxedPath);
 

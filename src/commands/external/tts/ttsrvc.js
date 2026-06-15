@@ -13,8 +13,8 @@ const TempFolder = require('../../../util/temp-folder');
 
 class Command {
     constructor(client) {
-        this.name = "ttsjeremy";
-        this.description = "Jeremy gamer 14 will Text to speech (ai cover of tts)";
+        this.name = "ttsrvc";
+        this.description = "RVC over  Text to speech (ai cover of tts)";
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,
@@ -23,7 +23,7 @@ class Command {
 
         this.client = client;
 
-        this.alias = ["jtts", "ttsj", "jeremytts",                       "jspeak", "speakj", "jeremyspeak", "speakjeremy"];
+        this.alias = ["rtts", "ttsr", "rvctts",                       "rspeak", "speakr", "rvcspeak", "speakrvc"];
     }
 
     async handle(message, args, util) {
@@ -35,7 +35,7 @@ class Command {
         // actually start doing stuff
         const startTime = Date.now();
 
-        const jobName = TempFolder.makeTempName("ttsjeremy");
+        const jobName = TempFolder.makeTempName("ttsrvc");
         const temporaryFolder = new TempFolder(jobName);
         await temporaryFolder.createAndDestroy(async (tempDir) => {
             // save the buffer somewhere (its probably a small file)
@@ -65,14 +65,14 @@ class Command {
 
             // have my AI voice cover it
             // create message if we didnt before
-            if (!replyMessage) { replyMessage = await message.reply(`Covering TTS with AI jeremygamer13 (this may take a bit)`); }
-            else { await replyMessage.edit(`Covering TTS with AI jeremygamer13 (this may take a bit)`); }
+            if (!replyMessage) { replyMessage = await message.reply(`Covering TTS with AI ${voiceModel.name} (this may take a bit)`); }
+            else { await replyMessage.edit(`Covering TTS with AI ${voiceModel.name} (this may take a bit)`); }
             // ok now do it
-            const outputPathAICover = path.join(tempDir, "ai_tts_jeremy_only.mp3");
+            const outputPathAICover = path.join(tempDir, "ai_tts_rvc_only.mp3");
             await RVC.infer(ttsInputPath, voiceModel.model, voiceModel.index, outputPathAICover, "rmvpe", 0);
 
-            // remux the audio to ogg because it might not actually be efficient mp3
-            const outputRemuxedPath = path.join(tempDir, `ai_tts_jeremy_remuxed.ogg`);
+            // remux the audio to ogg because it might not actually be efficient mp3 (not sure what it outputs but it's definitely larger than expected)
+            const outputRemuxedPath = path.join(tempDir, `ai_tts_rvc_remuxed.ogg`);
             await replyMessage.edit(`remuxing audio`);
             await FFmpegUtil.commands.convertToSafeOgg(outputPathAICover, outputRemuxedPath);
 
