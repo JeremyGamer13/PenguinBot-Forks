@@ -12,7 +12,7 @@ class Command {
         this.name = "removebg";
         this.description = "Removes the background on an image.";
         this.attributes = {
-            unlisted: true,
+            unlisted: false,
             lockedToCommands: true,
             permission: 0,
         };

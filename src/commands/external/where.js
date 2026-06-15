@@ -11,7 +11,7 @@ class Command {
         this.name = "where";
         this.description = "Shows where items are in an image.";
         this.attributes = {
-            unlisted: true,
+            unlisted: false,
             lockedToCommands: true,
             permission: 0,
         };

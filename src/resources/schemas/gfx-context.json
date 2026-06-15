@@ -1,0 +1,32 @@
+{
+    "type": "object",
+    "properties": {
+        "color": {
+            "type": "string",
+            "description": "A fitting complementary hex color for the main subject or main aspect of the image.",
+            "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+        },
+        "looking_towards_cardinal_direction_sentence": {
+            "type": "string",
+            "description": "A small sentence stating which cardinal direction the subject is staring in."
+        },
+        "looking_towards_x": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "The x-coordinate within a unit square (float 0.0 to 1.0) showing the direction that the subject is staring in."
+        },
+        "looking_towards_y": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "The y-coordinate within a unit square (float 0.0 to 1.0) showing the direction that the subject is staring in."
+        }
+    },
+    "required": [
+        "color",
+        "looking_towards_cardinal_direction_sentence",
+        "looking_towards_x",
+        "looking_towards_y"
+    ]
+}
