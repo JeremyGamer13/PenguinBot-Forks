@@ -3,10 +3,6 @@ os.environ['HF_HUB_OFFLINE'] = '1'
 import sys
 import json
 import argparse
-import torch
-from PIL import Image
-from transformers import AutoProcessor, AutoModelForZeroShotObjectDetection
-from thefuzz import process
 
 def main():
     parser = argparse.ArgumentParser()
@@ -15,6 +11,11 @@ def main():
     args = parser.parse_args()
     
     os.environ['HF_HOME'] = args.model
+    
+    import torch
+    from PIL import Image
+    from transformers import AutoProcessor, AutoModelForZeroShotObjectDetection
+    from thefuzz import process
 
     # Read classes
     input_data = sys.stdin.read()
