@@ -114,6 +114,7 @@ class Command {
         try {
             await message.channel.sendTyping();
             const output = await OllamaClients.penguinGPT.chatPrompt(chatId, userMessageUnderstood);
+            console.log(output);
             response = this.cleanResponse(output.content);
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");

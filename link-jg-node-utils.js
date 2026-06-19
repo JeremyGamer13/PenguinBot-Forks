@@ -18,5 +18,5 @@ if (fs.existsSync(jgNodeUtilsPath) && fs.existsSync(nodeModulesPath)) {
     fs.symlinkSync(jgNodeUtilsPath, nodeModulesPath);
     console.log("symlinked gng");
 } else {
-    console.log("paths are wrong gng", jgNodeUtilsPath, nodeModulesPath);
+    console.log("paths are wrong gng; make sure this script is running with admin permissions", jgNodeUtilsPath, nodeModulesPath);
 }

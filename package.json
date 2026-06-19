@@ -39,7 +39,7 @@
     "penguinmod": "github:PenguinMod/PenguinMod-ApiModule",
     "sharp": "^0.34.5",
     "slash": "^5.1.0",
-    "sync-json-database": "^1.0.4",
+    "sync-json-database": "^1.0.5",
     "tweetnacl": "^1.0.3",
     "twemoji": "^14.0.2",
     "undici": "^7.11.0",
