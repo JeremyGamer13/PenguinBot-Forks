@@ -29,6 +29,7 @@ const configuration = {
         availableOllamaModels: [
             "custom-penguinmod-server-v1",
             "custom-penguinmod-server-v2",
+            "custom-penguinmod-server-v3",
             "gemma4:e4b",
             "gemma4:e2b",
             "gemma3:12b",
@@ -141,6 +142,7 @@ const configuration = {
             '1376566271558160504', // vedal
             '983532566822916106', // lunair
             '1470133853200060477', // ddededodediamanto
+            '1121567701303824574', // picreator
         ],
 
         // jg: Role IDs that can use AI cover commands with approval (instant approval in personal mode)

@@ -1,8 +1,12 @@
 const discord = require("discord.js");
-const OllamaClients = require("../../util/ollama-clients");
+
+const Ollama = require("ollama-chatting");
+const OllamaModels = require("../../util/ollama-models.js");
+const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const configuration = require("../../config");
 const makePng = require('../../util/make-png');
+const jsonParseLoose = require("../../util/json-parse-loose.js");
 const isCompatibleImage = require('../../util/compatible-images');
 
 const drawSBPic = require('../../util/sbpic');
@@ -40,10 +44,7 @@ class Command {
         const replyMessage = await message.reply(`Hold up lemme cook 🙏 )`);
 
         // start asking chattus geepitus
-        const chatId = `aidraw-${Math.random()}`;
-        OllamaClients.processorIO.createChat(chatId);
-        OllamaClients.processorIO.informChat(chatId,
-            `You are a drawing bot.`
+        const systemPrompt = `You are a drawing bot.`
             + `\n` + `Using the JSON schema, you can draw images that the user asks for.`
             + `\n` + `The image starts as a white canvas for you to draw over.`
             + `\n` + `The "w" and "h" fields define the width and height of your image.`
@@ -52,27 +53,34 @@ class Command {
             + `\n` + `To draw a box, use something like { "t": "b", "p": [x1, y1, x2, y2], "c": "#961fce" }.`
             + `\n` + `To write text on the picture, use something like { "t": "t", "p": [x1, y1], "s": "Hello", "c": "#000000" }.`
             + `\n` + `You must draw whatever the user asks, but keep your content appropriate and inoffensive.`
-        );
+            + `\n` + `You must respond with a pure JSON object. Non-JSON information should be inserted into the \`desc\` field.`;
 
-        // get the response & reset the chat
+        // get the response
         let response = "";
         try {
-            const output = await OllamaClients.processorIO.chatStructuredPrompt(chatId, SchemaSBPicGeneration, userMessageInput, imageBuffer);
-            response = output.content;
+            const output = await OllamaChat.generate({
+                ...OllamaModels.processorIO,
+                system: systemPrompt,
+                prompt: userMessageInput,
+                format: SchemaSBPicGeneration,
+                images: imageBuffer ? [imageBuffer] : null,
+            });
+            response = output.response;
         } catch (err) {
+            console.error(err);
             return replyMessage.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
-        } finally {
-            OllamaClients.processorIO.removeChat(chatId);
         }
 
+        console.log(response);
+
         // we need to parse this response
-        const parsed = JSON.parse(response);
+        const parsed = jsonParseLoose(response);
         const image = drawSBPic(parsed);
         // send sbpic also
         const dataBuffer = Buffer.from(JSON.stringify(parsed, null, 4), "utf8");
         const dataAttachment = new discord.MessageAttachment(dataBuffer, "sbpic.json");
         replyMessage.edit({
-            content: parsed.desc.trim().substring(0, 2000),
+            content: (parsed.desc || "").trim().substring(0, 2000) || "*(lazy bitch didnt write a description)*",
             files: [image, dataAttachment],
             allowedMentions: {
                 parse: [],

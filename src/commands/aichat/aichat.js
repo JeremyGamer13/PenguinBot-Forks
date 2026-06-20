@@ -1,5 +1,7 @@
-const OllamaClients = require("../../util/ollama-clients");
+const OllamaModels = require("../../util/ollama-models");
 const tryCatch = require("../../util/try-catch");
+
+const AISharedChat = require("../../util/ai-chat");
 
 class Command {
     constructor() {
@@ -7,8 +9,8 @@ class Command {
         this.description = "tyea";
         this.attributes = {
             permission: 4,
-            jgAiChatCommand: true,
             unlisted: true,
+            jgAiChatCommand: true,
             jgOllamaClientsInvolved: ["mutatableChatbot"],
         };
     }
@@ -19,13 +21,13 @@ class Command {
         const chatId = args.shift();
         if (!chatId) throw new Error("Specify chat bro");
 
-        if (action === "create" && OllamaClients.mutatableChatbot.chatExists(chatId)) throw new Error("Bradar what is this Thats  a real chat");
-        if (action === "delete" && !OllamaClients.mutatableChatbot.chatExists(chatId)) throw new Error("Bradar what is this Thats not a real chat");
+        if (action === "create" && AISharedChat.chats[chatId]) throw new Error("Bradar what is this Thats  a real chat");
+        if (action === "delete" && !AISharedChat.chats[chatId]) throw new Error("Bradar what is this Thats not a real chat");
         if (action === "create") {
             if (chatId.match(/[^a-z0-9\_\-]/g)) throw new Error("Invalid chat ID");
-            OllamaClients.mutatableChatbot.createChat(chatId);
+            AISharedChat.createChat(chatId);
         } else {
-            OllamaClients.mutatableChatbot.removeChat(chatId);
+            delete AISharedChat.chats[chatId];
         }
 
         message.reply({

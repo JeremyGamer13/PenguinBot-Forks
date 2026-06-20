@@ -1,4 +1,4 @@
-const OllamaClients = require("../../util/ollama-clients");
+const OllamaModels = require("../../util/ollama-models");
 const tryCatch = require("../../util/try-catch");
 
 const configuration = require("../../config");
@@ -9,8 +9,8 @@ class Command {
         this.description = "tyea";
         this.attributes = {
             permission: 4,
-            jgAiChatCommand: true,
             unlisted: true,
+            jgAiChatCommand: true,
             jgOllamaClientsInvolved: ["mutatableChatbot"],
         };
     }
@@ -19,10 +19,9 @@ class Command {
         const model = args.shift();
         if (!configuration.funkyCapabilities.availableOllamaModels.includes(model)) throw new Error("Cant use that model man");
         
-        OllamaClients.mutatableChatbot.aiModel = model;
-
+        OllamaModels.mutatableChatbot.model = model;
         message.reply({
-            content: `swapped to \`${model}\``,
+            content: `swapped to \`${model}\` for next prompt`,
             allowedMentions: {
                 parse: [],
                 users: [],

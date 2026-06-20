@@ -6,12 +6,16 @@ const discord = require("discord.js");
 const jimp = require("jimp");
 const { createCanvas, loadImage } = require('canvas');
 
+const Ollama = require("ollama-chatting");
+const OllamaModels = require("../../util/ollama-models.js");
+const OllamaChat = new Ollama({ host: OllamaModels.url });
+
 const configuration = require("../../config");
 const TempFolder = require('../../util/temp-folder');
-const OllamaClients = require("../../util/ollama-clients");
 const ObjectDetection = require('../../util/object-detection');
 const RemoveBackground = require('../../util/remove-background');
 
+const jsonParseLoose = require('../../util/json-parse-loose.js');
 const SchemaGFXContext = require("../../resources/schemas/gfx-context.json");
 
 class Command {
@@ -81,20 +85,20 @@ class Command {
 
     async getImageContext(inputImageBuffer) {
         // NOTE: We use ollama to get contextual info about the image, so we have to ease it into telling us the right coordinates
-        const chatId = `aigfx-${Math.random()}`;
-        OllamaClients.genericIO.createChat(chatId);
-        OllamaClients.genericIO.informChat(chatId,
-            `Scan the image that the user provides for the fields.`
-            + `\n` + `- "color": A fitting complementary hex color for the main subject or main aspect of the image.`
-            + `\n` + `- "looking_towards_cardinal_direction_sentence": A small sentence stating the direction the subject is staring in.`
-            + `\n` + `- "looking_towards_x": The x-coordinate within a unit square (float 0.0 to 1.0) showing the direction that the subject is staring in.`
-            + `\n` + `- "looking_towards_y": The y-coordinate within a unit square (float 0.0 to 1.0) showing the direction that the subject is staring in.`
-            + `\n` + `Assume coordinates are floats from 0.0 to 1.0.`
-        );
-
         const messageInput = "Generate the expected fields based off of this image.";
-        const output = await OllamaClients.genericIO.chatStructuredPrompt(chatId, SchemaGFXContext, messageInput, inputImageBuffer);
-        const structuredOutput = JSON.parse(output.content);
+        const output = await OllamaChat.generate({
+            ...OllamaModels.genericIO,
+            format: SchemaGFXContext,
+            prompt: messageInput,
+            system: `Scan the image that the user provides for the fields.`
+                + `\n` + `- "color": A fitting complementary hex color for the main subject or main aspect of the image.`
+                + `\n` + `- "looking_towards_cardinal_direction_sentence": A small sentence stating the direction the subject is staring in.`
+                + `\n` + `- "looking_towards_x": The x-coordinate within a unit square (float 0.0 to 1.0) showing the direction that the subject is staring in.`
+                + `\n` + `- "looking_towards_y": The y-coordinate within a unit square (float 0.0 to 1.0) showing the direction that the subject is staring in.`
+                + `\n` + `Assume coordinates are floats from 0.0 to 1.0.`,
+            images: [inputImageBuffer]
+        });
+        const structuredOutput = jsonParseLoose(output.response);
         
         const hexColor = structuredOutput.color.startsWith("#") ? structuredOutput.color : `#${structuredOutput.color}`;
         return {

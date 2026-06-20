@@ -1,4 +1,6 @@
-const OllamaClients = require("../../util/ollama-clients");
+const Ollama = require("ollama-chatting");
+const OllamaModels = require("../../util/ollama-models.js");
+const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 class Command {
     constructor() {
@@ -61,29 +63,25 @@ class Command {
             return message.reply("python LOSES");
         }
 
-        const chatId = `airockpaperscissors-${Math.random()}`;
-        OllamaClients.lightText.createChat(chatId);
-        OllamaClients.lightText.informChat(chatId, inputPrompt);
-
-        // get the response & reset the chat
-        let response = "";
+        // get the response
         try {
-            const output = await OllamaClients.lightText.chatPrompt(chatId, "Who would win, if I placed \"" + opponent1 + "\" against \"" + opponent2 + "\"?");
-            response = output.content;
+            const output = await OllamaChat.generate({
+                ...OllamaModels.lightText,
+                prompt: "Who would win, if I placed \"" + opponent1 + "\" against \"" + opponent2 + "\"?",
+                system: inputPrompt
+            });
+            message.reply({
+                content: output.response.trim(),
+                allowedMentions: {
+                    parse: [],
+                    users: [],
+                    roles: [],
+                    repliedUser: true
+                }
+            });
         } catch (err) {
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
-        } finally {
-            OllamaClients.lightText.removeChat(chatId);
         }
-        message.reply({
-            content: response.trim(),
-            allowedMentions: {
-                parse: [],
-                users: [],
-                roles: [],
-                repliedUser: true
-            }
-        });
     }
 }
 

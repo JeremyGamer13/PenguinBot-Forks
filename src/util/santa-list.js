@@ -1,10 +1,13 @@
 const discord = require("discord.js");
 const Database = require('sync-json-database');
-const OllamaClients = require("./ollama-clients");
 const tryCatch = require("./try-catch");
 const env = require("./env-util");
 
 const SantaListDB = new Database('./databases/santa-list.json');
+
+const Ollama = require("ollama-chatting");
+const OllamaModels = require("../../util/ollama-models.js");
+const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const configuration = require("../config");
 const SantaPrompt = tryCatch(() => require('../resources/santa-prompt')) || "";
@@ -59,6 +62,7 @@ class SantaList {
         if (isMessageUnsafeForAgent(wish)) {
             response = "{{UNSAFE}}";
         } else {
+            // TODO: This needs to be reworked to use the new OllamaChat API
             const prompt = `${this.santaPrompt}` + (additionalPrompt ? `\n${additionalPrompt}` : "");
             OllamaClients.genericIO.createChat("santareflect");
             OllamaClients.genericIO.informChat("santareflect", prompt);

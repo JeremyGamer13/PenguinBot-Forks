@@ -38,7 +38,7 @@ class BotEvent {
         ) return;
 
         // no talking
-        if (false && message.channel.id === configuration.channels.funkyNoTalking) {
+        if (configuration.channels.funkyNoTalking && message.channel.id === configuration.channels.funkyNoTalking) {
             return message.delete();
         }
     }

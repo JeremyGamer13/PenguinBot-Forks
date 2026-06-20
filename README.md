@@ -75,7 +75,7 @@ Check the Notes section for details on customizing PenguinBot to your liking.
     - Configured via `.env`. Follow the instructions on their repo to download
 - [Ollama](https://ollama.com/) integration
     - Ollama uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.
-    - Configured via `.env`, `src/config.js`, and `src/util/ollama-clients.js`
+    - Configured via `.env`, `src/config.js`, and `src/util/ollama-models.js`
     - Cloud models will not be supported. Only local models are guaranteed to work
 - [Demucs](https://github.com/adefossez/demucs) library (used in commands) (requires python for installation)
     - Demucs uses machine learning technology and may be too demanding on your system. Don't enable it if you don't want to.

@@ -1,8 +1,7 @@
-const OllamaClients = require("../../util/ollama-clients");
-
 const configuration = require("../../config");
 
 const drawSBPic = require('../../util/sbpic');
+const jsonParseLoose = require("../../util/json-parse-loose.js");
 const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json');
 
 class Command {
@@ -19,8 +18,6 @@ class Command {
         // get user input
         const attachment = message.attachments.first();
         if (!attachment) return message.reply("add na jsoon to your message 2492941>");
-        const endingType = util.getAttachmentType(attachment);
-        if (endingType && endingType !== "json") return message.reply("Attach an .json of sbpic or rename it to .sbpic if you wanna be cool");
         if (attachment.size > 64 * 1000) return message.reply("Holy shit that's a fucking huge image");
 
         // we just expect this to work because realistically the command shouldnt work if this doesnt
@@ -30,7 +27,7 @@ class Command {
         const attachmentString = attachmentBuffer.toString("utf8");
 
         // we need to parse this response
-        const parsed = JSON.parse(attachmentString);
+        const parsed = jsonParseLoose(attachmentString);
         if (parsed.w <= 0 || parsed.w > 4096) return message.reply("No");
         if (parsed.h <= 0 || parsed.h > 4096) return message.reply("No");
         const image = drawSBPic(parsed);
