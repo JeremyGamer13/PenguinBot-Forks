@@ -1,4 +1,4 @@
-const os = require("os-utils");
+const systemInformation = require("systeminformation");
 
 const env = require("../../env-util.js");
 const configuration = require("../../../config.js");
@@ -23,10 +23,8 @@ class ToolSystemInfo {
      * @param {import("ollama").ToolCall} call 
      */
     static execute(call) {
-        const memoryMegabytes = os.totalmem();
-        const memoryUsagePercentage = Math.round((os.freemem() / memoryMegabytes) * 100) + '%';
-        const deviceUptime = FormatTime.formatTime(os.sysUptime() * 1000);
-        const logicalProcessors = os.cpuCount();
+        const timeInfo = systemInformation.time();
+        const deviceUptime = FormatTime.formatTime(timeInfo.uptime * 1000);
 
         const enabledModels = Object.keys(configuration.funkyCapabilities.ollamaConfigs)
             .filter(modelName => configuration.funkyCapabilities.ollamaConfigs[modelName]);
@@ -37,8 +35,6 @@ class ToolSystemInfo {
             + "\n" + `The device has named the AI assistant under the name "${configuration.nameBotReference}".`
             + "\n" + `Running ${platformDetails}.`
             + "\n" + `The device has been online for ${deviceUptime}.`
-            + "\n" + `The device has ${memoryMegabytes} MB of memory, ${memoryUsagePercentage} of which is in use.`
-            + "\n" + `The device's CPU has ${logicalProcessors} logical processors.`
             + "\n" + `The device currently has these AI models available: ${enabledModels.join(", ")}`
             + "\n" + `The device ${configuration.funkyCapabilities.ollamaImageProcessingViable ? "is capable of AI image processing" : "cannot process images with AI"}.`;
     }
