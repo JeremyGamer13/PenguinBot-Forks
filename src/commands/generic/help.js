@@ -7,7 +7,7 @@ class Command {
         this.description = "Lists all usable commands";
         this.attributes = {
             unlisted: true,
-            admin: false,
+            permission: 0,
             lockedToCommands: true,
         };
 
@@ -29,11 +29,7 @@ class Command {
             lastCommandName = command.name;
 
             // make sure to do this kids
-            let permission = command.attributes.permission;
-            if (permission === undefined) {
-                permission = 0;
-                if (command.attributes.admin === true) permission = 3;
-            }
+            let permission = command.attributes.permission || 0;
 
             if (
                 (command.attributes.unlisted === true || util.getPermissionLevel(message) < 0) &&
@@ -128,9 +124,8 @@ class Command {
             if (commandName in commands) {
                 // command found
                 if (!isAdmin) {
-                    if (command.attributes.unlisted || command.attributes.admin) {
+                    if (command.attributes.unlisted) {
                         // command is unlisted (likely a secret command, shouldnt explain secrets)
-                        // or command is admin (members shouldnt need to know how these work)
                         shouldExplainCommand = false;
                     }
                 }

@@ -1,10 +1,14 @@
+const discord = require("discord.js");
 const Database = require('sync-json-database');
 const DisabledInteractionsDB = new Database('./databases/disabled-interactions.json');
 
+const configuration = require("../config");
+
+const env = require('./env-util');
+const makePng = require('./make-png');
 const tryCatch = require('./try-catch');
 const bypass = require("./bypass-characters");
-const configuration = require("../config");
-const env = require('./env-util');
+const isCompatibleImage = require('./compatible-images');
 
 const automodKeywords = tryCatch(() => require('../resources/basic_automod')) || [];
 
@@ -14,6 +18,7 @@ const automodKeywords = tryCatch(() => require('../resources/basic_automod')) ||
  */
 class CommandUtility {
     static state = {};
+    static client = null;
 
     // used as a cleaner way to access values in the main bot process
     static request(value) {
@@ -32,6 +37,16 @@ class CommandUtility {
         return isExclusive;
     }
 
+    /** @param {import("discord.js").Message} message  */
+    static makeMessageLink(message) {
+        return `https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`;
+    }
+    /** @param {import("discord.js").TextChannel} channel  */
+    static makeChannelLink(channel) {
+        return `https://discord.com/channels/${channel.guildId}/${channel.id}`;
+    }
+
+    /** @returns {Promise<import("discord.js").Message?>} */
     static getReply(message) {
         return new Promise((resolve) => {
             if (!(message.reference && message.reference.messageId)) {
@@ -51,53 +66,99 @@ class CommandUtility {
             return;
         }
     };
-    static getInputImageForCommand(message, allowBlocking, allowGif) {
-        // this func should return [imageUrl?, usingGif?]
-        let usingGif = false;
+    /**
+     * Gets the input image for a command and converts it to PNG if necessary.
+     * @param {discord.Message} message the message to get input image from (likely the message with the command)
+     * @param {number} [amount=1] The amoount of images to fetch. Note that more images *can* be added to the command, they will just be ignored if this isnt increased.
+     * @param {boolean?} allowGif `true` = keep gifs as gifs, `false` or default = convert gifs to png. If true, then only supporters can use `.gif` files. `false` by default
+     * @param {boolean?} allowBlocking Replies to the message if input is invalid or failed. If this is used, then imageBuffer === false  means the message was replied to with an error. `true` by default
+     * @returns {Buffer[]} at least 1 image buffer
+     */
+    static async getInputImagesForCommand(message, amount = 1, allowGif = false, allowBlocking = true) {
+        const isDonator = this.isFromExclusive(message);
 
-        // NOTE: We should allow all of the file types that Jimp and Canvas can support.
-        const supportedTypes = ['png', 'jpeg', 'jpg'];
-        if (allowGif) {
-            supportedTypes.push('gif');
+        // priority:
+        // - Provided images
+        // - if not, then replied message images
+        // - if not, then mentioned user pfp
+        // - if not, then replied user pfp
+        // - if not, then current user pfp
+        // we do NOT stack provided images with replied user images, provided image with replied user pfp, etc.
+        const attachments = [];
+        if (message.attachments.size > 0) {
+            attachments.push(...message.attachments.values());
+        } else {
+            // Check if a user is mentioned in the args, or it's a reply to a user.
+            // Replies are mentions if the reply has no attachments.
+            let mention = message.mentions.users.first();
+            const reply = await this.getReply(message);
+            if ((reply && reply.attachments.size <= 0) && !mention) {
+                mention = reply.author;
+            }
+            
+            // If we can use the reply's attachments, then use them and dont use the PFP
+            // Otherwise get the PFP of the mentioned/replied user || the message author
+            if ((reply && reply.attachments.size > 0) && (reply.author.id === message.author.id || !this.interactionsBlocked(reply.author.id))) {
+                attachments.push(...reply.attachments.values());
+            } else {
+                // block if the user doesnt have interaftions
+                if (this.interactionsBlocked(mention) && mention.id !== message.author.id) {
+                    if (allowBlocking) {
+                        message.reply('The user you mentioned has interactions disabled.');
+                        return [false];
+                    }
+                    return [];
+                } else {
+                    // get the PFP of the mentioned user, or the author
+                    const requestGif = isDonator && allowGif;
+                    const options = { format: !requestGif ? "png" : "gif", size: 256, dynamic: requestGif };
+                    const imageUrl = mention ? mention.displayAvatarURL(options)
+                        : (message.member?.avatarURL(options) || message.author.displayAvatarURL(options));
+                    
+                    // copying fetching here is kinda bad, but i'd rather have this than weird loop over to reuse the attachments code
+                    const attachmentFetch = await fetch(imageUrl);
+                    const attachmentArrayBuffer = await attachmentFetch.arrayBuffer();
+                    const attachmentBuffer = Buffer.from(attachmentArrayBuffer);
+                    return [requestGif ? attachmentBuffer : (await makePng(attachmentBuffer))];
+                }
+            }
         }
 
-        const isDonator = this.isFromExclusive(message);
-        const supportedFileTypeMessage = `Please use a valid image in one of these formats: \`${supportedTypes.join("`, `")}\``;
-
-        if (message.attachments.size <= 0) {
-            let imageUrl = null;
-            imageUrl = message.author.displayAvatarURL({ format: 'png', size: 256 });
-
-            // Check if a user is mentioned in the args
-            const mention = message.mentions.users.first();
-            if (this.interactionsBlocked(mention) && mention.id !== message.author.id) {
-                if (allowBlocking) {
-                    message.reply('The user you mentioned has interactions disabled.');
-                    return [false];
+        // get image urls from the attachments
+        // the attachments will either be off of the current message OR a replied message
+        if (attachments.length <= 0) {
+            if (allowBlocking) {
+                if (allowGif) {
+                    message.reply(`Please use a valid image format.\nSupporters can use \`.gif\` images with this command.`);
+                } else {
+                    message.reply("Please use a valid image format.");
                 }
-                return [];
-            } else if (mention) {
-                imageUrl = mention.displayAvatarURL({ format: 'png', size: 256 });
+                return [false];
             }
+            return [];
+        }
 
-            return [imageUrl, false];
-        } else {
-            const attachment = message.attachments.first();
-            const endingType = this.getAttachmentType(attachment);
-            usingGif = endingType === "gif";
-
-            if ((usingGif && !isDonator) || (!supportedTypes.includes(endingType))) {
+        /** @type {[imageUrl:string, usingGif:boolean]} */
+        const imageUrls = [];
+        attachments.splice(amount, Infinity); // dont fetch more than max by cutting out everything after amount (after the first image by default)
+        for (const attachment of attachments) {
+            // check the file type
+            const imageUrl = attachment.url;
+            const imageType = this.getAttachmentType(attachment);
+            const usingGif = imageType === "gif";
+            if ((!isCompatibleImage(imageType)) || (usingGif && !isDonator)) {
                 if (allowBlocking) {
                     if (allowGif) {
-                        message.reply(`${supportedFileTypeMessage}\nOnly Supporters can use \`.gif\` images with this command.`);
+                        message.reply(`Please use a valid image format.\nSupporters can use \`.gif\` images with this command.`);
                     } else {
-                        message.reply(supportedFileTypeMessage);
+                        message.reply("Please use a valid image format.");
                     }
                     return [false];
                 }
                 return [];
             }
 
+            // file size limits
             if (!isDonator && attachment.size > 512000) {
                 if (allowBlocking) {
                     message.reply("Non-supporters or server boosters must use images below 512 KB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
@@ -105,23 +166,53 @@ class CommandUtility {
                 }
                 return [];
             }
-
-            if (isDonator && !usingGif && attachment.size > 1e+6) {
+            // supporter file size limits
+            if (isDonator && !usingGif && attachment.size > 2e+6) {
                 if (allowBlocking) {
-                    message.reply("Images must be below 1 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
+                    message.reply("Images must be below 2 MB.\nTry [resizing your image.](<https://ezgif.com/resize>)");
                     return [false];
                 }
                 return [];
             }
-            if (isDonator && usingGif && attachment.size > 2e+6) {
+            if (isDonator && usingGif && attachment.size > 5e+6) {
                 if (allowBlocking) {
-                    message.reply("GIFs must be below 2 MB.\nTry [resizing your gif](<https://ezgif.com/resize>) or [optimizing it.](<https://ezgif.com/optimize>)");
+                    message.reply("GIFs must be below 5 MB.\nTry [resizing your gif](<https://ezgif.com/resize>) or [optimizing it.](<https://ezgif.com/optimize>)");
                     return [false];
                 }
                 return [];
             }
 
-            return [attachment.url, usingGif];
+            imageUrls.push([imageUrl, usingGif]);
+        }
+
+        // now that we confirmed we can actually use all imageUrls, then fetch
+        const buffers = [];
+        for (const [imageUrl, usingGif] of imageUrls) {
+            const attachmentFetch = await fetch(imageUrl);
+            const attachmentArrayBuffer = await attachmentFetch.arrayBuffer();
+            const attachmentBuffer = Buffer.from(attachmentArrayBuffer);
+            buffers.push((usingGif && allowGif) ? attachmentBuffer : (await makePng(attachmentBuffer)));
+        }
+        return buffers;
+    }
+
+    /** @param {import("discord.js").MessageReaction} reaction  */
+    static async getReactingUsers(reaction) {
+        const maxLimit = 100;
+
+        let allUsers = [];
+        let lastId = null;
+        if (reaction.partial) await reaction.fetch();
+        while (true) {
+            const users = await reaction.users.fetch({ limit: maxLimit, after: lastId });
+            if (users.size === 0) return allUsers;
+
+            const lastUser = users.last();
+            allUsers.push(...Array.from(users.values())); // NOTE: this is kinda stinky i dont like it
+            lastId = lastUser.id;
+
+            if (users.size < maxLimit)
+                return allUsers;
         }
     }
 
@@ -208,13 +299,9 @@ class CommandUtility {
 
     // Generic "cannot use this command" handler for use by text + slash commands. Returns true on blocked message.
     static handleCommandBlock(command, message, split) {
-        let permission = command.attributes.permission;
-        if (permission === undefined) {
-            permission = 0;
-            if (command.attributes.admin === true) permission = 3;
-        }
+        let permission = command.attributes.permission || 0;
         if (this.getPermissionLevel(message) < permission) {
-            if (command.attributes.adminInclusive && this._inclusiveAllowsUser(message.author.id, message.member._roles, command.attributes.adminInclusive)) return;
+            if (command.attributes.permissionInclusive && this._inclusiveAllowsUser(message.author.id, message.member._roles, command.attributes.permissionInclusive)) return;
             this._commandBlockReject(command, message, split, `You need a permission level of ${permission} to run this command, yours is currently ${this.getPermissionLevel(message)}.`);
             return true;
         }
@@ -241,7 +328,7 @@ class CommandUtility {
                 return true;
             }
         }
-        if (command.attributes.lockedToCommands === true) {
+        if (command.attributes.lockedToCommands === true && this.getPermissionLevel(message) < 3) {
             // check which channel we are in
             let canBeUsed = true;
             if (message.guild && (message.guild.id === env.get("SERVER_ID")

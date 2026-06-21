@@ -12,7 +12,6 @@ class BotEvent {
     }
 
     async invoke(client, state) {
-        require('dotenv').config();
         const isInTestMode = state.isInTestMode;
 
         // log we are online
