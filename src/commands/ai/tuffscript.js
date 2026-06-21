@@ -22,7 +22,7 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: false,
-            jgOllamaClientsInvolved: ["tuffScript"],
+            jgollamaConfigsInvolved: ["tuffScript"],
         };
     }
 

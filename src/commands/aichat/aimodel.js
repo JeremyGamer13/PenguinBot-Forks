@@ -12,7 +12,7 @@ class Command {
             permission: 4,
             unlisted: true,
             jgAiChatCommand: true,
-            jgOllamaClientsInvolved: ["mutatableChatbot"],
+            jgollamaConfigsInvolved: ["mutatableChatbot"],
         };
     }
 

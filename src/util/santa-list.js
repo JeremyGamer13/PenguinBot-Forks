@@ -55,7 +55,7 @@ class SantaList {
      */
     static async santaReflectsOn(wish, additionalPrompt) {
         if (!env.getBool("OLLAMA_ENABLED")) throw new Error("Ollama not available");
-        if (!configuration.funkyCapabilities.ollamaClients.genericIO) throw new Error("AI model not available");
+        if (!configuration.funkyCapabilities.ollamaConfigs.genericIO) throw new Error("AI model not available");
         
         // make a chat, tell it the instructions, and then get the response
         let response = "";
@@ -97,7 +97,7 @@ class SantaList {
      */
     static async grinchReflectsOn(wish, additionalPrompt) {
         if (!env.getBool("OLLAMA_ENABLED")) throw new Error("Ollama not available");
-        if (!configuration.funkyCapabilities.ollamaClients.genericIO) throw new Error("AI model not available");
+        if (!configuration.funkyCapabilities.ollamaConfigs.genericIO) throw new Error("AI model not available");
         
         // make a chat, tell it the instructions, and then get the response
         let response = "";

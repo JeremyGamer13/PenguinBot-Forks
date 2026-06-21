@@ -11,7 +11,7 @@ class Command {
             permission: 0,
             unlisted: true,
             jgAiChatCommand: true,
-            jgOllamaClientsInvolved: ["mutatableChatbot"],
+            jgollamaConfigsInvolved: ["mutatableChatbot"],
         };
     }
 

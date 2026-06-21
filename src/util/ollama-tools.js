@@ -12,6 +12,10 @@ const ToolMockReact = require("./ollamaTool/interface/react.js");
 const ToolMockRob = require("./ollamaTool/interface/tell-rob.js");
 
 class OllamaTools {
+    /**
+     * @param {"aichat-prompt"|"test"|"rob"|null} useCase 
+     * @returns {Array<import("ollama-chatting").Tool>}
+     */
     static getList(useCase) {
         const vlcEnabled = env.getBool("VLC_MEDIA_ENABLED");
         switch (useCase) {
@@ -24,11 +28,20 @@ class OllamaTools {
                     ToolMockRob.getRepresentation(),
                 ];
             case "test":
+                // NOTE: assume no interfaces will be implemented
                 return [
                     ...(vlcEnabled ? [ToolVLCListening.getRepresentation()] : []),
                     ToolSystemInfo.getRepresentation(),
                     ToolPause.getRepresentation(),
                     ToolTest.getRepresentation(),
+                ];
+            case "rob":
+                // NOTE: these can allow conversational tools & topic starters like "im listening to xyz"
+                return [
+                    ...(vlcEnabled ? [ToolVLCListening.getRepresentation()] : []),
+                    ToolSystemInfo.getRepresentation(),
+                    ToolPause.getRepresentation(),
+                    ToolMockRob.getRepresentation(),
                 ];
             default:
                 return [];

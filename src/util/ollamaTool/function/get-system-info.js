@@ -28,6 +28,9 @@ class ToolSystemInfo {
         const deviceUptime = FormatTime.formatTime(os.sysUptime() * 1000);
         const logicalProcessors = os.cpuCount();
 
+        const enabledModels = Object.keys(configuration.funkyCapabilities.ollamaConfigs)
+            .filter(modelName => configuration.funkyCapabilities.ollamaConfigs[modelName]);
+
         const deviceLabel = env.get("DEVICE_LABEL");
         const platformDetails = `${process.platform} ${process.arch} on Node ${process.version}`;
         return `The device is named "${deviceLabel}".`
@@ -36,7 +39,7 @@ class ToolSystemInfo {
             + "\n" + `The device has been online for ${deviceUptime}.`
             + "\n" + `The device has ${memoryMegabytes} MB of memory, ${memoryUsagePercentage} of which is in use.`
             + "\n" + `The device's CPU has ${logicalProcessors} logical processors.`
-            + "\n" + `The device currently has these AI models available: ${Object.keys(configuration.funkyCapabilities.ollamaClients).join(", ")}`
+            + "\n" + `The device currently has these AI models available: ${enabledModels.join(", ")}`
             + "\n" + `The device ${configuration.funkyCapabilities.ollamaImageProcessingViable ? "is capable of AI image processing" : "cannot process images with AI"}.`;
     }
 }

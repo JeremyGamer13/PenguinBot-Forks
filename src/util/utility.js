@@ -433,10 +433,10 @@ class CommandUtility {
             }
         }
         // jg: ollama capability
-        if (command.attributes.jgOllamaClientsInvolved) {
+        if (command.attributes.jgollamaConfigsInvolved) {
             let canBeUsed = env.getBool("OLLAMA_ENABLED");
-            for (const aiModel of command.attributes.jgOllamaClientsInvolved) {
-                if (configuration.funkyCapabilities.ollamaClients[aiModel] !== true) {
+            for (const aiModel of command.attributes.jgollamaConfigsInvolved) {
+                if (configuration.funkyCapabilities.ollamaConfigs[aiModel] !== true) {
                     canBeUsed = false;
                     break;
                 }

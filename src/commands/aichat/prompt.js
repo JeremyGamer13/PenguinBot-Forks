@@ -21,7 +21,7 @@ class Command {
             permission: 0,
             unlisted: true,
             jgAiChatCommand: true,
-            jgOllamaClientsInvolved: ["mutatableChatbot"],
+            jgollamaConfigsInvolved: ["mutatableChatbot"],
         };
     }
 
@@ -80,7 +80,7 @@ class Command {
                                 tools.push({
                                     role: "tool",
                                     tool_name: "tell-rob",
-                                    content: await ToolMockRob.handle(message, call),
+                                    content: await ToolMockRob.handle(message.channel, call),
                                 });
                                 break;
                         }

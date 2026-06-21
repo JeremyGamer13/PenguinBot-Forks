@@ -1,3 +1,5 @@
+const env = require("../../env-util");
+
 class ToolMockRob {
     /**
      * @returns {import("ollama-chatting").Tool}
@@ -20,13 +22,13 @@ class ToolMockRob {
     }
 
     /**
-     * @param {import('discord.js').Message} message 
+     * @param {import('discord.js').TextChannel} channel 
      * @param {import("ollama").ToolCall} call 
      */
-    static async handle(message, call) {
-        const robId = `1344543448719429673`;
+    static async handle(channel, call) {
+        const robId = env.get("ROB_INTEGRATION_USER_ID");
         const startTime = Date.now();
-        await message.channel.send({
+        await channel.send({
             content: `<@${robId}> ${call.function.arguments.text}`,
             allowedMentions: {
                 users: [robId],
@@ -35,7 +37,7 @@ class ToolMockRob {
             }
         });
         try {
-            const collected = await message.channel.awaitMessages({
+            const collected = await channel.awaitMessages({
                 filter: m => m.author.id === robId,
                 max: 1,
                 time: 10000,

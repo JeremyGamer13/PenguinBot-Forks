@@ -13,7 +13,7 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
-            jgOllamaClientsInvolved: ["genericIO"],
+            jgollamaConfigsInvolved: ["genericIO"],
         };
     }
 

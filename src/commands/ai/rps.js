@@ -9,7 +9,7 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
-            jgOllamaClientsInvolved: ["lightText"],
+            jgollamaConfigsInvolved: ["lightText"],
         };
     }
 

@@ -34,7 +34,7 @@ class BotEvent {
     async invoke(client, state, message) {
         // see if this feature is enabled
         if (!env.getBool("OLLAMA_ENABLED")) return;
-        if (!configuration.funkyCapabilities.ollamaClients.messageRewriter) return;
+        if (!configuration.funkyCapabilities.ollamaConfigs.messageRewriter) return;
 
         // ignore bots
         if (!message.author) return;

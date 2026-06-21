@@ -52,6 +52,13 @@ class OllamaModels {
         thinking: false,
         timeout: 2 * 60 * 1000, // 2 minutes
     };
+    /** must have access to tools @type {Ollama.ChatRequest} */
+    static robChatter = {
+        model: "gemma4:e2b",
+        thinking: true, // thinking might not be necessary
+        timeout: 5 * 60 * 1000, // 5 minutes
+        tools: OllamaTools.getList("rob"),
+    };
 
     // configs where settings can be adjusted on runtime, probably with cmds
     /** @type {Ollama.ChatRequest} */

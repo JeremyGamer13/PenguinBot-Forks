@@ -26,7 +26,7 @@ class Command {
             permission: 0,
             unlisted: false,
             lockedToCommands: true,
-            jgOllamaClientsInvolved: ["genericIO"],
+            jgollamaConfigsInvolved: ["genericIO"],
         };
 
         this.alias = ["graphics"];

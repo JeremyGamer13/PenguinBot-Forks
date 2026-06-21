@@ -44,14 +44,15 @@ const configuration = {
             "deepseek-r1:8b",
         ],
 
-        // jg: which ollama clients are available
-        ollamaClients: {
+        // jg: which ollama configs are available
+        ollamaConfigs: {
             genericIO: true,
             processorIO: true,
             messageRewriter: true,
             lightText: true,
             penguinGPT: true,
             tuffScript: true,
+            robChatter: true,
             mutatableChatbot: true,
         },
 
@@ -107,6 +108,9 @@ const configuration = {
 
         // jg: santa list!!!!
         funkySantaList: "1444881035719606373",
+
+        // jg: where rob should talk in
+        funkyRobChat: "1511217728361467947",
     },
 
     permissions: {
