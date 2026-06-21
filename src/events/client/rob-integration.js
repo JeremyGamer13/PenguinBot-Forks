@@ -52,8 +52,8 @@ class BotEvent {
         const representationToolPause = ToolPause.getRepresentation();
         const representationToolRob = ToolMockRob.getRepresentation();
 
-        // every 15 minutes
-        const messageCooldown = 15 * 60 * 1000;
+        // every hour
+        const messageCooldown = 60 * 60 * 1000;
         setInterval(async () => {
             // we need to use .chat for tools
             // see how many times we want JSB to talk to Rob
