@@ -1,5 +1,6 @@
 // DISCLOSURE: ai written pretty much
 const JSON5 = require('json5');
+const dirtyJson = require("dirty-json");
 const { jsonrepair } = require('jsonrepair');
 
 /**
@@ -20,7 +21,7 @@ const jsonParseLoose = (text) => {
     let cleaned = text.trim();
 
     // Remove common Markdown code block prefixes like ```json or ````
-    cleaned = cleaned.replace(/^```\s*json?\s*/i, "");
+    cleaned = cleaned.replace(/^```\s*\w+?\s*/i, "");
     cleaned = cleaned.trim();
     cleaned = cleaned.replace(/^```/i, "");
 
@@ -32,7 +33,11 @@ const jsonParseLoose = (text) => {
     
     // jsonrepair returns a string of valid JSON
     const repairedJsonString = jsonrepair(cleaned);
-    return JSON5.parse(repairedJsonString);
+    try {
+        return JSON5.parse(repairedJsonString);
+    } catch {
+        return dirtyJson.parse(repairedJsonString);
+    }
 }
 
 module.exports = jsonParseLoose;

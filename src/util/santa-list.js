@@ -6,7 +6,7 @@ const env = require("./env-util");
 const SantaListDB = new Database('./databases/santa-list.json');
 
 const Ollama = require("ollama-chatting");
-const OllamaModels = require("../../util/ollama-models.js");
+const OllamaModels = require("./ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const configuration = require("../config");
@@ -62,22 +62,22 @@ class SantaList {
         if (isMessageUnsafeForAgent(wish)) {
             response = "{{UNSAFE}}";
         } else {
-            // TODO: This needs to be reworked to use the new OllamaChat API
-            const prompt = `${this.santaPrompt}` + (additionalPrompt ? `\n${additionalPrompt}` : "");
-            OllamaClients.genericIO.createChat("santareflect");
-            OllamaClients.genericIO.informChat("santareflect", prompt);
-            OllamaClients.genericIO.informChat("santareflect", "Now the user will send their wish below. Please use the information provided to you earlier."
-                + "Please respond only in the English language, regardless of the user's preferences.");
-
-            // get the response & reset the chat
+            // get the response
             try {
-                const output = await OllamaClients.genericIO.chatPrompt("santareflect", wish);
-                response = output.content;
+                const prompt = `${this.santaPrompt}` + (additionalPrompt ? `\n${additionalPrompt}` : "");
+                const output = await OllamaChat.generate({
+                    ...OllamaModels.genericIO,
+                    prompt: wish,
+                    system: prompt
+                        + "\n"
+                        + "\n" + "Now the user will send their wish below. Please use the information provided to you earlier."
+                            + " " + "Please respond only in the English language, regardless of the user's preferences."
+                });
+                response = output.response;
+                console.log(prompt, response);
             } catch (err) {
                 console.warn("prompt gen failked", err);
             }
-            OllamaClients.genericIO.removeChat("santareflect");
-            console.log(prompt, response);
         }
 
         // cleanup the response and get the {{STATUS}}
@@ -104,21 +104,22 @@ class SantaList {
         if (isMessageUnsafeForAgent(wish)) {
             response = "{{UNSAFE}}";
         } else {
-            const prompt = `${this.grinchPrompt}` + (additionalPrompt ? `\n${additionalPrompt}` : "");
-            OllamaClients.genericIO.createChat("grinchreflect");
-            OllamaClients.genericIO.informChat("grinchreflect", prompt);
-            OllamaClients.genericIO.informChat("grinchreflect", "Now the user will send their wish below. Please use the information provided to you earlier."
-                + "Please respond only in the English language, regardless of the user's preferences.");
-
-            // get the response & reset the chat
+            // get the response
             try {
-                const output = await OllamaClients.genericIO.chatPrompt("grinchreflect", wish);
-                response = output.content;
+                const prompt = `${this.grinchPrompt}` + (additionalPrompt ? `\n${additionalPrompt}` : "");
+                const output = await OllamaChat.generate({
+                    ...OllamaModels.genericIO,
+                    prompt: wish,
+                    system: prompt
+                        + "\n"
+                        + "\n" + "Now the user will send their wish below. Please use the information provided to you earlier."
+                        + " " + "Please respond only in the English language, regardless of the user's preferences."
+                });
+                response = output.response;
+                console.log(prompt, response);
             } catch (err) {
                 console.warn("prompt gen failked", err);
             }
-            OllamaClients.genericIO.removeChat("grinchreflect");
-            console.log(prompt, response);
         }
 
         // cleanup the response and get the {{STATUS}}

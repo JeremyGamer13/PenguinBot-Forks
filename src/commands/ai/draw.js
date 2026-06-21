@@ -43,24 +43,21 @@ class Command {
 
         const replyMessage = await message.reply(`Hold up lemme cook 🙏 )`);
 
-        // start asking chattus geepitus
-        const systemPrompt = `You are a drawing bot.`
-            + `\n` + `Using the JSON schema, you can draw images that the user asks for.`
-            + `\n` + `The image starts as a white canvas for you to draw over.`
-            + `\n` + `The "w" and "h" fields define the width and height of your image.`
-            + `\n` + `With the "ops" array, you can list operations that will create the output.`
-            + `\n` + `To draw a line, use something like { "t": "l", "p": [x1, y1, x2, y2], "c": "#598ae4" }.`
-            + `\n` + `To draw a box, use something like { "t": "b", "p": [x1, y1, x2, y2], "c": "#961fce" }.`
-            + `\n` + `To write text on the picture, use something like { "t": "t", "p": [x1, y1], "s": "Hello", "c": "#000000" }.`
-            + `\n` + `You must draw whatever the user asks, but keep your content appropriate and inoffensive.`
-            + `\n` + `You must respond with a pure JSON object. Non-JSON information should be inserted into the \`desc\` field.`;
-
         // get the response
         let response = "";
         try {
             const output = await OllamaChat.generate({
                 ...OllamaModels.processorIO,
-                system: systemPrompt,
+                system: `You are a drawing bot.`
+                    + `\n` + `Using the JSON schema, you can draw images that the user asks for.`
+                    + `\n` + `The image starts as a white canvas for you to draw over.`
+                    + `\n` + `The "w" and "h" fields define the width and height of your image.`
+                    + `\n` + `With the "ops" array, you can list operations that will create the output.`
+                    + `\n` + `To draw a line, use something like { "t": "l", "p": [x1, y1, x2, y2], "c": "#598ae4" }.`
+                    + `\n` + `To draw a box, use something like { "t": "b", "p": [x1, y1, x2, y2], "c": "#961fce" }.`
+                    + `\n` + `To write text on the picture, use something like { "t": "t", "p": [x1, y1], "s": "Hello", "c": "#000000" }.`
+                    + `\n` + `You must draw whatever the user asks, but keep your content appropriate and inoffensive.`
+                    + `\n` + `You must respond with a pure JSON object. Non-JSON information should be inserted into the \`desc\` field.`,
                 prompt: userMessageInput,
                 format: SchemaSBPicGeneration,
                 images: imageBuffer ? [imageBuffer] : null,

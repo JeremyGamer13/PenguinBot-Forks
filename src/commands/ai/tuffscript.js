@@ -20,13 +20,13 @@ class Command {
         this.name = "tuffscript";
         this.description = "Evaluate TuffScript™ code";
         this.attributes = {
-            permission: 4,
+            permission: 0,
             lockedToCommands: false,
             jgOllamaClientsInvolved: ["tuffScript"],
         };
     }
 
-    async getResponse(chatId, code) {
+    async getResponse(code) {
         try {
             const userMessageInput = "Please evaluate my TuffScript program.\n" + code;
             const response = await OllamaChat.generate({
@@ -113,9 +113,9 @@ class Command {
         const randomText = wasteTimeMessages[Math.floor(Math.random() * wasteTimeMessages.length)];
         const evaluatingMessage = await message.reply(`Processing: ${randomText}`);
 
-        // get the response & reset the chat
+        // get the response
         const startTime = Date.now();
-        const response = await this.getResponse(chatId, code); // chat is deleted after response
+        const response = await this.getResponse(code);
         if (!response) return evaluatingMessage.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
 
         // parse

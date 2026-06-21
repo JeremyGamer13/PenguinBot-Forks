@@ -59,7 +59,6 @@ class OllamaModels {
         model: "gemma4:e2b", // this is very likely to be adjusted
         thinking: false,
         timeout: 5 * 60 * 1000, // 5 minutes
-        tools: OllamaTools.getList(),
     };
 }
 

@@ -161,6 +161,8 @@ const configuration = {
             '790782926785609728', // ianyourgod
             '567307285324496897', // jwklong
             '715193626430406770', // anonygoose
+            '1274550888706474169', // ash unbravechimp
+            '1446263635268735151', // not__bob
         ],
 
         // Channels checked for in the lockedToCommands property (excluding commands channel from above & threads within that channel)

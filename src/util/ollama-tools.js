@@ -1,35 +1,37 @@
-class ToolTest {
-    /**
-     * @param {import("ollama").ToolCall} call 
-     */
-    static execute(call) {
-        return `The information you just gave to me was: ${JSON.stringify(call)}`;
-    }
+const env = require("./env-util.js");
+const configuration = require("../config.js");
 
-    /**
-     * @returns {import("ollama-chatting").Tool}
-     */
-    static getRepresentation() {
-        return {
-            type: 'function',
-            function: {
-                name: 'test',
-                description: 'Test tool. Use it if instructed to by the user.',
-                callback: this.execute.bind(this),
-            },
-        }
-    }
-}
+// TOOLS
+// function (entirely functional tools on their own with implemented callbacks)
+const ToolVLCListening = require("./ollamaTool/function/get-host-listening.js");
+const ToolSystemInfo = require("./ollamaTool/function/get-system-info.js");
+const ToolPause = require("./ollamaTool/function/pause.js");
+const ToolTest = require("./ollamaTool/function/test.js");
+// interface (mock tools that need to be called OR fully implemented in a streaming callback)
+const ToolMockReact = require("./ollamaTool/interface/react.js");
+const ToolMockRob = require("./ollamaTool/interface/tell-rob.js");
 
 class OllamaTools {
-    static ToolTest = ToolTest;
-
     static getList(useCase) {
+        const vlcEnabled = env.getBool("VLC_MEDIA_ENABLED");
         switch (useCase) {
-            default:
+            case "aichat-prompt":
                 return [
+                    ...(vlcEnabled ? [ToolVLCListening.getRepresentation()] : []),
+                    ToolSystemInfo.getRepresentation(),
+                    ToolPause.getRepresentation(),
+                    ToolMockReact.getRepresentation(),
+                    ToolMockRob.getRepresentation(),
+                ];
+            case "test":
+                return [
+                    ...(vlcEnabled ? [ToolVLCListening.getRepresentation()] : []),
+                    ToolSystemInfo.getRepresentation(),
+                    ToolPause.getRepresentation(),
                     ToolTest.getRepresentation(),
                 ];
+            default:
+                return [];
         }
     }
 }
