@@ -36,7 +36,7 @@
     "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",
     "node-fetch": "^2.6.13",
-    "ollama-chatting": "github:JeremyGamer13/ollama-chatting#main",
+    "ollama-chatting": "^2.0.3",
     "omggif": "^1.0.10",
     "os-utils": "^0.0.14",
     "penguinmod": "github:PenguinMod/PenguinMod-ApiModule",
