@@ -52,16 +52,20 @@ class BotEvent {
         const representationToolPause = ToolPause.getRepresentation();
         const representationToolRob = ToolMockRob.getRepresentation();
 
-        // every hour
-        const messageCooldown = 60 * 60 * 1000;
+        // every 3 hours
+        const messageCooldown = 3 * 60 * 60 * 1000;
         setInterval(async () => {
             // we need to use .chat for tools
             // see how many times we want JSB to talk to Rob
             const toolCallCount = 2 + Math.round(Math.random() * 5);
             const lastRobMessages = await robChannel.messages.fetch({ limit: 6 });
+            lastRobMessages.reverse();
             // make the acutal calls
             console.log("Rob Integration: Talking to Rob now");
             console.log("-----------------------------------");
+            const robContext = lastRobMessages
+                .map(message => `${message.author.id === client.user.id ? `${configuration.nameBotReference} (You)` : (message.author.id === robUserId ? "Rob" : message.author.username)}: ${message.cleanContent.substring(0, 256) || "Ok Rob"}`)
+                .join("\n")
             await OllamaChat.chat({
                 ...OllamaModels.robChatter,
                 messages: [{
@@ -83,7 +87,7 @@ class BotEvent {
                     role: "user",
                     content: `--- START OF CONTEXT ---`
                         + "\n" + `The last 6 messages in the chat so far have said:`
-                        + "\n" + lastRobMessages.map(message => `${message.author.username}: ${message.cleanContent.substring(0, 256) || "Ok Rob"}`).join("\n")
+                        + "\n" + robContext
                         + "\n" + `--- END OF CONTEXT ---`
                         + "\n"
                         + "\n" + `Now I want you to continue the conversation by talking to Rob.`
