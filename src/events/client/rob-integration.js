@@ -65,7 +65,7 @@ class BotEvent {
             console.log("-----------------------------------");
             const robContext = lastRobMessages
                 .map(message => `${message.author.id === client.user.id ? `${configuration.nameBotReference} (You)` : (message.author.id === robUserId ? "Rob" : message.author.username)}: ${message.cleanContent.substring(0, 256) || "Ok Rob"}`)
-                .join("\n")
+                .join("\n");
             await OllamaChat.chat({
                 ...OllamaModels.robChatter,
                 messages: [{
