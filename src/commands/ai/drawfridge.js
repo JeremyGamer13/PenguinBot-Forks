@@ -22,7 +22,7 @@ class Command {
             jgollamaConfigsInvolved: ["processorIO"],
         };
 
-        this.alias = ["fridge"];
+        this.alias = ["fridge", "drawsbpic"];
     }
 
     async invoke(message, args, util) {
