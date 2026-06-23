@@ -53,6 +53,7 @@ const configuration = {
             penguinGPT: true,
             tuffScript: true,
             robChatter: true,
+            searchOverview: true,
             mutatableChatbot: true,
         },
 

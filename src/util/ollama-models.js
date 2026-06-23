@@ -18,53 +18,59 @@ class OllamaModels {
     /** genericIO should allow image & text input @type {Ollama.ChatRequest} */
     static genericIO = {
         model: "gemma3:4b",
-        thinking: false,
-        timeout: 25 * 1000, // 25 seconds
+        think: false,
+        timeout: 2 * 60 * 1000, // 2 minutes
     };
     /** genericIO but allowed longer time @type {Ollama.ChatRequest} */
     static processorIO = {
         model: "gemma3:4b",
-        thinking: false,
+        think: false,
         timeout: 5 * 60 * 1000, // 5 minutes
     };
     /** @type {Ollama.ChatRequest} */
     static messageRewriter = {
         model: "gemma3:1b",
-        thinking: false,
+        think: false,
         timeout: 1 * 60 * 1000, // 1 minute
     };
     /** @type {Ollama.ChatRequest} */
     static lightText = {
         model: "gemma3:1b",
-        thinking: false,
-        timeout: 25 * 1000, // 25 seconds
+        think: false,
+        timeout: 1 * 60 * 1000, // 1 minute
     };
     /** @type {Ollama.ChatRequest} */
     static penguinGPT = {
         model: "custom-penguinmod-server-v3",
-        thinking: false,
+        think: false,
         timeout: 1.5 * 60 * 1000, // 1.5 minute
     };
     /** @type {Ollama.ChatRequest} */
     static tuffScript = {
-        model: "gemma3:12b", // TODO: do we need 12b for this
-        // model: "deepseek-r1:8b",
-        thinking: false,
+        model: "gemma4:e2b",
+        think: true,
         timeout: 2 * 60 * 1000, // 2 minutes
     };
     /** must have access to tools @type {Ollama.ChatRequest} */
     static robChatter = {
         model: "gemma4:e2b",
-        thinking: true, // thinking might not be necessary
-        timeout: 5 * 60 * 1000, // 5 minutes
+        think: false,
+        timeout: 15 * 60 * 1000, // 15 minutes
         tools: OllamaTools.getList("rob"),
+    };
+    /** must have access to tools @type {Ollama.ChatRequest} */
+    static searchOverview = {
+        model: "gemma4:e2b",
+        think: true,
+        timeout: 5 * 60 * 1000, // 5 minutes
+        tools: OllamaTools.getList("search-overview"),
     };
 
     // configs where settings can be adjusted on runtime, probably with cmds
     /** @type {Ollama.ChatRequest} */
     static mutatableChatbot = {
         model: "gemma4:e2b", // this is very likely to be adjusted
-        thinking: false,
+        think: false,
         timeout: 5 * 60 * 1000, // 5 minutes
     };
 }

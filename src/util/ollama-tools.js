@@ -6,6 +6,8 @@ const configuration = require("../config.js");
 const ToolVLCListening = require("./ollamaTool/function/get-host-listening.js");
 const ToolSystemInfo = require("./ollamaTool/function/get-system-info.js");
 const ToolPause = require("./ollamaTool/function/pause.js");
+const ToolSearchAutocomplete = require("./ollamaTool/function/search-autocomplete.js");
+const ToolSearch = require("./ollamaTool/function/search-query.js");
 const ToolTest = require("./ollamaTool/function/test.js");
 // interface (mock tools that need to be called OR fully implemented in a streaming callback)
 const ToolMockReact = require("./ollamaTool/interface/react.js");
@@ -13,7 +15,7 @@ const ToolMockRob = require("./ollamaTool/interface/tell-rob.js");
 
 class OllamaTools {
     /**
-     * @param {"aichat-prompt"|"test"|"rob"|null} useCase 
+     * @param {"aichat-prompt"|"test"|"rob"|"search-overview"|null} useCase 
      * @returns {Array<import("ollama-chatting").Tool>}
      */
     static getList(useCase) {
@@ -24,6 +26,8 @@ class OllamaTools {
                     ...(vlcEnabled ? [ToolVLCListening.getRepresentation()] : []),
                     ToolSystemInfo.getRepresentation(),
                     ToolPause.getRepresentation(),
+                    ToolSearchAutocomplete.getRepresentation(),
+                    ToolSearch.getRepresentation(),
                     ToolMockReact.getRepresentation(),
                     ToolMockRob.getRepresentation(),
                 ];
@@ -33,6 +37,8 @@ class OllamaTools {
                     ...(vlcEnabled ? [ToolVLCListening.getRepresentation()] : []),
                     ToolSystemInfo.getRepresentation(),
                     ToolPause.getRepresentation(),
+                    ToolSearchAutocomplete.getRepresentation(),
+                    ToolSearch.getRepresentation(),
                     ToolTest.getRepresentation(),
                 ];
             case "rob":
@@ -41,7 +47,13 @@ class OllamaTools {
                     ...(vlcEnabled ? [ToolVLCListening.getRepresentation()] : []),
                     ToolSystemInfo.getRepresentation(),
                     ToolPause.getRepresentation(),
+                    ToolSearch.getRepresentation(),
                     ToolMockRob.getRepresentation(),
+                ];
+            case "search-overview":
+                return [
+                    ToolSearchAutocomplete.getRepresentation(),
+                    ToolSearch.getRepresentation(),
                 ];
             default:
                 return [];
