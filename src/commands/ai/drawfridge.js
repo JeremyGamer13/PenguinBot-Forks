@@ -14,13 +14,15 @@ const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json');
 
 class Command {
     constructor() {
-        this.name = "draw";
+        this.name = "drawfridge";
         this.description = "the Ai can draw fridge type pictures trust";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
             jgollamaConfigsInvolved: ["processorIO"],
         };
+
+        this.alias = ["fridge"];
     }
 
     async invoke(message, args, util) {
@@ -41,7 +43,7 @@ class Command {
         const userMessageInput = `Please draw me a picture, here is what i want:`
             + (userMessage ? userMessage : (attachment ? "Make it look like the picture i gave you" : "Do whatever you wanna draw"))
 
-        const replyMessage = await message.reply(`Hold up lemme cook 🙏 )`);
+        const replyMessage = await message.reply(`Hold up lemme cook 🙏 ) (im drawing Stream Bot Picture)`);
 
         // get the response
         let response = "";

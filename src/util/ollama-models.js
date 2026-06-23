@@ -65,6 +65,24 @@ class OllamaModels {
         timeout: 5 * 60 * 1000, // 5 minutes
         tools: OllamaTools.getList("search-overview"),
     };
+    /** @type {Ollama.ChatRequest} */
+    static svgCoder = {
+        model: "gemma4:e4b",
+        think: false,
+        timeout: 5 * 60 * 1000, // 5 minutes
+        options: {
+            num_ctx: 8192
+        },
+    };
+    /** same as svgCoder but a vision model (IF VISION DISABLED, DONT DISABLE THIS MODEL OR IT USUALLY DISABLES svgCoder TOO) @type {Ollama.ChatRequest} */
+    static svgCoderImage = {
+        model: "gemma4:e4b",
+        think: false,
+        timeout: 5 * 60 * 1000, // 5 minutes
+        options: {
+            num_ctx: 8192
+        },
+    };
 
     // configs where settings can be adjusted on runtime, probably with cmds
     /** @type {Ollama.ChatRequest} */

@@ -54,6 +54,8 @@ const configuration = {
             tuffScript: true,
             robChatter: true,
             searchOverview: true,
+            svgCoder: true,
+            svgCoderImage: true,
             mutatableChatbot: true,
         },
 

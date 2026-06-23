@@ -40,7 +40,7 @@ class Command {
                         + `\n` + `Keep your results in a tight and compact format if possible, avoiding large table or list formats. Never refer to yourself specifically to any extent.`
                 }, {
                     role: "user",
-                    content: `Search for "${searchQuery}"`
+                    content: `Search for ${searchQuery}`
                 }]
             }, (chunk) => {
                 // chunk.message.content & chunk.message.thinking contain stitched together versions of all the chunks so far.
@@ -61,6 +61,7 @@ class Command {
                 }
             });
         } catch (err) {
+            console.error(err);
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         }
     }
