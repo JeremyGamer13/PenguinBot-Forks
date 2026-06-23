@@ -38,7 +38,7 @@ class Command {
             jgollamaConfigsInvolved: ["svgCoder", "svgCoderImage"],
         };
 
-        this.alias = ["draw", "svg"];
+        this.alias = ["draw"];
     }
 
     async invoke(message, args, util) {
