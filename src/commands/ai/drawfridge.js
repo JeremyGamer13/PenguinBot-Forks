@@ -12,6 +12,18 @@ const isCompatibleImage = require('../../util/compatible-images');
 const drawSBPic = require('../../util/sbpic');
 const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json');
 
+const attemptRender = async (jsonString) => {
+    try {
+        const parsed = jsonParseLoose(jsonString);
+        const image = drawSBPic(parsed);
+        return image;
+    } catch (err) {
+        const strErr = `${err}`;
+        // TODO: figure out what the error is when it fails entirely becaue its just speaking
+        return strErr;
+    }
+};
+
 class Command {
     constructor() {
         this.name = "drawfridge";
@@ -40,14 +52,21 @@ class Command {
             imageBuffer = imageInput;
         }
 
+        // start tracking here
+        const startTime = Date.now();
         const userMessageInput = `Please draw me a picture, here is what i want:`
             + (userMessage ? userMessage : (attachment ? "Make it look like the picture i gave you" : "Do whatever you wanna draw"))
 
-        const replyMessage = await message.reply(`Hold up lemme cook 🙏 ) (im drawing Stream Bot Picture)`);
+        const replyMessage = await message.reply(`your drawing is queued 🙏 ) (im drawing Stream Bot Picture)`);
 
         // get the response
         let response = "";
+        let lastValidJson = null;
+        let lastValidJsonUpdate = 0;
+        let editingMessagePromise = null;
+        let editingMessageTime = 0;
         try {
+            console.log("SBPIC SBPIC SBPIC SBPIC SBPIC DRAWING  SBPIC\n\n");
             const output = await OllamaChat.generate({
                 ...OllamaModels.processorIO,
                 system: `You are a drawing bot.`
@@ -63,30 +82,68 @@ class Command {
                 prompt: userMessageInput,
                 format: SchemaSBPicGeneration,
                 images: imageBuffer ? [imageBuffer] : null,
+            }, async (chunk) => {
+                // In ollama-chatting, chunk.response refers to the accumulated response so far
+                // In ollama-chatting, chunk.chunk.response refers to single-tokens
+                if (chunk.chunk.thinking) process.stdout.write(chunk.chunk.thinking);
+                if (chunk.chunk.response) process.stdout.write(chunk.chunk.response);
+
+                // check if we should update json
+                if ((Date.now() - lastValidJsonUpdate) > 2000) {
+                    lastValidJsonUpdate = Date.now();
+                    // await after update time changed
+                    const renderAttempt = await attemptRender(chunk.response);
+                    lastValidJson = (renderAttempt && typeof renderAttempt === "object") ? chunk.response : lastValidJson;
+                }
+
+                // check if we should update message
+                if (editingMessageTime === 0) {
+                    editingMessageTime = Date.now();
+                    // await after update time changed
+                    editingMessagePromise = replyMessage.edit("im drawing this image RIGHT NOW");
+                    await editingMessagePromise;
+                } else if ((Date.now() - editingMessageTime) > 25000 && chunk.response.length > 100 && lastValidJson) {
+                    console.log("\nSBPIC message updating");
+                    editingMessageTime = Date.now();
+                    // await after update time changed
+                    const renderAttempt = await attemptRender(lastValidJson);
+                    editingMessagePromise = replyMessage.edit({
+                        content: typeof renderAttempt === "string" ? (renderAttempt.substring(0, 2000) || "???")
+                            : `Current progress: ${((Date.now() - startTime) / 1000)} seconds`,
+                        files: (renderAttempt && typeof renderAttempt === "object") ? [renderAttempt] : null,
+                    });
+                    await editingMessagePromise;
+                }
             });
+            console.log("\n");
             response = output.response;
         } catch (err) {
             console.error(err);
-            return replyMessage.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+            // dont remove the old message
+            return replyMessage.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         }
 
         console.log(response);
 
         // we need to parse this response
-        const parsed = jsonParseLoose(response);
-        const image = drawSBPic(parsed);
-        // send sbpic also
-        const dataBuffer = Buffer.from(JSON.stringify(parsed, null, 4), "utf8");
+        await editingMessagePromise;
+        const renderedImageTry = await attemptRender(response);
+        const renderedFinalImage = (renderedImageTry && typeof renderedImageTry === "object") ? renderedImageTry : await attemptRender(lastValidJson);
+        // send SBPIC also
+        const dataJson = renderedFinalImage === renderedImageTry ? jsonParseLoose(response) : jsonParseLoose(lastValidJson);
+        const dataBuffer = Buffer.from(JSON.stringify(dataJson, null, 4), "utf8");
         const dataAttachment = new discord.MessageAttachment(dataBuffer, "sbpic.json");
+
+        // see if we are rendering or if the ai didnt make anything
+        if (typeof renderedFinalImage === "string") {
+            return replyMessage.edit({
+                content: renderedFinalImage.substring(0, 2000) || "???"
+            });
+        }
         replyMessage.edit({
-            content: (parsed.desc || "").trim().substring(0, 2000) || "*(lazy bitch didnt write a description)*",
-            files: [image, dataAttachment],
-            allowedMentions: {
-                parse: [],
-                users: [],
-                roles: [],
-                repliedUser: true
-            }
+            content: (dataJson.desc || "").trim().substring(0, 2000) || "*(lazy bitch didnt write a description)*"
+                + "\n" + "-# Completed in " + ((Date.now() - startTime) / 1000) + " seconds",
+            files: [renderedFinalImage, dataAttachment]
         });
     }
 }
