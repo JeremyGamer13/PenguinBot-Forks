@@ -115,18 +115,32 @@ const repairSvg = (rawSvgString) => {
         }
 
         // 2. Ensure xmlns
-        if (!svgElement.hasAttribute('xmlns')) {
-            svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        }
+        svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-        // 3. Ensure viewBox
+        // 3. Ensure viewBox, as well as clamp width & height
+        let width = Number((svgElement.getAttribute('width') || '100').replace(/px/gi, '')) || 100;
+        let height = Number((svgElement.getAttribute('height') || '100').replace(/px/gi, '')) || 100;
+        width = Math.min(Math.max(0, width), 8192);
+        height = Math.min(Math.max(0, height), 8192);
         if (!svgElement.hasAttribute('viewBox')) {
-            const w = (svgElement.getAttribute('width') || '100').replace(/px/gi, '');
-            const h = (svgElement.getAttribute('height') || '100').replace(/px/gi, '');
-            svgElement.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
         }
 
-        // 4. Add background rect if requested
+        // 4. ensure the viewbox isnt too huge
+        const parts = svgElement.getAttribute("viewBox")
+            .trim()
+            .split(/[\s,]+/)
+            .map(unit => Number(unit || "0"))
+            .map(num => (isNaN(num) || !isFinite(num)) ? 0 : num);
+        if (parts.length > 4) parts.splice(4, Infinity);
+        while (parts.length < 2) parts.push(0);
+        if (parts.length === 2) parts.push(width);
+        if (parts.length === 3) parts.push(height);
+        parts[2] = Math.min(Math.max(0, parts[2]), 8192);
+        parts[3] = Math.min(Math.max(0, parts[3]), 8192);
+        svgElement.setAttribute('viewBox', parts.join(' '));
+
+        // 5. Add background rect if requested
         const bgColor = svgElement.style?.background || svgElement.style.backgroundColor;
         if (bgColor) {
             const rect = doc.createElement('rect');

@@ -9,6 +9,25 @@ const makePng = require('../../util/make-png');
 const svgRepair = require('../../util/svg-repair.js');
 const isCompatibleImage = require('../../util/compatible-images');
 
+const attemptRender = async (svgString) => {
+    try {
+        const parsed = svgRepair(svgString);
+        const dataBuffer = Buffer.from(parsed, "utf8");
+        const image = await makePng(dataBuffer);
+        return image;
+    } catch (err) {
+        const strErr = `${err}`;
+
+        // ai is just talking
+        if (strErr.includes("Input buffer contains unsupported image format")) return svgString;
+        if (strErr.includes("Error: Invalid input")) return svgString;
+        if (strErr.includes("Input Buffer is empty")) return svgString;
+
+        // its an actual error
+        return strErr;
+    }
+};
+
 class Command {
     constructor() {
         this.name = "drawsvg";
@@ -37,16 +56,21 @@ class Command {
             imageBuffer = imageInput;
         }
 
+        // start tracking here
+        const startTime = Date.now();
         const userMessageInput = `Please draw me a picture, here is what i want:`
             + (userMessage ? userMessage : (attachment ? "Make it look like the picture i gave you" : "Do whatever you wanna draw"))
 
-        const replyMessage = await message.reply(`Hold up lemme cook 🙏 ) (im drawing Scalable Vector Graphics)`);
+        const replyMessage = await message.reply(`your drawing is queued 🙏 ) (im drawing Scalable Vector Graphics)`);
 
         // get the response
         let response = "";
+        let lastValidSvg = null;
+        let lastValidSvgUpdate = 0;
+        let editingMessagePromise = null;
+        let editingMessageTime = 0;
         try {
             console.log("SVG SVG SVG SVG SVG DRAWING SVG\n\n");
-            // TODO: Ollama is straight up ignoring the image input. We should find a workaround for this.
             const output = await OllamaChat.generate({
                 ...(imageBuffer ? OllamaModels.svgCoderImage : OllamaModels.svgCoder),
                 system: `You are a drawing bot.`
@@ -55,58 +79,71 @@ class Command {
                     + `\n` + `Provide the raw SVG code starting with the <svg> tag and ending with the </svg> tag. Provide the clean, copy-pasteable XML/SVG content directly.`
                     + `\n`
                     + `\n` + `If a request is ambiguous, use your best judgment to create a visually appealing design.`
+                    + `\n` + `If a request is extremely inappropriate or sexual, rework the prompt to be safe and abiding by guidelines.`
                     + `\n` + `Focus on clean paths, logical grouping, and effective use of colors or gradients to maximize the visual impact of the vector graphic.`
+                    + `\n` + `Use multiple path segments and features to add detail to the image where possible.`
                     + `\n` + `You must draw whatever the user asks, but keep your content appropriate and inoffensive.`,
                 prompt: userMessageInput,
                 images: imageBuffer ? [new Uint8Array(imageBuffer)] : null,
-            }, (chunk) => {
+            }, async (chunk) => {
+                // In ollama-chatting, chunk.response refers to the accumulated response so far
+                // In ollama-chatting, chunk.chunk.response refers to single-tokens
                 if (chunk.chunk.thinking) process.stdout.write(chunk.chunk.thinking);
                 if (chunk.chunk.response) process.stdout.write(chunk.chunk.response);
+                
+                // check if we should update svg
+                if ((Date.now() - lastValidSvgUpdate) > 2000) {
+                    lastValidSvgUpdate = Date.now();
+                    // await after update time changed
+                    const renderAttempt = await attemptRender(chunk.response);
+                    lastValidSvg = (renderAttempt && typeof renderAttempt === "object") ? chunk.response : lastValidSvg;
+                }
+
+                // check if we should update message
+                if (editingMessageTime === 0) {
+                    editingMessageTime = Date.now();
+                    // await after update time changed
+                    editingMessagePromise = replyMessage.edit("im drawing this image RIGHT NOW");
+                    await editingMessagePromise;
+                } else if ((Date.now() - editingMessageTime) > 25000 && chunk.response.length > 100 && lastValidSvg) {
+                    console.log("\nSVG message updating");
+                    editingMessageTime = Date.now();
+                    // await after update time changed
+                    const renderAttempt = await attemptRender(lastValidSvg);
+                    editingMessagePromise = replyMessage.edit({
+                        content: typeof renderAttempt === "string" ? (renderAttempt.substring(0, 2000) || "???")
+                            : `Current progress: ${((Date.now() - startTime) / 1000)} seconds`,
+                        files: (renderAttempt && typeof renderAttempt === "object") ? [renderAttempt] : null,
+                    });
+                    await editingMessagePromise;
+                }
             });
             console.log("\n");
             response = output.response;
         } catch (err) {
             console.error(err);
-            return replyMessage.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+            // dont remove the old message
+            return replyMessage.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         }
 
         // we need to parse this response
+        await editingMessagePromise;
+        const renderedImageTry = await attemptRender(response);
+        const renderedFinalImage = (renderedImageTry && typeof renderedImageTry === "object") ? renderedImageTry : await attemptRender(lastValidSvg);
         // send SVG also
-        console.log("SVG repairing...");
-        const parsed = svgRepair(response);
-        const dataBuffer = Buffer.from(parsed, "utf8");
+        const dataBuffer = Buffer.from(renderedFinalImage === renderedImageTry ? svgRepair(response) : svgRepair(lastValidSvg), "utf8");
         const dataAttachment = new discord.MessageAttachment(dataBuffer, "image.svg");
 
-        try {
-            console.log("SVG rendering...");
-            const image = await makePng(dataBuffer);
-            replyMessage.edit({
-                content: "I did it",
-                files: [image, dataAttachment],
-                allowedMentions: {
-                    parse: [],
-                    users: [],
-                    roles: [],
-                    repliedUser: true
-                }
+        // see if we are rendering or if the ai didnt make anything
+        if (typeof renderedFinalImage === "string") {
+            return replyMessage.edit({
+                content: renderedFinalImage.substring(0, 2000) || "???"
             });
-        } catch (err) {
-            // in this case, we just didnt make any SVG
-            if (`${err}`.includes("Input buffer contains unsupported image format")) {
-                return replyMessage.edit({
-                    content: response.substring(0, 2000) || "Fuck",
-                    allowedMentions: {
-                        parse: [],
-                        users: [],
-                        roles: [],
-                        repliedUser: true
-                    }
-                });
-            }
-
-            // else, err
-            throw err;
         }
+        replyMessage.edit({
+            content: "Completed in " + ((Date.now() - startTime) / 1000) + " seconds",
+            files: [renderedFinalImage, dataAttachment]
+        });
     }
 }
 
