@@ -26,6 +26,7 @@ src/resources/santa-prompt.js
 src/resources/grinch-prompt.js
 src/resources/basic_automod.js
 src/resources/vlc-blocked-terms.json
+src/resources/poop-messages.js
 src/commands/gameidea.js
 src/commands/textmodifier/joyous.js
 
