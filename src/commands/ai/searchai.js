@@ -6,10 +6,16 @@ const SearXNG = require("../../util/searxng.js");
 
 class Command {
     constructor() {
-        this.name = "search";
+        this.name = "searchai";
         this.description = "Im so evil and im also Google AI Overview... so i didnt even need to say im evil";
         this.attributes = {
-            permission: 0,
+            // NOTE: For now, I've decided it's too risky to give public users search ability:
+            // - IP grabbing & displaying is likely possible
+            // - People can search concerning things under my network (very illegal stuff too)
+            // - May be possible to ratelimit SearXNG too heavily
+            // - AI can read unpredictable results which are inappropriate for PM
+            // Will reconsider when I've at least put searches under a proxy of some kind to solve IP problems
+            permission: 4,
             jgollamaConfigsInvolved: ["searchOverview"],
         };
     }
