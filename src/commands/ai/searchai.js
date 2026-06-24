@@ -18,6 +18,8 @@ class Command {
             permission: 4,
             jgollamaConfigsInvolved: ["searchOverview"],
         };
+
+        this.alias = ["aisearch"];
     }
 
     /** @param {import("discord.js").Message} message  */
