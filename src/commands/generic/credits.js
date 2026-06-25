@@ -3,7 +3,7 @@ const discord = require("discord.js");
 class Command {
     constructor(client) {
         this.name = "credits";
-        this.description = "View creation credits for PenguinBot.";
+        this.description = "View creation credits for gronk.";
         this.attributes = {
             unlisted: false,
             permission: 0,
