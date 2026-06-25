@@ -8,6 +8,8 @@ class Command {
     constructor() {
         this.name = "searchai";
         this.description = "Im so evil and im also Google AI Overview... so i didnt even need to say im evil";
+        this.descriptionLong = "Search something on the internet and get AI overview."
+            + "\n" + "Summarizes results and then formats them with ai.";
         this.attributes = {
             // NOTE: For now, I've decided it's too risky to give public users search ability:
             // - IP grabbing & displaying is likely possible

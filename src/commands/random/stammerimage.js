@@ -7,6 +7,8 @@ class Command {
     constructor() {
         this.name = "stammerimage";
         this.description = "remap the colors from first to second";
+        this.descriptionLong = "remap the colors from the first image to second image."
+            + "\n" + "Grabs almost EVERY color from the first image, so compression & aliasing can cause the result to look better than it should.";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,

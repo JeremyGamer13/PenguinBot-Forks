@@ -6,6 +6,7 @@ const Database = require('sync-json-database');
 const TrainingDatabase = new Database('./databases/train-ai.json');
 
 const tryCatch = require("../../util/try-catch");
+const configuration = require("../../config.js");
 const isMessageUnsafeForAgent = tryCatch(() => require('../../util/ai-unsafe')) || (() => false);
 
 // DISCLOSURE: these 2 functions are ai code
@@ -41,6 +42,12 @@ class Command {
     constructor() {
         this.name = "pmgpt";
         this.description = "Speak with the great penguinmod server AI";
+        this.descriptionLong = "Speak with the great penguinmod server AI"
+            + "\n" + "So we call h8im PenguinGPT right, he's like the rebirth of that one extension"
+            + "\n" + "This is NOT my child, this is YOUR child. The penguinmod server's child. You guys suck at paying child support"
+            + "\n" + "So PenguinGPT is really stupid and chaotic and takes a while to respond sometimes"
+            + "\n" + `To TRAIN PenguinGPT, please chat in <#${configuration.channels.funkyTrainAI}> with your own messages!!!!!!!`
+            + "\n" + "*(Note: PenguinGPT is only available sometimes and training is disabled when its not available)*";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,

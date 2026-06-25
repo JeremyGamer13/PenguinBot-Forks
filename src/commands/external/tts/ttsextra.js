@@ -12,6 +12,13 @@ class Command {
         };
 
         this.alias = ["etts", "ttse", "extratts",                      "espeak", "speake", "extraspeak", "speakextra"];
+        this.example = [
+            { text: "{{prefix}}ttsextra (language) (voice) (text)" },
+            { text: "{{prefix}}ttsextra en google This is google tts" },
+            { text: "{{prefix}}ttsextra en espeak-ng I am a robot" },
+            { text: "{{prefix}}ttsextra en david Microsoft david." },
+            { text: "{{prefix}}ttsextra en bonzi Hello there! I'm Bonzi." },
+        ];
     }
 
     async invoke(message, args, util) {

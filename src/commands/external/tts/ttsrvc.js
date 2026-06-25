@@ -15,6 +15,8 @@ class Command {
     constructor(client) {
         this.name = "ttsrvc";
         this.description = "RVC over  Text to speech (ai cover of tts)";
+        this.descriptionLong = "RVC over  Text to speech (ai cover of tts)"
+            + "\n" + "Acts like using {{prefix}}cover on a clip of tts from {{prefix}}ttsextra en david";
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,

@@ -28,6 +28,10 @@ class Command {
     constructor() {
         this.name = "drawfridge";
         this.description = "the Ai can draw fridge type pictures trust";
+        this.descriptionLong = "Tells an ai to draw a picture based on a description"
+            + "\n" + "drawfridge draws using .sbpic (Stream Bot Picture) and has less capability."
+            + "\n" + "Accepts general image input also."
+            + "\n" + "Fridge typpe pictures are like your son made a pretty ahh ahh drawing but he's being cool and creative so you hang it up on the fridge anyway";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,

@@ -16,6 +16,10 @@ class Command {
     constructor(client) {
         this.name = "cover";
         this.description = "AI voice will redub the audio";
+        this.descriptionLong = "AI voice will redub the audio"
+            + "\n" + "This command has a LOT of options so genuinely just run {{prefix}}cover and see them all"
+            + "\n" + "You can add multiple options in the same command & some of them stack (like pitch changes)"
+            + "\n" + "Note that not all voices are available for public use and some voices require approval to use";
         this.attributes = {
             unlisted: false,
             jgAiCoverCommand: true,

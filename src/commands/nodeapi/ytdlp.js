@@ -14,6 +14,11 @@ class Command {
         };
 
         this.alias = ["youtube", "yt", "yt-dlp", "ytmp3"];
+
+        this.example = [
+            { text: "{{prefix}}ytdlp https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+            { text: "{{prefix}}ytdlp dQw4w9WgXcQ" },
+        ];
     }
 
     async invoke(message, args, util) {

@@ -10,6 +10,8 @@ class Command {
     constructor() {
         this.name = "emojify";
         this.description = "Explain in fortnite terms";
+        this.descriptionLong = "AI creates an emoji representation of the attached image"
+            + "\n" + "Accepts general image input (defaults to PFP).";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,

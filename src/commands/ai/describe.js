@@ -10,6 +10,8 @@ class Command {
     constructor() {
         this.name = "describe";
         this.description = "What kind of fruit is this";
+        this.descriptionLong = "Describes the attached image with AI"
+            + "\n" + "Accepts general image input (defaults to PFP).";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,

@@ -10,6 +10,9 @@ class Command {
     constructor() {
         this.name = "scan";
         this.description = "Scan imagie";
+        this.descriptionLong = "Scans the attached image with AI and returns the text"
+            + "\n" + "It's like really BAD OCR (Optical Character Recognition)"
+            + "\n" + "Accepts general image input (defaults to PFP).";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,

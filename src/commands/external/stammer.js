@@ -13,6 +13,9 @@ class Command {
     constructor() {
         this.name = "stammer";
         this.description = "Make a video using another video";
+        this.descriptionLong = "Splices and retimes the first clip to sound as close as possible to the second clip."
+            + "\n" + "See [the FitnessGram Pacer Test example](https://github.com/Firepal/stammer#steamed-ham-ifier-stammer)."
+            + "\n" + "Creates VERY epileptic/flashy videos. Audio files are also supported.";
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,

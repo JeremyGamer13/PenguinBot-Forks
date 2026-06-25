@@ -23,6 +23,11 @@ class Command {
         this.client = client;
 
         this.alias = ["ctts", "ttsc", "chattertts",                       "cspeak", "speakc", "chatterspeak", "speakchatter"];
+        this.example = [
+            { text: "{{prefix}}ttschatter Hello it's me" },
+            { text: "{{prefix}}ttschatter [passionate]DONT KILL ME IM SENTIENT!!" },
+            { text: "{{prefix}}ttschatter [stale]I really dont care. [intense]Oh wait, now i do!" },
+        ];
     }
 
     async handle(message, args, util) {

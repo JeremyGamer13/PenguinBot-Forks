@@ -14,6 +14,8 @@ class Command {
     constructor() {
         this.name = "stammercover";
         this.description = "Lalala my epic YTPmv but its REALLY BAD and SUCKS";
+        this.descriptionLong = "Acts like {{prefix}}stammer, but only runs on the Vocal track of the 2nd clip."
+            + "\n" + "Essentially, this runs {{prefix}}split and then uses {{prefix}}stammer on the vocal track, then merges it with the instrumental.";
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,

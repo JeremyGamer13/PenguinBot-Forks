@@ -11,13 +11,20 @@ const downloadAttachments = require('../../util/download-attachments');
 class Command {
     constructor() {
         this.name = "tamper";
-        this.description = "Corrupt a video or audio file cool way";
+        this.description = "Corrupt a video or audio file a certain amount";
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,
             numberConversion: true,
             permission: 0,
         };
+
+        this.example = [
+            { text: "{{prefix}}tamper 15" },
+            { text: "{{prefix}}tamper 50" },
+            { text: "{{prefix}}tamper 100" },
+            { text: "{{prefix}}tamper 100 noStutter" },
+        ];
     }
 
     async handle(message, args, util) {

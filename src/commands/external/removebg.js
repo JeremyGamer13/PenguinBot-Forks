@@ -11,6 +11,8 @@ class Command {
     constructor() {
         this.name = "removebg";
         this.description = "Removes the background on an image.";
+        this.descriptionLong = "Removes the background on an image."
+            + "\n" + "Accepts general image input (defaults to PFP).";
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,

@@ -32,6 +32,9 @@ class Command {
     constructor() {
         this.name = "drawsvg";
         this.description = "Muahahah im PROBLEMATIC MEDIA and i support AI IMAGERY MUAHAHHA 😈😈😈😈😈😈";
+        this.descriptionLong = "Tells an ai to draw a picture based on a description"
+            + "\n" + "drawsvg draws using SVG (Scalable Vector Graphics). May take longer due to complexity but generally looks funny"
+            + "\n" + "Accepts general image input also.";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,

@@ -17,6 +17,11 @@ class Command {
         };
 
         this.alias = ["whereis"];
+
+        this.example = [
+            { text: "{{prefix}}where main subject, head, eye, mouth" },
+            { text: "{{prefix}}where the asynchronous operation" },
+        ];
     }
 
     async handle(message, args, util) {

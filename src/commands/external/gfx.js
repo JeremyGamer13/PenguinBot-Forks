@@ -22,9 +22,13 @@ class Command {
     constructor() {
         this.name = "gfx";
         this.description = "adds fire greaphics and stuff around an image with a caption if you want";
+        this.descriptionLong = "adds fire greaphics and stuff around an image with a caption if you want"
+            + "\n" + "Imagine like those sick radical images where the character has like laser eyes and stuff and they have fire AURA and everything"
+            + "\n" + "thats what this command does BUT!!! WITH ONE CATCH!!!"
+            + "\n" + "No AI image generation is done for this command!! There are AI tools involved, but none of them are capable of real image generation";
         this.attributes = {
             permission: 0,
-            unlisted: false,
+            unlisted: true,
             lockedToCommands: true,
             jgollamaConfigsInvolved: ["genericIO"],
         };

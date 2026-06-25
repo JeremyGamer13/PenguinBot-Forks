@@ -11,6 +11,11 @@ class Command {
             lockedToCommands: true,
             jgollamaConfigsInvolved: ["lightText"],
         };
+
+        this.example = [
+            { text: "{{prefix}}rps rock vs paper" },
+            { text: "{{prefix}}rps Really stupid guy vs really SMART guy" },
+        ];
     }
 
     async invoke(message, args, util) {

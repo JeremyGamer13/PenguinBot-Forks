@@ -19,6 +19,8 @@ class Command {
     constructor() {
         this.name = "tuffscript";
         this.description = "Evaluate TuffScript™ code";
+        this.descriptionLong = "Evaluate TuffScript™ code using the amazing TuffScript™ interpreter"
+            + "\n" + "*(it's entirely powered by AI and very prone to hallucination 😁)*";
         this.attributes = {
             permission: 0,
             lockedToCommands: false,

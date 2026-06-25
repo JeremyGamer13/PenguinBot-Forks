@@ -6,6 +6,7 @@ class Command {
     constructor() {
         this.name = "commandidea";
         this.description = "I Need an idea for a command";
+        this.descriptionLong = "it generates a useless command idea with ....ai 😱";
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
