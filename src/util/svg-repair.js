@@ -24,6 +24,15 @@ const fixReferenceNames = (svgString) => {
     });
 };
 
+const parseViewbox = (viewBox) => {
+    const parts = viewBox
+        .trim()
+        .split(/[\s,]+/)
+        .map(unit => Number(unit || "0"))
+        .map(num => (isNaN(num) || !isFinite(num)) ? 0 : num);
+    return parts;
+};
+
 /**
  * A loose SVG repair that fixes through JSDOM
  * Intended to repair:
@@ -117,30 +126,56 @@ const repairSvg = (rawSvgString) => {
         // 2. Ensure xmlns
         svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-        // 3. Ensure viewBox, as well as clamp width & height
-        let width = Number((svgElement.getAttribute('width') || '100').replace(/px/gi, '')) || 100;
-        let height = Number((svgElement.getAttribute('height') || '100').replace(/px/gi, '')) || 100;
-        width = Math.min(Math.max(0, width), 8192);
-        height = Math.min(Math.max(0, height), 8192);
-        if (!svgElement.hasAttribute('viewBox')) {
-            svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        // 3. Ensure width & height AND OR viewBox
+        const defaultWidth = 100;
+        const defaultHeight = 100;
+        // if we have a viewbox we can make width & height from
+        if (svgElement.hasAttribute('viewBox') && (!svgElement.hasAttribute("width") || !svgElement.hasAttribute("height"))) {
+            const viewBox = parseViewbox(svgElement.getAttribute("viewBox"));
+            if (!svgElement.hasAttribute("width")) {
+                svgElement.setAttribute('width', `${typeof viewBox[2] === "number" ? viewBox[2] : defaultWidth}px`);
+            }
+            if (!svgElement.hasAttribute("height")) {
+                svgElement.setAttribute('height', `${typeof viewBox[3] === "number" ? viewBox[3] : defaultHeight}px`);
+            }
+        }
+        // if the last check didnt happen, we use default width & height here
+        // NOTE: We standardize width & height to mean the *literal* pixel size to render the svg at (since we assume standalone SVG, no parent container)
+        let width = parseFloat(svgElement.getAttribute('width') || defaultWidth) || defaultWidth;
+        let height = parseFloat(svgElement.getAttribute('height') || defaultHeight) || defaultHeight;
+        width = Math.max(1, width);
+        height = Math.max(1, height);
+        
+        // clamp width & height to a safe value without ruining aspect ratio
+        const aspectRatio = width / height;
+        let newWidth = Math.min(Math.max(1, width), 8192);
+        let newHeight = Math.min(Math.max(1, height), 8192);
+        if (newWidth / newHeight > aspectRatio) {
+            newWidth = Math.round(newHeight * aspectRatio);
+        } else {
+            newHeight = Math.round(newWidth / aspectRatio);
         }
 
-        // 4. ensure the viewbox isnt too huge
-        const parts = svgElement.getAttribute("viewBox")
-            .trim()
-            .split(/[\s,]+/)
-            .map(unit => Number(unit || "0"))
-            .map(num => (isNaN(num) || !isFinite(num)) ? 0 : num);
-        if (parts.length > 4) parts.splice(4, Infinity);
-        while (parts.length < 2) parts.push(0);
-        if (parts.length === 2) parts.push(width);
-        if (parts.length === 3) parts.push(height);
-        parts[2] = Math.min(Math.max(0, parts[2]), 8192);
-        parts[3] = Math.min(Math.max(0, parts[3]), 8192);
-        svgElement.setAttribute('viewBox', parts.join(' '));
+        width = newWidth;
+        height = newHeight;
+        svgElement.setAttribute('width', `${width}px`);
+        svgElement.setAttribute('height', `${height}px`);
 
-        // 5. Add background rect if requested
+        // 4. ensure the viewbox is proper 
+        // NOTE: we dont have to clamp or round viewBox since width & height declare the real pixel size (in standalone SVG at least)
+        if (!svgElement.hasAttribute('viewBox')) {
+            // this will always be a proper viewbox
+            svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        } else {
+            const viewBox = parseViewbox(svgElement.getAttribute("viewBox"));
+            if (viewBox.length > 4) viewBox.splice(4, Infinity);
+            while (viewBox.length < 2) viewBox.push(0);
+            if (viewBox.length === 2) viewBox.push(width);
+            if (viewBox.length === 3) viewBox.push(height);
+            svgElement.setAttribute('viewBox', viewBox.join(' '));
+        }
+
+        // 5. Add background rect if requested (gemma4 likes to do this, which works in browser(?) but not other environments)
         const bgColor = svgElement.style?.background || svgElement.style.backgroundColor;
         if (bgColor) {
             const rect = doc.createElement('rect');
@@ -150,6 +185,10 @@ const repairSvg = (rawSvgString) => {
             // Insert as the first element so it renders behind everything else
             svgElement.insertBefore(rect, svgElement.firstChild);
         }
+
+        // TODO: Need to fix the following:
+        // - Opening and ending tag mismatch: svg line (X) and (X)
+        // - invalid properties/values set on certain svg elements
 
         return fixReferenceNames(svgElement.outerHTML);
     } catch (err) {

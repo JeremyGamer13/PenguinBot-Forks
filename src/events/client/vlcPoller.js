@@ -1,4 +1,5 @@
 const env = require("../../util/env-util");
+const envFill = require("../../util/env-fill");
 const configuration = require("../../config");
 
 const VLCPoller = require("../../util/vlc-poller");
@@ -17,12 +18,11 @@ class BotEvent {
         const isInPersonalMode = state.isInPersonalMode;
 
         console.log("vlc polling!");
-        
-        const baseStatusText = isInTestMode ? configuration.status.testing
+
+        const statusText = isInTestMode ? configuration.status.testing
             : (isInPersonalMode ? configuration.status.personal : configuration.status.normal);
-        const statusText = baseStatusText.replace(/{{[^}]+}}/g, (text) => env.get(text.replace(/[{}]/g, "")));
         try {
-            VLCPoller.initialize(client, statusText);
+            VLCPoller.initialize(client, envFill(statusText));
         } catch (err) {
             console.warn("vlc thing failed", err);
         }

@@ -43,6 +43,7 @@ const state = {
     commands: {},
     services: {}, // commands can add to this object themselves
     slash: {},
+    alias: {},
     prefix,
     isInTestMode,
     isInPersonalMode,
