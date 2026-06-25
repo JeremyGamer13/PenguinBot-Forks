@@ -11,7 +11,7 @@ class Command {
             unlisted: false,
         };
 
-        this.alias = ["etts", "ttse", "extratts",             "speak", "espeak", "speake", "extraspeak", "speakextra"];
+        this.alias = ["etts", "ttse", "extratts",                      "espeak", "speake", "extraspeak", "speakextra"];
     }
 
     async invoke(message, args, util) {
