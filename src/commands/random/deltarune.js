@@ -1,6 +1,6 @@
 const FormatTime = require("../../util/format-time.js");
 
-const activeTimestamp = 1784343200000;
+const activeTimestamp = 1819999990000;
 
 class Command {
     constructor() {
@@ -17,7 +17,7 @@ class Command {
         const difference = activeTimestamp - currentTime;
         message.reply({
             content: difference <= 0 ? `wha? whatre you doing-its ITS RIGHT NOW DELTARUNE NOW <:glee:1505817436895707288><:glee:1505817436895707288><:glee:1505817436895707288>`
-                : `Deltarune chapter 6 is in ${FormatTime.formatTime(difference)} (specifically, its happening on <t:${activeTimestamp / 1000}:s> <t:${activeTimestamp / 1000}:R>)`,
+                : `Deltarune chapter 67 is in ${FormatTime.formatTime(difference)} (specifically, its happening on <t:${activeTimestamp / 1000}:s> <t:${activeTimestamp / 1000}:R>)`,
             allowedMentions: {
                 parse: [],
                 users: [],
