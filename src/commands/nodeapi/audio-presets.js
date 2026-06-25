@@ -13,6 +13,7 @@ function newCommand(presetFunc, preset) {
 
             this.name = preset.short;
             this.description = preset.description;
+            this.attributes.helpIcon = "🔊";
 
             switch (preset.name) {
                 case "hopon":

@@ -22,6 +22,9 @@ class Command {
 
     getCommandIcon(command) {
         if (command.attributes && command.attributes.helpIcon) return command.attributes.helpIcon;
+        if (command.attributes.jgAiChatCommand) return "💬";
+        if (command.attributes.jgAiCoverCommand) return "🎙️";
+        if (command.attributes.jgollamaConfigsInvolved) return "✨";
         if (command.attributes.exclusive) return "<:gold_pengin:1158864673861537864>";
         if (command.attributes.spaceOwner) return "📰";
         if (command.attributes.lockedToHelp) return "📙";
