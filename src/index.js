@@ -39,18 +39,22 @@ nodeprocess.on('uncaughtException', (err) => {
 // add state stuff
 const prefix = isInTestMode ? env.get("PREFIX_TEST")
     : (isInPersonalMode ? env.get("PREFIX_PERSONAL") : env.get("PREFIX"));
+const prefixPresets = isInTestMode ? env.get("PREFIX_PRESETS_TEST")
+    : (isInPersonalMode ? env.get("PREFIX_PRESETS_PERSONAL") : env.get("PREFIX_PRESETS"));
 const state = {
     commands: {},
     services: {}, // commands can add to this object themselves
     slash: {},
     alias: {},
     prefix,
+    prefixPresets,
     isInTestMode,
     isInPersonalMode,
     panelForcedDisabled: env.getBool("STATE_DEFAULT_PANELFORCEDDISABLED"),
     preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
 
     // JG: Random thihngs
+    nodeApiPresets: {},
     nodeApiOverlays: env.getBool("STATE_DEFAULT_NODEAPIOVERLAYS_PERSONAL") ? isInPersonalMode : env.getBool("STATE_DEFAULT_NODEAPIOVERLAYS"),
     nodeApiAudios: env.getBool("STATE_DEFAULT_NODEAPIAUDIOS_PERSONAL") ? isInPersonalMode : env.getBool("STATE_DEFAULT_NODEAPIAUDIOS"),
     nodeApiPresetCooldown: env.getNumber("STATE_DEFAULT_NODEAPIPRESETCOOLDOWN"),

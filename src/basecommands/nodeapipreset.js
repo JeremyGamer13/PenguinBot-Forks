@@ -2,6 +2,7 @@ const jgNodeUtils = require("jg-node-utils");
 
 const env = require("../util/env-util");
 const fetchNodeApi = require("../util/fetch-nodeapi");
+const CommandUtility = require("../util/utility.js");
 
 class NodeAPIPreset {
     constructor() {
@@ -16,17 +17,17 @@ class NodeAPIPreset {
         this.presetFunc = () => this.preset;
     }
 
-    makeUrl(message, args) {
+    makeUrl(message) {
         const preset = this.presetFunc();
         return preset.endpoint + jgNodeUtils.objectToSearchParams(preset.content);
     }
-    async invoke(message, args, util) {
-        const canDo = util.request(this.toggle);
-        if (!canDo) return message.reply(`disabled (this command is probably for discord screenshare)`);
+    async invoke(message) {
+        const canDo = CommandUtility.request(this.toggle);
+        if (!canDo) return;
         if (this.cooldownUsers[message.author.id] > Date.now()) return message.reply("no too much");
 
-        const endpoint = `${this.makeUrl(message, args)}`;
-        this.cooldownUsers[message.author.id] = Date.now() + util.request("nodeApiPresetCooldown");
+        const endpoint = `${this.makeUrl(message)}`;
+        this.cooldownUsers[message.author.id] = Date.now() + CommandUtility.request("nodeApiPresetCooldown");
 
         const result = await fetchNodeApi(endpoint);
         const resultJson = await result.json();
