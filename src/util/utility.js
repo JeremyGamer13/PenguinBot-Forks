@@ -9,7 +9,7 @@ const tryCatch = require('./try-catch');
 const bypass = require("./bypass-characters");
 const isCompatibleImage = require('./compatible-images');
 
-const automodKeywords = tryCatch(() => require('../resources/basic_automod')) || [];
+const automodKeywords = tryCatch(() => require('../resources/basic-automod')) || [];
 
 /**
  * @classdesc Meant to be a helper for common discord-related functions.

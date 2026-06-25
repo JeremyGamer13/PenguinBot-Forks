@@ -75,42 +75,47 @@ class BotEvent {
                     repliedUser: true
                 }
             });
-        }
-    
-        // handle cmds
-        // this is perhaps a command
-        const split = message.content.split(' ');
-        split[0] = split[0].replace(prefix, '');
-        if (!(split[0] in state.commands)) {
             return;
         }
     
-        const commandName = split[0];
-        const command = state.commands[commandName];
-    
+        // handle cmds because this is perhaps a command
+        // NOTE: Preserving whitespace characters like \n is important
+        const messageSlice = message.content.slice(prefix.length);
+        const indexOfFirstWhitespace = messageSlice.search(/\s/);
+        const commandName = indexOfFirstWhitespace === -1 ? messageSlice : messageSlice.slice(0, indexOfFirstWhitespace);
+        const command = state.commands[commandName] || state.alias[commandName];
+        if (!command) {
+            return message.reply({
+                content: `Command not found. Did you mean something else?\nUse \`${prefix}help\` to see a list of commands.`,
+                allowedMentions: {
+                    parse: [],
+                    users: [],
+                    roles: [],
+                    repliedUser: true
+                }
+            });
+        }
+
+        // Only chop off the first whitespace character, then preserve all the rest
+        const argumentsString = messageSlice.slice(commandName.length);
+        const indexOfFirstNonWhitespace = argumentsString.search(/\S/);
+        const textToSplit = (indexOfFirstNonWhitespace === -1 ? argumentsString : argumentsString.slice(indexOfFirstNonWhitespace));
+        const split = textToSplit === "" ? [] : textToSplit.split(" ");
         const isBlocked = CommandUtility.handleCommandBlock(command, message, split);
         if (isBlocked) return;
-    
-        // remove the command name argument
-        split.shift();
 
         // some commands can allow number conversion
         const convertNums = command.attributes.numberConversion === true;
-        const args = convertNums ? split.map(argument => {
-            if (isNaN(Number(argument))) {
-                return String(argument);
-            }
-            return Number(argument);
-        }) : split;
+        const args = convertNums ? split.map(arg => isNaN(Number(arg)) ? String(arg) : Number(arg)) : split;
     
         // use command now
         try {
-            /* client is passed so the command can send messages in arbitrary channels */
+            // client is passed so the command can send messages in arbitrary channels
             await command.invoke(message, args, CommandUtility, client);
         } catch (err) {
             console.error(err);
             message.reply({
-                content: `An unknown error occurred.\n${err}`,
+                content: `An unknown error occurred.\n${err}`.substring(0, 2000),
                 allowedMentions: {
                     parse: [],
                     users: [],

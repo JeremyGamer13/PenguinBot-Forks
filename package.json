@@ -10,23 +10,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/opus": "^0.10.0",
-    "@discordjs/rest": "^2.2.0",
-    "@discordjs/voice": "^0.16.0",
-    "axios": "^1.6.2",
-    "cors": "^2.8.5",
     "discord.js": "^13.14.0",
     "dotenv": "^16.4.7",
     "glob": "^11.0.3",
-    "moment": "^2.29.4",
-    "moment-duration-format": "^2.3.2",
-    "node-fetch": "^2.6.13",
     "sync-json-database": "^1.0.5",
     "systeminformation": "^5.31.7",
-    "tweetnacl": "^1.0.3",
-    "twemoji": "^14.0.2",
-    "undici": "^7.11.0",
-    "uuid": "^11.1.1",
-    "ws": "^8.17.0"
+    "uuid": "^11.1.1"
   }
 }
