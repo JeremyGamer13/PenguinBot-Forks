@@ -52,8 +52,8 @@ class BotEvent {
         const representationToolPause = ToolPause.getRepresentation();
         const representationToolRob = ToolMockRob.getRepresentation();
 
-        // every 3 hours
-        const messageCooldown = 3 * 60 * 60 * 1000;
+        // every 4 hours
+        const messageCooldown = 4 * 60 * 60 * 1000;
         setInterval(async () => {
             // we need to use .chat for tools
             // see how many times we want JSB to talk to Rob
@@ -64,7 +64,7 @@ class BotEvent {
             console.log("Rob Integration: Talking to Rob now");
             console.log("-----------------------------------");
             const robContext = lastRobMessages
-                .map(message => `${message.author.id === client.user.id ? `${configuration.nameBotReference} (You)` : (message.author.id === robUserId ? "Rob" : message.author.username)}: ${message.cleanContent.substring(0, 256) || "Ok Rob"}`)
+                .map(message => `${message.author.id === client.user.id ? `${configuration.nameBotReference} (You)` : (message.author.id === robUserId ? "Rob" : message.author.username)}: ${(message.cleanContent.substring(0, 256) || "Ok Rob").replace(`<@${robUserId}>`, "").trim()}`)
                 .join("\n");
             await OllamaChat.chat({
                 ...OllamaModels.robChatter,
@@ -72,8 +72,8 @@ class BotEvent {
                     role: "system",
                     content: `You are a Discord bot named ${configuration.nameBotReference}.`
                         + "\n" + `You are intended to discuss with another bot, named Rob.`
-                        + "\n" + `You must talk with Rob using the \`${representationToolRob.function.name}\` tool.`
-                        + "\n" + `All messaging will be processed strictly through the \`${representationToolRob.function.name}\` tool only.`
+                        + "\n" + `You must talk with Rob using the \`${representationToolRob.function.name}\` tool. Create a structured JSON tool call to use it.`
+                        + "\n" + `All messaging will be processed strictly through the \`${representationToolRob.function.name}\` tool only. You must send proper JSON tool calls with your message.`
                         + "\n"
                         + "\n" + `Rob is a green robot, with his caricature being the Bugdroid Android robot.`
                         + "\n" + `Rob is a conversational Discord bot created by Dogo6647.`
