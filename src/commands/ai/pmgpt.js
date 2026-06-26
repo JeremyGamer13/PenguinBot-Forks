@@ -90,7 +90,7 @@ class Command {
     cleanResponse(response) {
         const trimmed = response.replace(/\r/g, "").substring(0, 2000).trim();
         const newlineCount = trimmed.split("\n").length - 1;
-        const likelyResponse = (newlineCount <= 3 ? trimmed : trimmed.split("\n").shift()).trim();
+        const likelyResponse = (newlineCount <= 67 ? trimmed : trimmed.split("\n").shift()).trim();
         const noQuoteStart = (likelyResponse.startsWith('"') ? likelyResponse.slice(1) : likelyResponse);
         const noQuotes = (noQuoteStart.endsWith('"') ? noQuoteStart.slice(0, -1) : noQuoteStart);
 
