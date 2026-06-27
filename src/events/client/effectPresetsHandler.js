@@ -32,6 +32,8 @@ class BotEvent {
         
         // dont listen to actual commands
         if (message.content.startsWith(commandPrefix)) return;
+        // listen for prefix only
+        if (!message.content.startsWith(prefix)) return;
     
         // handle cmds because this is perhaps a command
         // NOTE: Preserving whitespace characters like \n is important
