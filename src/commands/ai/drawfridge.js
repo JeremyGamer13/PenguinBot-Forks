@@ -38,10 +38,14 @@ class Command {
             jgollamaConfigsInvolved: ["processorIO"],
         };
 
+        this.usersDrawing = new Set();
         this.alias = ["fridge", "drawsbpic"];
     }
 
     async invoke(message, args, util) {
+        if (this.usersDrawing.has(message.author.id))
+            return message.reply("shut the fuck up");
+
         // get user input
         const userMessage = args.join(" ").trim();
         const attachment = message.attachments.first();
@@ -71,6 +75,9 @@ class Command {
         let editingMessageTime = 0;
         try {
             console.log("SBPIC SBPIC SBPIC SBPIC SBPIC DRAWING  SBPIC\n\n");
+            if (this.usersDrawing.has(message.author.id)) throw new Error("This user is queued");
+            this.usersDrawing.add(message.author.id);
+
             const output = await OllamaChat.generate({
                 ...OllamaModels.processorIO,
                 system: `You are a drawing bot.`
@@ -125,6 +132,8 @@ class Command {
             console.error(err);
             // dont remove the old message
             return replyMessage.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+        } finally {
+            this.usersDrawing.delete(message.author.id);
         }
 
         console.log(response);
@@ -132,7 +141,7 @@ class Command {
         // we need to parse this response
         await editingMessagePromise;
         const renderedImageTry = await attemptRender(response);
-        const renderedFinalImage = (renderedImageTry && typeof renderedImageTry === "object") ? renderedImageTry : await attemptRender(lastValidJson);
+        const renderedFinalImage = (renderedImageTry && typeof renderedImageTry === "object") ? renderedImageTry : (typeof renderedImageTry === "string" && !lastValidJson ? renderedImageTry : await attemptRender(lastValidJson));
         // send SBPIC also
         const dataJson = renderedFinalImage === renderedImageTry ? jsonParseLoose(response) : jsonParseLoose(lastValidJson);
         const dataBuffer = Buffer.from(JSON.stringify(dataJson, null, 4), "utf8");
