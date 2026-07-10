@@ -22,6 +22,8 @@ class BotEvent {
         this.once = true;
 
         this.client = client;
+
+        this.productionOnly = true;
     }
 
     /**

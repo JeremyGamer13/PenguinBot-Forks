@@ -14,6 +14,7 @@ class BotEvent {
         this.client = client;
 
         this.publicOnly = true;
+        this.productionOnly = true;
     }
 
     /**
