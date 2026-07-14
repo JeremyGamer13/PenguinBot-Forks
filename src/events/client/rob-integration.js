@@ -110,10 +110,13 @@ class BotEvent {
                     switch (call.function.name) {
                         case representationToolRob.function.name:
                             console.log("Rob Integration: Talking to rob about", call.function.arguments);
+
+                            const robContent = await ToolMockRob.handle(robChannel, call);
+                            console.log("Rob Integration: ToolMockRob:", robContent);
                             tools.push({
                                 role: "tool",
                                 tool_name: representationToolRob.function.name,
-                                content: await ToolMockRob.handle(robChannel, call),
+                                content: robContent,
                             });
                             break;
                     }
