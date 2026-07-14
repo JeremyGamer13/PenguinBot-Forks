@@ -12,7 +12,7 @@ const configuration = {
         // The bot can use seperate text when running in test mode.
         // Note that the .env variables are available here if you use stuff like {{NAME}}, avoid using something like {{TOKEN}} or {{PENGUINMOD_PASSWORD}}
         normal: "a game probably",
-        testing: "a game probably",
+        testing: "my {{DEVICE_LABEL}} is ON",
         personal: "my {{DEVICE_LABEL}} is ON",
     },
 
@@ -170,6 +170,7 @@ const configuration = {
             '715193626430406770', // anonygoose
             '1274550888706474169', // ash unbravechimp
             '1446263635268735151', // not__bob
+            '1264445751723823245', // gen1x
         ],
 
         // Channels checked for in the lockedToCommands property (excluding commands channel from above & threads within that channel)
