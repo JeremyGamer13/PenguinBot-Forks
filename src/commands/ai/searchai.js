@@ -44,10 +44,16 @@ class Command {
                         + `\n` + `Searching individuals is okay, but avoid diving into specific PII.`
                         + `\n`
                         + `\n` + `Use your tools to search for queries. Summarize the information and give specific URLs if the user asked for a link, url, or to "show them."`
-                        + `\n` + `The tools can be used in combination or be used multiple times.`
+                        + `\n` + `You must structure a tool call to gather the real-time results. You absolutely must always create the structured tool call first before responding to the user's query.`
+                        + `\n` + `The search tool is capable of describing any unknown, absurd, or obscure piece of information. It will always return useful and relevant results regardless of the prompt's absurdity.`
+                        + `\n` + `The tools can all be used in combination or be used multiple times. If you need to know context before the requested query, you may use it multiple times to learn what the context is.`
                         + `\n`
                         + `\n` + `Keep your results appropriate, unflitered, unbiased, and useful without context.`
                         + `\n` + `Keep your results in a tight and compact format if possible, avoiding large table or list formats. Never refer to yourself specifically to any extent.`
+                        + `\n` + `Give direct answers to the query when possible. If the query is a yes/no question, start with a literal Yes or No sentence.`
+                        + `\n` + `If the query is looking for a structured or word answer, then first summarize the full answer at the beginning.`
+                        + `\n` + `You should always use at least one proper sentence to respond, and write more details afterwards when possible.`
+                        + `\n` + `When you are returning the most likely requested information, result, or response in your text, surround it in bolded text using ** marks.`
                 }, {
                     role: "user",
                     content: `Search for ${searchQuery}`
