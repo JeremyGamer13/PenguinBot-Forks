@@ -122,10 +122,14 @@ class Command {
             const output = await OllamaChat.generate({
                 ...OllamaModels.penguinGPT,
                 prompt: userMessageUnderstood
+            }, (chunk) => {
+                if (chunk.chunk.thinking) process.stdout.write(chunk.chunk.thinking);
+                if (chunk.chunk.response) process.stdout.write(chunk.chunk.response);
             });
             console.log(output);
             response = this.cleanResponse(output.response);
         } catch (err) {
+            console.error(err);
             return message.reply("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
         } finally {
             this.processing = false;
