@@ -49,6 +49,8 @@ const configuration = {
         spaces: "1139749855913316474",
         teamWanted: "1139749855913316474",
         spam: "1040077506029551647",
+
+        // TODO: Need to port train ai channel to this bot because it only rruns on pc anyway
     },
 
     permissions: {
@@ -94,6 +96,9 @@ const configuration = {
 
         // On top of the permission check, who can use pm!echo
         echo: [env.get("OWNER"), "462098932571308033", "567307285324496897"],
+
+        // On top of the permission check, who can use pm!toggle (enable/disable ai)
+        toggle: [env.get("OWNER")],
     },
 };
 

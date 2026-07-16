@@ -40,7 +40,8 @@ const state = {
     alias: {},
     prefix,
     isInTestMode,
-    preventRuntimeChanges: env.getBool('PREVENT_UPDATES')
+    preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
+    enabledAi: true, // TODO: TFInish this also i think i need to port ALLL of the ollama shit including config.js here
 };
 CommandUtility.state = state;
 CommandUtility.client = client;
