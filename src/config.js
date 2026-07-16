@@ -5,27 +5,21 @@ const configuration = {
     // Used in cases like "Welcome to the {NAME} server!" and "Do not post NSFW invites in the {NAME} server."
     nameReference: "PenguinMod",
     // The name of your bot (some files like the credits command will still say PenguinBot, since this is PenguinBot's code)
-    nameBotReference: "PenguinBot",
+    nameBotReference: "PenguinAI",
 
     // Status of the bot, stated in Discord like "Playing (text)" or "Playing a game" then, on a new line "(text)"
     status: {
         // The bot can use seperate text when running in test mode.
         // Note that the .env variables are available here if you use stuff like {{NAME}}, avoid using something like {{TOKEN}} or {{PENGUINMOD_PASSWORD}}
-        normal: "{{PREFIX}}help | PenguinMod",
-        testing: "{{PREFIX_TEST}}help | PenguinBot Testing",
+        normal: "💧 no water wasted",
+        testing: "{{PREFIX_TEST}}help | PenguinAI Testing",
     },
 
     // The bot has many auto responses, toggled using the RESPOND_TO_KEYWORDS env. They will only be usable in these channels:
     autoResponseChannels: [
         // These are the channels used in PenguinMod's server:
         // dont include things like bug reports or suggestions
-        '1038238583686967428', // penguin-chat
-        '1161202733269930075', // vip-chat
-        '1052023660594081862', // projects
-        '1038236110335266907', // off-topic
         '1038251459843723274', // commands
-        '1038261660164563044', // old-secret-penguin-chat
-        '1161439112096665711', // one-minute-and-37-seconds
         '1139749855913316474', // penguinbot-test
     ],
 
@@ -42,24 +36,23 @@ const configuration = {
 
         // The channel where blocked automod alerts are sent. PenguinBot will send automod bypass alerts here too, if the basic-automod file is added.
         // See src/util/utility.js to see where basic-automod is used.
-        automod: "1335746419193151598",
+        automod: "1139749855913316474",
 
         // A channel where PenguinBot can send reported users to. Usable via /report
-        userReports: "1174360726765305987",
+        userReports: "1139749855913316474",
 
         // A channel where PenguinBot can send reported mods to. Usable via /modreport
-        adminReports: "1214727525607936020",
+        adminReports: "1139749855913316474",
 
-        help: "1090809014343974972",
-        spaces: "1181097377730400287",
-        teamWanted: "1095867529169207416",
+        help: "1139749855913316474",
+        spaces: "1139749855913316474",
+        teamWanted: "1139749855913316474",
         spam: "1040077506029551647",
     },
 
     permissions: {
         // Permission Level 1: A low permission level that isnt used much.
         permission1: [
-            "1170911460948451438", // Bot Developer
         ],
         // Permission Level 2: Reserved for moderator commands.
         permission2: [
@@ -95,19 +88,10 @@ const configuration = {
         ],
 
         // On top of the permission check, who can use pm!eval (run custom code)
-        eval: [env.get("OWNER"), "462098932571308033", "567307285324496897"],
+        eval: [env.get("OWNER")],
 
         // On top of the permission check, who can use pm!echo
         echo: [env.get("OWNER"), "462098932571308033", "567307285324496897"],
-
-        // On top of the permission check, who can use pm!delmsg
-        delmsg: [env.get("OWNER"), "462098932571308033", "567307285324496897"],
-
-        // On top of the permission check, who can use pm!penguinbotupload
-        penguinbotupload: [env.get("OWNER"), "462098932571308033", "567307285324496897"],
-
-        // Who can use "force" options in pm!exclusiverole
-        exclusiveroleForce: [env.get("OWNER"), "462098932571308033", "567307285324496897"],
     },
 };
 

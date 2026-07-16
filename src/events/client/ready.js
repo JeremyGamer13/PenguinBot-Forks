@@ -5,8 +5,6 @@ const env = require("../../util/env-util");
 const envFill = require("../../util/env-fill");
 const configuration = require("../../config");
 
-const ReactionMessageUtil = require("../../util/reaction-msg-util");
-
 class BotEvent {
     constructor(client) {
         this.listener = "ready";
@@ -121,17 +119,6 @@ class BotEvent {
         // log when commands cant load
         if (failed) {
             mainChannel.send(`Some commands failed to load.\n\n${errors}`.substring(0, 2000));
-        }
-
-        // extra tasks
-        // spaces reaction messages
-        if (!isInTestMode) {
-            try {
-                await ReactionMessageUtil.handleStartup(client);
-            } catch (err) {
-                mainChannel.send(`Failed to handle ReactionMessageUtil.handleStartup(). Listing spaces that failed.\n\n${err}`.substring(0, 2000));
-                console.warn(err);
-            }
         }
     }
 }

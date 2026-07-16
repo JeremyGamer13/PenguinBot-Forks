@@ -40,7 +40,6 @@ const state = {
     alias: {},
     prefix,
     isInTestMode,
-    panelForcedDisabled: env.getBool("STATE_DEFAULT_PANELFORCEDDISABLED"),
     preventRuntimeChanges: env.getBool('PREVENT_UPDATES')
 };
 CommandUtility.state = state;

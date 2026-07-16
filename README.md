@@ -1,3 +1,7 @@
+# PenguinAI
+This is a fork of PenguinBot-Public for the PenguinAI Discord Bot seen in the PenguinMod server.
+Some things are omitted from this repository and you will not find downloads for them.
+
 # PenguinBot-Public
 A stripped-down public version of PenguinBot.
 Certain features or commands may be missing from this repository.
@@ -13,13 +17,6 @@ This bot was originally built to be a Private Bot for PenguinMod's Discord Serve
 You can edit most of these Discord-specific features in the `src/config.js` file. More complicated checks may be present in the `src/util/utility.js` file or `src/events/client` folder.
 Most other things will just be command-specific checks or custom emojis being used.
 
-The bot uses many assets that cannot be released inside of this repo.
-
-You can find them here:
-https://drive.google.com/file/d/1TwvCSmPvxthxB1taJ4c-1wrxhgVhLEl1/view?usp=sharing
-
-Note that **fonts are not included** in this download.
-
 For the most part, you need a good understanding of JavaScript and JSON to make commands or do anything meaningful with the code of this bot.
 
 # License
@@ -33,10 +30,8 @@ The `assets` folder is **NOT** under this license. Content in there may be licen
 If you do not do this, many commands relating to managing the GitHub repository will cause undefined behavior.
 
 1. Install Node.js, preferably v18 or v20. **Newer versions of Node may not be compatible out of the box with Canvas or other modules yet.**
-2. Install FFMPEG. Easiest way to check if it's setup properly is to run `ffmpeg` in a terminal with no arguments.
 3. Install Git
-4. Create a `cache`, `databases`, `temp`, and `memes` folder in the root folder for PenguinBot.
-5. Download the `assets` folder in the link found in the Notes section, and put it in the root folder for PenguinBot.
+4. Create a `cache`, `databases`, `temp` folder in the root folder for PenguinBot.
 6. Install all of the node modules with `npm ci` or `npm i`
     - If you have `nvm` installed to switch between Node installations, you may need to rebuild canvas when switching versions by using `npm rebuild canvas`
 7. Duplicate `.env.template` and rename it to `.env`, then fill any of the information you can.
@@ -46,28 +41,6 @@ If you do not do this, many commands relating to managing the GitHub repository 
     - When the bot is online, you can use the `restart` command in Discord to restart the bot.
 
 Check the Notes section for details on customizing PenguinBot to your liking.
-
-# Basic Commands Template
-```js
-const OptionType = require('../util/optiontype');
-
-class Command {
-    constructor() {
-        this.name = "base";
-        this.description = "Description";
-        this.attributes = {
-            unlisted: true,
-            permission: 3
-        };
-    }
-
-    invoke(message) {
-
-    }
-}
-
-module.exports = Command;
-```
 
 # Signoffs
 Have a good life! Don't ever think you can't do something, you always can when you're programming something.
