@@ -12,6 +12,7 @@ class Command {
         this.attributes = {
             unlisted: true,
             permission: 0,
+            lockedToCommands: true,
         };
         this.slash = {
             options: [{

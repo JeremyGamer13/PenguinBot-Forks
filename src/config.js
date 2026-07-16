@@ -21,6 +21,7 @@ const configuration = {
         // dont include things like bug reports or suggestions
         '1038251459843723274', // commands
         '1139749855913316474', // penguinbot-test
+        '1481769780418711562', // penguin-bot (test server)
     ],
 
     // Used to link to channels within the server. These IDs are the ones we use in PenguinMod.
@@ -85,6 +86,7 @@ const configuration = {
             '1176024649390366780', // admin-chat
             '1176024748300443698', // admin-furry-rp
             '1126699478607470652', // mod-furry-rp
+            '1481769780418711562', // penguin-bot (test server)
         ],
 
         // On top of the permission check, who can use pm!eval (run custom code)

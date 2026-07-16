@@ -13,9 +13,7 @@ class Command {
     }
 
     reject(message) {
-        message.reply({
-            files: ['./assets/randomImages/iknow.png']
-        });
+        return message.reply("🫩");
     }
 
     run(message, args, util) {

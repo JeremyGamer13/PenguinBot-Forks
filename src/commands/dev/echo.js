@@ -12,9 +12,7 @@ class Command {
     }
 
     reject(message) {
-        message.reply({
-            content: '<:haha:1124199185021927528>'
-        });
+        return message.reply("naw");
     }
 
     extractMessageFromReply(message) {
