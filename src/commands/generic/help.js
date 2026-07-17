@@ -42,6 +42,7 @@ class Command {
         if (command.attributes.lockedToHelp) return "📙";
         if (command.attributes.lockedToChannels) return "🔒";
         if (command.attributes.lockedToCommands) return "🤖";
+        if (command.attributes.lockedToPenguinAI) return "✨";
         return "👤";
     }
     async handleSendingList(message, args, util) {

@@ -22,6 +22,7 @@ const configuration = {
         '1038251459843723274', // commands
         '1139749855913316474', // penguinbot-test
         '1481769780418711562', // penguin-bot (test server)
+        '1527141148777254982', // penguin-ai (test server)
     ],
 
     // Used to link to channels within the server. These IDs are the ones we use in PenguinMod.
@@ -50,7 +51,8 @@ const configuration = {
         teamWanted: "1139749855913316474",
         spam: "1040077506029551647",
 
-        // TODO: Need to port train ai channel to this bot because it only rruns on pc anyway
+        // PM AI: the train AI channel
+        trainAi: "1490146686776119497",
     },
 
     permissions: {
@@ -89,6 +91,16 @@ const configuration = {
             '1176024748300443698', // admin-furry-rp
             '1126699478607470652', // mod-furry-rp
             '1481769780418711562', // penguin-bot (test server)
+            '1527141148777254982', // penguin-ai (test server)
+        ],
+
+        // Channels checked for in the lockedToPenguinAI property (excluding channels that have been whitelisted for usage on runtime)
+        lockedToPenguinAI: [
+            '1038251459843723274', // commands
+            '1174359501688803358', // commandsDev
+            '1139749855913316474', // penguinbot-test
+            '1481769780418711562', // penguin-bot (test server)
+            '1527141148777254982', // penguin-ai (test server)
         ],
 
         // On top of the permission check, who can use pm!eval (run custom code)
@@ -99,6 +111,29 @@ const configuration = {
 
         // On top of the permission check, who can use pm!toggle (enable/disable ai)
         toggle: [env.get("OWNER")],
+    },
+
+    // PM AI: Our unique settings
+    penguinAi: {
+        // TODO: Add this,. See if we can:
+        // use a Markov chain method to run the AI much cheaper on CPU when the main model is unavailable
+        markovModel: false,
+
+        // TODO: Add this, see above also
+        // Use the markov model when the AI takes longer than 10 seconds to respond (warming up)
+        markovModelOnWarmUp: false,
+
+        // TODO: Add this
+        // If true, messages are preprocessed by a formal model to see if PenguinAI should have tool results in the conversation
+        // This is because PenguinAI might have access to tools but the model might be too off-track by the training data to genuinely use them properly
+        preprocessRequestForTools: false,
+
+        // PM AI: can ollama use images on this device? (in some cases, even if a model can run with vision capability,
+        // image requests might take forever to process and arent worth doing)
+        ollamaImageProcessingViable: true,
+
+        // PM AI: whether or not train AI channel does anything
+        trainAIEnabled: true,
     },
 };
 

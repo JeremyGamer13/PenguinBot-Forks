@@ -21,6 +21,7 @@ src/util/gamejam-themegen.js
 src/resources/basic-automod.js
 src/commands/gameidea.js
 src/commands/textmodifier/joyous.js
+src/util/ai-unsafe.js
 
 # runtime folders
 cache/*

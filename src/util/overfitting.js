@@ -70,7 +70,7 @@ const isOverfitting = (response = "") => {
  * @returns {string}
  */
 const appendOverfitting = (response = "") => {
-    const likelyOverfitting = this.isResponseOverfitting(response);
+    const likelyOverfitting = isOverfitting(response);
     const overfittingWarning = "\n-# This response is likely regurgitating from the dataset. (overfitting)";
     return !likelyOverfitting ? response : (response.substring(0, 1995 - overfittingWarning.length) + overfittingWarning);
 };

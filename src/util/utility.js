@@ -352,6 +352,25 @@ class CommandUtility {
                 return true;
             }
         }
+        // PM AI:
+        if (command.attributes.lockedToPenguinAI === true && this.getPermissionLevel(message) < 3) {
+            // check which channel we are in
+            let canBeUsed = true;
+            if (message.guild && (message.guild.id === env.get("SERVER_ID")
+                || (env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guild.id === "746156168560508950"))) { // i have a test server so
+                canBeUsed = configuration.permissions.lockedToPenguinAI.includes(message.channel.id);
+                if (command.attributes.unlockedChannels) {
+                    // there are other conditions here
+                    canBeUsed = canBeUsed
+                        || command.attributes.unlockedChannels.includes(message.channel.id)
+                        || command.attributes.unlockedChannels.includes(message.channel.parentId);
+                }
+            }
+            if (!canBeUsed) {
+                this._commandBlockReject(command, message, split, `This command can only be used in PenguinAI channels.`);
+                return true;
+            }
+        }
         if (command.attributes.lockedToHelp) {
             // check which channel we are in
             let canBeUsed = true;
