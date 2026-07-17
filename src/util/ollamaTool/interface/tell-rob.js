@@ -40,7 +40,7 @@ class ToolMockRob {
             const collected = await channel.awaitMessages({
                 filter: m => m.author.id === robId,
                 max: 1,
-                time: 10000,
+                time: 30 * 1000, // 30 seconds
                 errors: ['time']
             });
             const spentTimeStr = ((Date.now() - startTime) / 1000).toFixed(2);

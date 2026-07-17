@@ -72,7 +72,7 @@ class OllamaModels {
     static svgCoderImage = {
         model: "gemma4:e4b",
         think: false,
-        timeout: 5 * 60 * 1000, // 5 minutes
+        timeout: 10 * 60 * 1000, // 10 minutes
         options: {
             num_ctx: 8192
         },
