@@ -40,12 +40,6 @@ class OllamaModels {
         timeout: 1 * 60 * 1000, // 1 minute
     };
     /** @type {Ollama.ChatRequest} */
-    static penguinGPT = {
-        model: "custom-penguinmod-server-v3",
-        think: false,
-        timeout: 1.5 * 60 * 1000, // 1.5 minute
-    };
-    /** @type {Ollama.ChatRequest} */
     static tuffScript = {
         model: "gemma4:e2b",
         think: true,

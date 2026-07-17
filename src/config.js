@@ -50,7 +50,6 @@ const configuration = {
             processorIO: true,
             messageRewriter: true,
             lightText: true,
-            penguinGPT: true,
             tuffScript: true,
             robChatter: true,
             searchOverview: true,
@@ -62,9 +61,6 @@ const configuration = {
         // jg: can ollama use images on this device? (in some cases, even if a model can run with vision capability,
         // image requests might take forever to process and arent worth doing)
         ollamaImageProcessingViable: true,
-
-        // jg: whether or not train AI channel does anything
-        funkyTrainAIEnabled: true,
     },
 
     // Used to link to channels within the server. These IDs are the ones we use in PenguinMod.
@@ -102,9 +98,6 @@ const configuration = {
 
         // jg: The british chat
         funkyBritishChat: "1488692670665855027",
-
-        // jg: the train AI channel
-        funkyTrainAI: "1490146686776119497",
 
         // jg: the No talking channel
         funkyNoTalking: "1488734908242329622",
