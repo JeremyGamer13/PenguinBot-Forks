@@ -1,3 +1,5 @@
+const discord = require("discord.js");
+
 const PenguinAI = require("../../util/penguinai.js");
 
 const configuration = require("../../config.js");
@@ -27,6 +29,7 @@ class Command {
         });
         message.reply({
             content: response,
+            flags: discord.MessageFlags.FLAGS.SUPPRESS_EMBEDS,
             allowedMentions: {
                 parse: [],
                 users: [],
