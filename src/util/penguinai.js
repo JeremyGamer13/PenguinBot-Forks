@@ -80,10 +80,13 @@ class PenguinAI {
             });
             
             // block it if the AI said something bad
-            if (!CommandUtility.automodAllows(output.response, true)) {
+            const blockedWord = CommandUtility.automodAllows(output.response, true, true);
+            if (blockedWord) {
                 console.log(`tried to post automodded response from pmgpt`
                     + "\n" + `---\n${options.prompt}\n---`
-                    + "\n" + `---\n${output.response}\n---`);
+                    + "\n" + `---\n${output.response}\n---`
+                    + "\n" + `he said ${blockedWord}`
+                    + "\n");
                 return "uhh dont say that again.";
             }
 

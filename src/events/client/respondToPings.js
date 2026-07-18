@@ -23,6 +23,10 @@ class BotEvent {
      * @returns 
      */
     addMessageToHistory(message) {
+        // see if this is automodded/ai controlling
+        if (!PenguinAI.canListenTo(message.cleanContent))
+            return;
+
         const channelId = message.channel.id;
         const history = PenguinAI.history.get(channelId) || [];
 
