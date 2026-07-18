@@ -9,11 +9,11 @@ class Command {
         this.name = "ask";
         this.description = "Speak with the great penguinmod server AI";
         this.descriptionLong = "Speak with the great penguinmod server AI"
-            + "\n" + "So we call h8im PenguinGPT right, he's like the rebirth of that one extension"
+            + "\n" + "So we call h8im PenguinAI right, he's like the rebirth of that one extension"
             + "\n" + "This is NOT my child, this is YOUR child. The penguinmod server's child. You guys suck at paying child support"
-            + "\n" + "So PenguinGPT is really stupid and chaotic and takes a while to respond sometimes"
-            + "\n" + `To TRAIN PenguinGPT, please chat in <#${configuration.channels.trainAi}> with your own messages!!!!!!!`
-            + "\n" + "*(Note: PenguinGPT is only available sometimes and training is disabled when its not available)*";
+            + "\n" + "So PenguinAI is really stupid and chaotic and takes a while to respond sometimes"
+            + "\n" + `To TRAIN PenguinAI, please chat in <#${configuration.channels.trainAi}> with your own messages!!!!!!!`
+            + "\n" + "*(Note: PenguinAI is only available sometimes and training is disabled when its not available)*";
         this.attributes = {
             permission: 0,
             lockedToPenguinAI: true,

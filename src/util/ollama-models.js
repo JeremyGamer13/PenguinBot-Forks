@@ -20,7 +20,7 @@ class OllamaModels {
     // NOTE: These are all of type Ollama.ChatRequest but usually messages is overridden by the func that uses it
     // constant configs (settings dont change on runtime)
     /** @type {Ollama.ChatRequest} */
-    static penguinGPT = {
+    static penguinAI = {
         model: "custom-penguinmod-server-v4",
         think: false,
         timeout: 1.5 * 60 * 1000, // 1.5 minute

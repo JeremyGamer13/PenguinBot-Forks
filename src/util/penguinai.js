@@ -68,10 +68,10 @@ class PenguinAI {
                 // TODO: This
                 throw new Error("Configuration enables unimplemented settings: markovModelOnWarmUp");
 
-            // ask PenguinGPT ollama
-            console.log("\n", "PenguinAI askng PenguinGPT", userMessageUnderstood, "\n");
+            // ask penguinAI ollama
+            console.log("\n", "PenguinAI bot askng penguinAI model", userMessageUnderstood, "\n");
             const output = await OllamaChat.generate({
-                ...OllamaModels.penguinGPT,
+                ...OllamaModels.penguinAI,
                 ...options,
                 prompt: userMessageUnderstood,
             }, (chunk) => {
@@ -82,7 +82,7 @@ class PenguinAI {
             // block it if the AI said something bad
             const blockedWord = CommandUtility.automodAllows(output.response, true, true);
             if (blockedWord) {
-                console.log(`tried to post automodded response from pmgpt`
+                console.log(`tried to post automodded response from pmai`
                     + "\n" + `---\n${options.prompt}\n---`
                     + "\n" + `---\n${output.response}\n---`
                     + "\n" + `he said ${blockedWord}`
