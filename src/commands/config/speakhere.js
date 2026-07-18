@@ -1,15 +1,15 @@
 const Database = require('sync-json-database');
 const WhitelistChannels = new Database('./databases/whitelist-channels.json');
+const SpeakingChannels = new Database('./databases/speaking-channels.json');
 
-const OptionType = require('../util/optiontype');
+const PenguinAI = require('../../util/penguinai.js');
 
 class Command {
     constructor() {
         this.name = "speakhere";
-        this.description = "Enable or disable PenguinAI chatting in a channel.";
-        this.descriptionLong = "Enable or disable PenguinAI chatting in a channel."
-            + "\n" + "This also enables PenguinAI commands that prompt the AI."
-            + "\n" + "By default, PenguinAI doesn't speak in channels he doesn't know about.";
+        this.description = "Enable or disable PenguinAI chatting automatically in a channel.";
+        this.descriptionLong = "Enable or disable PenguinAI listening & chatting automatically in a channel."
+            + "\n" + "This also whitelists the channel for other AI behavior.";
         this.example = [
             { text: "{{prefix}}speakhere" },
             { text: "{{prefix}}speakhere disable" },
@@ -20,9 +20,18 @@ class Command {
     }
 
     invoke(message, args) {
+        const channelId = message.channel.id;
         const enableSpeaking = args[0] !== 'disable';
-        WhitelistChannels.set(message.channel.id, enableSpeaking);
-        message.reply(`Got it. I ${enableSpeaking ? "will start listening here" : "will not speak here anymore"}.`);
+        SpeakingChannels.set(channelId, enableSpeaking);
+
+        // whitelist this channel if we want to speak here
+        if (enableSpeaking)
+            WhitelistChannels.set(channelId, true);
+
+        if (!PenguinAI.canListenIn(channelId))
+            PenguinAI.history.delete(channelId);
+
+        message.reply(`Got it I ${enableSpeaking ? "will START speaking here" : "will NOT talk here anymore :("}`);
     }
 }
 

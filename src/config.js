@@ -38,17 +38,17 @@ const configuration = {
 
         // The channel where blocked automod alerts are sent. PenguinBot will send automod bypass alerts here too, if the basic-automod file is added.
         // See src/util/utility.js to see where basic-automod is used.
-        automod: "1139749855913316474",
+        automod: "",
 
         // A channel where PenguinBot can send reported users to. Usable via /report
-        userReports: "1139749855913316474",
+        userReports: "",
 
         // A channel where PenguinBot can send reported mods to. Usable via /modreport
-        adminReports: "1139749855913316474",
+        adminReports: "",
 
-        help: "1139749855913316474",
-        spaces: "1139749855913316474",
-        teamWanted: "1139749855913316474",
+        help: "",
+        spaces: "",
+        teamWanted: "",
         spam: "1040077506029551647",
 
         // PM AI: the train AI channel

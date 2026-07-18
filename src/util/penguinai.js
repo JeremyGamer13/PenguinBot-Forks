@@ -1,3 +1,7 @@
+const Database = require('sync-json-database');
+const WhitelistChannels = new Database('./databases/whitelist-channels.json');
+const SpeakingChannels = new Database('./databases/speaking-channels.json');
+
 const Ollama = require("ollama-chatting");
 const OllamaModels = require("./ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
@@ -86,7 +90,9 @@ class PenguinAI {
             // the AI response is fine
             return !shouldClean ? output.response : cleanResponse(output.response, cleanOptions);
         } catch (err) {
-            // TODO: Catch the "final chunk missing done" error and return "uhh can u say that again?" if so
+            // NOTE: soemtimes the ai is too Fucking lost that it just doesnt give done so
+            if (`${err}`.includes("Did not receive done or success response in stream"))
+                return "uhh can u say that again?";
             throw new Error(err);
         }
     }
@@ -110,6 +116,61 @@ class PenguinAI {
         } finally {
             this._queueProcessing = false;
         }
+    }
+
+    /**
+     * The max length of the history list
+     * @returns {10}
+     */
+    static get HISTORY_LENGTH() {
+        return 10;
+    }
+
+    /**
+     * Global message history of channel id -> message content[]
+     * @type {Map<string, string[]>}
+     */
+    static history = new Map();
+
+    /**
+     * Whether or not PenguinAI is allowed to listen in this channel right now
+     * @param {string} channelId 
+     * @returns {boolean}
+     */
+    static canListenIn(channelId) {
+        if (!CommandUtility.request('enabledAi')) return false;
+        if (channelId === configuration.channels.spam) return false;
+        if (channelId === configuration.channels.userReports) return false;
+        if (channelId === configuration.channels.adminReports) return false;
+
+        const channelSpecification = WhitelistChannels.get(channelId);
+        const isDisabledInWhitelist = channelSpecification === false;
+        if (isDisabledInWhitelist) return false;
+
+        // if channelSpecification is truthy by this point, then it was configured to be usable
+        return channelSpecification ? true : configuration.permissions.lockedToPenguinAI.includes(channelId);
+    }
+    /**
+     * Whether or not PenguinAI is allowed to speak automatically in this channel right now
+     * @param {string} channelId 
+     * @returns {boolean}
+     */
+    static canSpeakIn(channelId) {
+        if (!CommandUtility.request('enabledAi')) return false;
+        if (channelId === configuration.channels.spam) return false;
+        if (channelId === configuration.channels.userReports) return false;
+        if (channelId === configuration.channels.adminReports) return false;
+        return SpeakingChannels.get(channelId) === true;
+    }
+
+    /**
+     * Whether or not PenguinAI is allowed to listen to the specified message (save it in limited history)
+     * @param {string} content 
+     * @returns {boolean}
+     */
+    static canListenTo(content) {
+        if (!CommandUtility.request('enabledAi')) return false;
+        return !isMessageUnsafeForAgent(content) && CommandUtility.automodAllows(content, true);
     }
 
     /**

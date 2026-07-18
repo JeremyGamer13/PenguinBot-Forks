@@ -30,7 +30,6 @@ class BotEvent {
 
         const prefix = state.prefix;
         const isInTestMode = state.isInTestMode;
-        const isInPersonalMode = state.isInPersonalMode;
 
         const isTestingInPublic = isInTestMode && !(env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guildId === "746156168560508950")
 
