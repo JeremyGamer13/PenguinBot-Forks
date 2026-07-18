@@ -84,7 +84,8 @@ class BotEvent {
                 prompt: history.length <= 0 ? message.cleanContent : ""
                     + "Some other people were talking about like,"
                     + "\n" + history.toReversed().join("\n")
-                    + "\n" + `But what i wanna say to you is ${message.cleanContent}`,
+                    + "\n"
+                    + "\n" + `But what I ACTUALLY wanna say to you, is ${message.cleanContent}`,
             });
             await message.reply({
                 content: response,

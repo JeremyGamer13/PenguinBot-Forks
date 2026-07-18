@@ -94,7 +94,7 @@ class PenguinAI {
             return !shouldClean ? output.response : cleanResponse(output.response, cleanOptions);
         } catch (err) {
             // NOTE: soemtimes the ai is too Fucking lost that it just doesnt give done so
-            if (`${err}`.includes("Did not receive done or success response in stream"))
+            if (`${err}`.includes("Did not receive done or success response in stream") || `${err}`.includes("This operation was aborted"))
                 return "uhh can u say that again?";
             throw new Error(err);
         }
