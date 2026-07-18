@@ -120,10 +120,10 @@ class PenguinAI {
 
     /**
      * The max length of the history list
-     * @returns {10}
+     * @returns {4}
      */
     static get HISTORY_LENGTH() {
-        return 10;
+        return 4;
     }
 
     /**
