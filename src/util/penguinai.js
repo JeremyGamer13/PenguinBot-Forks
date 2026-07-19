@@ -128,7 +128,7 @@ class PenguinAI {
                                 if (alreadyCompleted) return resolve();
                                 reject(err);
                             }
-                        }, usingMarkov ? 0 : 15000);
+                        }, usingMarkov ? 0 : 8000);
                     });
                 };
 
