@@ -24,6 +24,7 @@ class Command {
     invoke(message, args) {
         const channelId = message.channel.id;
         const enableListening = args[0] !== 'disable';
+        // TODO: Need to sync this between hosts (this runs on both jg compujter and jg laptop)
         WhitelistChannels.set(channelId, enableListening);
 
         // we cant be speaking if we arent whitelisted

@@ -22,6 +22,7 @@ class Command {
     invoke(message, args) {
         const channelId = message.channel.id;
         const enableSpeaking = args[0] !== 'disable';
+        // TODO: Need to sync this between hosts (this runs on both jg compujter and jg laptop)
         SpeakingChannels.set(channelId, enableSpeaking);
 
         // whitelist this channel if we want to speak here

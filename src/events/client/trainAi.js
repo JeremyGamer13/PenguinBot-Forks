@@ -40,6 +40,7 @@ class BotEvent {
         ) return;
 
         // train ai
+        // TODO: Need to sync this between hosts (this runs on both jg compujter and jg laptop)
         if (configuration.penguinAi.trainAIEnabled && message.channel.id === configuration.channels.trainAi) {
             if (message.content.startsWith("!")) return;
             // dont learn pings
