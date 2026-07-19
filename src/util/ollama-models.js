@@ -39,12 +39,6 @@ class OllamaModels {
         think: false,
         timeout: 1 * 60 * 1000, // 1 minute
     };
-    /** @type {Ollama.ChatRequest} */
-    static tuffScript = {
-        model: "gemma4:e2b",
-        think: true,
-        timeout: 2 * 60 * 1000, // 2 minutes
-    };
     /** must have access to tools @type {Ollama.ChatRequest} */
     static robChatter = {
         model: "gemma4:e2b",
