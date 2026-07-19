@@ -7,6 +7,7 @@ const Ollama = require("ollama-chatting");
 const OllamaModels = require("./ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
+const env = require("./env-util.js");
 const tryCatch = require("./try-catch.js");
 const configuration = require("../config.js");
 const CommandUtility = require("./utility.js");
@@ -61,6 +62,8 @@ class PenguinAI {
         const promptAutomodded = options.automod !== false && !CommandUtility.automodAllows(options.prompt, true);
         if (usingMarkov && options.system)
             throw new Error("Cannot use a system prompt when the markov model is in use");
+        if (!usingMarkov && !env.getBool("OLLAMA_ENABLED"))
+            throw new Error("Ollama is disabled");
 
         // use this message for markov (we dont need to encourage markov model to do anything because,,,, what would it change)
         let userMessageUnderstood = options.prompt;
