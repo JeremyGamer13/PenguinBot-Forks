@@ -187,6 +187,8 @@ class PenguinAI {
 
                 // DISCLOSURE: ai extended (this originally only looked for 1 keyword before maxTries/2)
                 if (result.tries < maxTries / 2) {
+                    // we dont wanna find thenm in order we wanan find the keywords in any random order
+                    keywords.sort(() => Math.random() - 0.5);
                     // 2. Determine how many keywords are required based on tries
                     // 0-250: 4, 250-500: 3, 500-750: 2, 750-1000: 1
                     const segmentSize = (maxTries / 2) / keywords.length;

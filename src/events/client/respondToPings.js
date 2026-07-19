@@ -82,8 +82,7 @@ class BotEvent {
             try { await message.channel.sendTyping(); } catch { } // genuinely dont care if this fails
 
             const response = await PenguinAI.generate({
-                // TODO: If we know we're talking to the markov model, dont bother giving history
-                prompt: history.length <= 0 ? message.cleanContent : ""
+                prompt: state.enabledMarkov || history.length <= 0 ? message.cleanContent : ""
                     + "Some other people were talking about like,"
                     + "\n" + history.toReversed().join("\n")
                     + "\n"
