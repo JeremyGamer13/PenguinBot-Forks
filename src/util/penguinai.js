@@ -121,7 +121,7 @@ class PenguinAI {
                             // ask penguinAI markov
                             try {
                                 console.log("\n", "PenguinAI markov falling back; looking for keywords in", userMessageUnderstood, "\n");
-                                const output = await this._generateMarkov();
+                                const output = await this._generateMarkov(userMessageUnderstood);
                                 return resolve(output);
                             } catch (err) {
                                 // ignore markov errors if the ollama model finished in time
