@@ -6,25 +6,23 @@ const configuration = require("../../config.js");
 
 class Command {
     constructor() {
-        this.name = "ask";
-        this.description = "Speak with the great penguinmod server AI";
-        this.descriptionLong = "Speak with the great penguinmod server AI"
-            + "\n" + "So we call h8im PenguinAI right, he's like the rebirth of that one extension"
-            + "\n" + "This is NOT my child, this is YOUR child. The penguinmod server's child. You guys suck at paying child support"
-            + "\n" + "So PenguinAI is really stupid and chaotic and takes a while to respond sometimes"
-            + "\n" + `To TRAIN PenguinAI, please chat in <#${configuration.channels.trainAi}> with your own messages!!!!!!!`;
+        this.name = "markov";
+        this.description = "Speak with PenguinAI with less intelligence";
+        this.descriptionLong = "Speak with PenguinAI as a Markov model/chain"
+            + "\n" + "This version of PenguinAI is also used when the LLM is unavailable."
+            + "\n" + "You are more likely to get sentence-copies and imitated messages from the Markov model."
+            + "\n" + "See the ask command for training info.";
         this.attributes = {
             permission: 0,
             lockedToPenguinAI: true,
         };
-
-        this.alias = ["prompt", "pmgpt", "penguingpt", "pmai", "penguinai", "penguinmodgpt", "penguinmodai"];
     }
     async invoke(message, args, util) {
         try { await message.channel.sendTyping(); } catch {}
 
         const response = await PenguinAI.generate({
             prompt: args.join(" "),
+            markov: true,
         });
         message.reply({
             content: response,

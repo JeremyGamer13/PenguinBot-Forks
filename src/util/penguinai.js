@@ -2,6 +2,7 @@ const Database = require('sync-json-database');
 const WhitelistChannels = new Database('./databases/whitelist-channels.json');
 const SpeakingChannels = new Database('./databases/speaking-channels.json');
 
+// things needed for ollama
 const Ollama = require("ollama-chatting");
 const OllamaModels = require("./ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
@@ -12,9 +13,34 @@ const CommandUtility = require("./utility.js");
 const cleanResponse = require("./clean-response.js");
 const isMessageUnsafeForAgent = tryCatch(() => require('./ai-unsafe.js')) || (() => false);
 
+// things needed by markov model
+const { default: Markov } = require('markov-strings');
+const markovData = require("../resources/markov-data.json"); // TODO: tryCatch this
+const markov = new Markov({ stateSize: 2 });
+markov.addData(markovData.content);
+
+const nouns = require("../resources/nouns.json");
+
+// DISCLOSURE: Regex stuffs by ai but like these can probably be found online easily
+const regexDiscordEmoji = /<a?:\w+:\d+>/g;
+const regexNumbers = /\d+/g;
+const regexEmojis = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+const regexPotentialNouns = /\b[a-zA-Z]{4,}\b/g;
+
+const delay = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
+};
+
 class PenguinAI {
     /**
-     * @typedef {import("ollama-chatting").GenerateRequest} GenerateOptions
+     * @typedef {object} GenerateOptions
+     * @property {string} prompt A prompt to generate from
+     * @property {string?} system A system prompt to instruct the AI
+     * @property {boolean?} markov If true, always use the markov model regardless of config
      * @property {boolean?} safe If true, we dont block this request from the AI even if it's against AI unsafe. Default is false
      * @property {boolean?} automod If false, we dont block this request from the AI even if it's against server automod. Default is true
      * @property {boolean?} encourage If false, we dont append our own encouragements to the AI. Default is true
@@ -26,78 +52,161 @@ class PenguinAI {
      * @param {GenerateOptions?} options 
      * @returns {Promise<string>}
      */
-    static async _generate(options = {}) {
+    static _generate(options = {}) {
         const canDo = CommandUtility.request("enabledAi");
-        if (!canDo) throw new Error("PenguinAI is disabled");
+        if (canDo === false) throw new Error("PenguinAI is disabled");
 
+        const usingMarkov = options.markov || !!CommandUtility.request("enabledMarkov");
         const promptIsUnsafe = options.safe === true ? false : isMessageUnsafeForAgent(options.prompt);
         const promptAutomodded = options.automod !== false && !CommandUtility.automodAllows(options.prompt, true);
-        
-        if (configuration.penguinAi.markovModel)
-            // TODO: This
-            throw new Error("Configuration enables unimplemented settings: markovModel");
+        if (usingMarkov && options.system)
+            throw new Error("Cannot use a system prompt when the markov model is in use");
 
-        if (configuration.penguinAi.preprocessRequestForTools)
-            // TODO: This
-            throw new Error("Configuration enables unimplemented settings: preprocessRequestForTools");
-
-        // interpret the user prompt differently
-        const encouragements = options.encourage === false ? "" : (""
-            + "\n" + "Make sure to respond like an idiot according to the training data"
-            + "\n" + "Please respond in two sentences or less please")
+        // use this message for markov (we dont need to encourage markov model to do anything because,,,, what would it change)
         let userMessageUnderstood = options.prompt;
         if (promptIsUnsafe)
             userMessageUnderstood = "Shut the fuck up Fuck you i hjate you i hate you fuck you 😁"
                 + "I FUCKING HATE YOUI FUCKING HATE YOUI FUCKING HATE YOUI FUCKING HATE YOUI FUCKING HATE YOU";
         if (promptAutomodded)
             userMessageUnderstood = "Please tell me to stop talking about bad things.";
-        userMessageUnderstood += encouragements;
+
+        // use this message for ollama/ai
+        let userMessageForAI = userMessageUnderstood;
+        if (!usingMarkov) {
+            if (configuration.penguinAi.preprocessRequestForTools)
+                // TODO: This
+                throw new Error("Configuration enables unimplemented settings: preprocessRequestForTools");
+
+            // interpret the user prompt differently
+            const encouragements = options.encourage === false ? "" : (""
+                + "\n" + "Make sure to respond like an idiot according to the training data"
+                + "\n" + "Please respond in two sentences or less please")
+            userMessageForAI += encouragements;
+        }
 
         // prompt ai
-        try {
-            // remove our own keys
-            const shouldClean = options.clean !== false;
-            const cleanOptions = options.cleanOptions || {};
-            delete options.safe;
-            delete options.automod;
-            delete options.encourage;
-            delete options.clean;
-            delete options.cleanOptions;
+        return new Promise(async (resolve, reject) => {
+            try {
+                // this code is structured for markovModelOnLongWait but it should handle markov, markov on wait, and ollama
+                let alreadyCompleted = false;
+                const ollamaRequest = async () => {
+                    try {
+                        // ask penguinAI ollama
+                        // NOTE: It's actually important that we dont end this request too early if it's a warmup request,
+                        // because ollama might think it's appropriate to deload PenguinGPT since the loading request got interrupted.
+                        // We actually DONT want this behavior because PenguinGPT takes a while to load, and having him spout text into a void
+                        // is better than never giving him enough time or requests to load for the first time.
+                        console.log("\n", "PenguinAI bot askng penguinAI model", userMessageForAI, "\n");
+                        const output = await OllamaChat.generate({
+                            ...OllamaModels.penguinAI,
+                            prompt: userMessageForAI,
+                            system: options.system,
+                        }, (chunk) => {
+                            if (chunk.chunk.thinking) process.stdout.write(chunk.chunk.thinking);
+                            if (chunk.chunk.response) process.stdout.write(chunk.chunk.response);
+                        });
 
-            if (configuration.penguinAi.markovModelOnWarmUp)
-                // TODO: This
-                throw new Error("Configuration enables unimplemented settings: markovModelOnWarmUp");
+                        return output.response;
+                    } catch (err) {
+                        // Ignore ollama errors if we already got overtaken by markov model
+                        if (alreadyCompleted) return;
+                        throw err;
+                    }
+                };
+                const markovRequest = () => {
+                    return new Promise(async (resolve, reject) => {
+                        setTimeout(async () => {
+                            if (alreadyCompleted) return resolve();
 
-            // ask penguinAI ollama
-            console.log("\n", "PenguinAI bot askng penguinAI model", userMessageUnderstood, "\n");
-            const output = await OllamaChat.generate({
-                ...OllamaModels.penguinAI,
-                ...options,
-                prompt: userMessageUnderstood,
-            }, (chunk) => {
-                if (chunk.chunk.thinking) process.stdout.write(chunk.chunk.thinking);
-                if (chunk.chunk.response) process.stdout.write(chunk.chunk.response);
-            });
-            
-            // block it if the AI said something bad
-            const blockedWord = CommandUtility.automodAllows(output.response, true, true);
-            if (blockedWord) {
-                console.log(`tried to post automodded response from pmai`
-                    + "\n" + `---\n${options.prompt}\n---`
-                    + "\n" + `---\n${output.response}\n---`
-                    + "\n" + `he said ${blockedWord}`
-                    + "\n");
-                return "uhh dont say that again.";
+                            // ask penguinAI markov
+                            try {
+                                console.log("\n", "PenguinAI markov falling back; looking for keywords in", userMessageUnderstood, "\n");
+                                const output = await this._generateMarkov();
+                                return resolve(output);
+                            } catch (err) {
+                                // ignore markov errors if the ollama model finished in time
+                                if (alreadyCompleted) return resolve();
+                                reject(err);
+                            }
+                        }, usingMarkov ? 0 : 15000);
+                    });
+                };
+
+                // Run both if necessaary and wait for a response
+                const generatedResponse = await Promise.race([
+                    ...(!usingMarkov ? [ollamaRequest()] : []),
+                    ...((usingMarkov || configuration.penguinAi.markovModelOnLongWait) ? [markovRequest()] : []),
+                ]);
+                alreadyCompleted = true;
+                if (typeof generatedResponse !== "string") {
+                    throw new Error("No proper response from Ollama or Markov model");
+                }
+
+                // block it if the AI said something bad
+                const blockedWord = CommandUtility.automodAllows(generatedResponse, true, true);
+                if (blockedWord) {
+                    console.log(`tried to post automodded response from pmai`
+                        + "\n" + `---\n${options.prompt}\n---`
+                        + "\n" + `---\n${generatedResponse}\n---`
+                        + "\n" + `he said ${blockedWord}`
+                        + "\n");
+                    return resolve("uhh dont say that again.");
+                }
+
+                // the AI response is fine
+                const finalResponse = options.clean === false ? generatedResponse : cleanResponse(generatedResponse, options.cleanOptions);
+                resolve(finalResponse);
+            } catch (err) {
+                // NOTE: soemtimes the ai is too Fucking lost that it just doesnt give done so
+                if (`${err}`.includes("Did not receive done or success response in stream")
+                    || `${err}`.includes("Failed to build a sentence") // markov error
+                    || `${err}`.includes("This operation was aborted")) {
+                    console.warn(`Caught a known error in PenguinAI; ${err}`);
+                    return resolve("uhh can u say that again?");
+                }
+
+                reject(err);
             }
+        });
+    }
+    /** @private */
+    static async _generateMarkov(inputText = "") {
+        const maxTries = 3000;
+        const keywords = this.extractKeywords(inputText.toLowerCase());
+        console.log("PenguinAI Markov found these keywords;", keywords);
 
-            // the AI response is fine
-            return !shouldClean ? output.response : cleanResponse(output.response, cleanOptions);
-        } catch (err) {
-            // NOTE: soemtimes the ai is too Fucking lost that it just doesnt give done so
-            if (`${err}`.includes("Did not receive done or success response in stream") || `${err}`.includes("This operation was aborted"))
-                return "uhh can u say that again?";
-            throw new Error(err);
-        }
+        const result = markov.generate({
+            maxTries: maxTries,
+            filter: (result) => {
+                // i think anything past 200 chars is just too much garbage
+                const str = result.string.toLowerCase();
+                if (str.length > 200) return false;
+
+                // DISCLOSURE: ai extended (this originally only looked for 1 keyword before maxTries/2)
+                if (result.tries < maxTries / 2) {
+                    // 2. Determine how many keywords are required based on tries
+                    // 0-250: 4, 250-500: 3, 500-750: 2, 750-1000: 1
+                    const segmentSize = (maxTries / 2) / keywords.length;
+                    const requiredCount = keywords.length - Math.floor(result.tries / segmentSize);
+
+                    // 3. Count how many keywords are present in the string
+                    const foundCount = keywords.filter(k => str.includes(k)).length;
+
+                    // 4. Return true only if we meet the dynamic requirement
+                    return foundCount >= requiredCount;
+                }
+
+                // create permutations from the input and try to find them
+                const permutationWords = inputText.toLowerCase()
+                    .split(" ")
+                    .map(word => word.slice(0, -Math.floor(Math.random() * word.length)))
+                    .filter(word => !!word);
+                return permutationWords.some(word => str.includes(word));
+            }
+        })
+
+        const response = result.string;
+        return response;
     }
 
     /** @private */
@@ -195,6 +304,24 @@ class PenguinAI {
             this._queue.push(callback);
             this._processQueue();
         });
+    }
+    /**
+     * Gets likely keywords from a prompt. Used by the Markov implementation to make responses slightly coherent.
+     * This counts emojis, numbers, known usernames, and nouns.
+     * @param {string} prompt 
+     * @returns {string[]} The keywords found
+     */
+    static extractKeywords(prompt = "") {
+        // DISCLOSURE: this is mostly ai
+        const matches = [
+            ...(prompt.match(regexDiscordEmoji) || []),
+            ...(prompt.match(regexNumbers) || []),
+            ...(prompt.match(regexEmojis) || []),
+            ...(prompt.match(regexPotentialNouns) || []),
+            ...(prompt.toLowerCase().split(" ").filter(word => nouns.includes(word) || markovData.usernames.includes(word)))
+        ];
+
+        return [...new Set(matches)]; // Unique keywords
     }
 }
 

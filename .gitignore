@@ -22,6 +22,7 @@ src/resources/basic-automod.js
 src/commands/gameidea.js
 src/commands/textmodifier/joyous.js
 src/util/ai-unsafe.js
+src/resources/markov-data.json
 
 # runtime folders
 cache/*

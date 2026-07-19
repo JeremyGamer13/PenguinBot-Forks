@@ -41,7 +41,8 @@ const state = {
     prefix,
     isInTestMode,
     preventRuntimeChanges: env.getBool('PREVENT_UPDATES'),
-    enabledAi: true, // TODO: TFInish this also i think i need to port ALLL of the ollama shit including config.js here
+    enabledAi: env.getBool("STATE_DEFAULT_ENABLEDAI"),
+    enabledMarkov: env.getBool("STATE_DEFAULT_ENABLEDMARKOV"),
 };
 CommandUtility.state = state;
 CommandUtility.client = client;

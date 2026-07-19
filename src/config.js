@@ -115,13 +115,8 @@ const configuration = {
 
     // PM AI: Our unique settings
     penguinAi: {
-        // TODO: Add this,. See if we can:
-        // use a Markov chain method to run the AI much cheaper on CPU when the main model is unavailable
-        markovModel: false,
-
-        // TODO: Add this, see above also
-        // Use the markov model when the AI takes longer than 10 seconds to respond (warming up)
-        markovModelOnWarmUp: false,
+        // Use the markov model when the AI takes longer than 20 seconds to respond (warming up or stuck)
+        markovModelOnLongWait: true,
 
         // TODO: Add this
         // If true, messages are preprocessed by a formal model to see if PenguinAI should have tool results in the conversation

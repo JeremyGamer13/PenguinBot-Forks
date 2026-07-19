@@ -28,6 +28,7 @@
     "jimp": "^1.6.0",
     "jsdom": "^26.1.0",
     "jszip": "^3.10.1",
+    "markov-strings": "^3.0.4",
     "mathjs": "^15.2.0",
     "ollama-chatting": "^2.0.3",
     "omggif": "^1.0.10",
