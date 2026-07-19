@@ -55,7 +55,7 @@ class OllamaModels {
     };
     /** @type {Ollama.ChatRequest} */
     static svgCoder = {
-        model: "gemma4:e4b",
+        model: "gemma4:12b",
         think: false,
         timeout: 5 * 60 * 1000, // 5 minutes
         options: {
@@ -64,7 +64,7 @@ class OllamaModels {
     };
     /** same as svgCoder but a vision model (IF VISION DISABLED, DONT DISABLE THIS MODEL OR IT USUALLY DISABLES svgCoder TOO) @type {Ollama.ChatRequest} */
     static svgCoderImage = {
-        model: "gemma4:e4b",
+        model: "gemma4:12b",
         think: false,
         timeout: 10 * 60 * 1000, // 10 minutes
         options: {
