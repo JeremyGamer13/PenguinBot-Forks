@@ -78,8 +78,7 @@ class BotEvent {
     
         // use command now
         try {
-            // client is passed so the command can send messages in arbitrary channels
-            await command.invoke(message, args, CommandUtility, client);
+            await command.invoke(message, args, CommandUtility);
         } catch (err) {
             console.error(err);
             message.reply({

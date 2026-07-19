@@ -1,5 +1,4 @@
-const childProcess = require("child_process");
-const { MessageAttachment } = require('discord.js');
+const discord = require('discord.js');
 
 class Command {
     constructor() {
@@ -12,21 +11,21 @@ class Command {
     }
 
     async invoke(message, args, util) {
-        const channelid = args.shift();
-        const replyId = /^[0-9]+$/.test(args.at(-1)) ? args.pop() : '';
+        if (!message.guild)
+            return message.reply("no guild");
 
-        if (!message.guild) return message.reply("no guild");
-
-        const channel = message.guild.channels.cache.get(channelid);
+        const channelId = args.shift();
+        const channel = message.guild.channels.cache.get(channelId);
         if (!channel) return message.reply("no channel");
 
+        const replyId = /^[0-9]+$/.test(args.at(-1)) ? args.pop() : '';
         await channel.send({
             reply: {
                 messageReference: replyId,
                 failIfNotExist: false
             },
             content: args.join(" ") || undefined,
-            files: message.attachments.toJSON().map(v => new MessageAttachment(v.url, v.name)),
+            files: message.attachments.toJSON().map(file => new discord.MessageAttachment(file.url, file.name)),
         });
     }
 }

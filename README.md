@@ -31,7 +31,7 @@ If you do not do this, many commands relating to managing the GitHub repository 
 
 1. Install Node.js, preferably v18 or v20. **Newer versions of Node may not be compatible out of the box with Canvas or other modules yet.**
 3. Install Git
-4. Create a `cache`, `databases`, `temp` folder in the root folder for PenguinBot.
+4. Create a `cache`, `databases`, `data`, `temp`, and `memes` folder in the root folder for PenguinBot.
 6. Install all of the node modules with `npm ci` or `npm i`
     - If you have `nvm` installed to switch between Node installations, you may need to rebuild canvas when switching versions by using `npm rebuild canvas`
 7. Duplicate `.env.template` and rename it to `.env`, then fill any of the information you can.

@@ -1,5 +1,6 @@
 const Database = require('sync-json-database');
 const DisabledInteractionsDB = new Database('./databases/disabled-interactions.json');
+
 const OptionType = require('../util/optiontype');
 
 class Command {
@@ -22,6 +23,7 @@ class Command {
                 }]
             }]
         };
+
         this.alias = ["interaction"];
     }
 
@@ -33,13 +35,15 @@ class Command {
     
     invoke(message, args) {
         const userId = `${message.author.id}`;
-        if (!args[0]) return message.reply(`Specify \`enable\` or \`disable\` to enable or disable yourself from being used in certain commands.
-Your interactions are currently ${DisabledInteractionsDB.get(userId) ? 'disable' : 'enable'}d.`);
+        if (!args[0])
+            return message.reply("Specify `enable` or `disable` to enable or disable yourself from being used in certain commands."
+                + "\n" + `Your interactions are currently ${DisabledInteractionsDB.get(userId) ? 'disable' : 'enable'}d.`);
+
         // handle stuff
         const disableInteractions = args[0] === 'disable';
         DisabledInteractionsDB.set(userId, disableInteractions);
-        message.reply(`Interactions have been ${disableInteractions ? 'disable' : 'enable'}d.${disableInteractions ? `
-People who ping you for commands will not be able to use you or your image.` : ''}`);
+        message.reply(`Interactions have been ${disableInteractions ? 'disable' : 'enable'}d.`
+            + (!disableInteractions ? "" : ("\n" + "People who ping you for commands will not be able to use you or your image.")));
     }
 }
 

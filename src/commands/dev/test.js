@@ -11,7 +11,15 @@ class Command {
     }
 
     invoke(message, args, util) {
-        message.reply(JSON.stringify(args));
+        message.reply({
+            content: JSON.stringify(args),
+            allowedMentions: {
+                parse: [],
+                users: [],
+                roles: [],
+                repliedUser: true
+            }
+        });
     }
 }
 

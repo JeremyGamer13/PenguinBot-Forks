@@ -106,6 +106,9 @@ const configuration = {
         // On top of the permission check, who can use pm!eval (run custom code)
         eval: [env.get("OWNER")],
 
+        // On top of the permission check, who can use pm!pull (pull & restart can cause running custom code)
+        pull: [env.get("OWNER")],
+
         // On top of the permission check, who can use pm!echo
         echo: [env.get("OWNER"), "462098932571308033", "567307285324496897"],
 

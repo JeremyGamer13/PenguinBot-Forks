@@ -27,6 +27,7 @@ src/resources/markov-data.json
 # runtime folders
 cache/*
 databases/*
+data/*
 memes/*
 temp/*
 

@@ -10,10 +10,8 @@ class Command {
 
     async invoke(message, _, util) {
         const shouldntRestart = util.request('preventRuntimeChanges');
-        if (shouldntRestart) {
-            message.reply('Variable `PREVENT_UPDATES` is set to true on this host.');
-            return;
-        }
+        if (shouldntRestart)
+            return message.reply('Variable `PREVENT_UPDATES` is set to true on this host.');
 
         await message.reply('Restarting bot... <:juice:1158872031211831377>');
         process.exit(50);

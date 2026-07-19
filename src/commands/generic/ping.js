@@ -10,9 +10,7 @@ class Command {
             lockedToCommands: true,
         };
 
-        /**
-         * @type {discord.Client}
-         */
+        /** @type {discord.Client} */
         this.client = client;
     }
 
