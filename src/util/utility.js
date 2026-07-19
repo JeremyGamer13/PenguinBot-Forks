@@ -360,6 +360,7 @@ class CommandUtility {
             let canBeUsed = true;
             if (message.guild && (message.guild.id === env.get("SERVER_ID")
                 || (env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guild.id === "746156168560508950"))) { // i have a test server so
+                // TODO: This needs to check the whitelisted channels
                 canBeUsed = configuration.permissions.lockedToPenguinAI.includes(message.channel.id);
                 if (command.attributes.unlockedChannels) {
                     // there are other conditions here
