@@ -1,8 +1,9 @@
+const discord = require('discord.js');
+
 const Database = require('sync-json-database');
 const DonatorRoleDB = new Database('./databases/donator-roles.json');
 
-const { Message, MessageEmbed, GuildEmoji } = require('discord.js');
-const configuration = require("../../config");
+const configuration = require("../../config.js");
 
 class Command {
     constructor() {
@@ -18,7 +19,7 @@ class Command {
     }
 
     /**
-     * @param {Message} message 
+     * @param {discord.Message} message 
      * @param {Array} args 
      */
     async invoke(message, args, util) {
@@ -126,7 +127,7 @@ class Command {
                 if (!role) {
                     return message.reply(`You don't have an exclusive role!\nUse \`${prefix}exclusiverole create\` to make one.`);
                 }
-                const embed = new MessageEmbed();
+                const embed = new discord.MessageEmbed();
                 embed.setTitle(`${role.name}`);
                 embed.setDescription(`Created for <@${message.member.id}>`);
                 embed.setThumbnail(role.iconURL());

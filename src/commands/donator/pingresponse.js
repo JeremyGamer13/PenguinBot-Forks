@@ -50,6 +50,7 @@ class Command {
         if (reason.length > 256) {
             text += '\n**Note: Your response is over 256 characters. Your message will be cut off.**';
         }
+        // TODO: This should be a general util or something
         let newlineCount = 0;
         PingResponseDB.set(userId, reason
             .substring(0, 256)

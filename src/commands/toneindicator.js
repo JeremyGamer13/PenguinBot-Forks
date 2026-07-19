@@ -1,12 +1,14 @@
-const OptionType = require('../util/optiontype');
-const ToneMap = require('../util/ti-list');
+const ToneMap = require('../util/ti-list.js');
+const OptionType = require('../util/optiontype.js');
 
-// my bumass only knows like 3 so kinda useful for me when they talking in penguin-chat 🥱
-// #jeremy-is=over-party
 class Command {
     constructor() {
         this.name = "toneindicator";
-        this.description = "Explains the provided tone indicator";
+        this.description = "Names the provided tone indicator";
+        this.descriptionLong = "Names the provided tone indicator."
+            + "\n" + '"93% of someone\'s liking of what you say comes from what you do non-verbally, and we often don\'t have access to these non-verbal cues online."'
+            + "\n" + '"It can be difficult for neurodivergent people to understand you even in face-to-face, where they do have access to non-verbal cues, so imagine how much harder it is online."'
+            + "\n" + "See [toneindicators.carrd.co](https://toneindicators.carrd.co/#faq) for more information.";
         this.attributes = {
             unlisted: false,
             permission: 0,
@@ -27,6 +29,7 @@ class Command {
 
     convertSlashCommand(interaction, util) {
         interaction.author = interaction.member.user;
+
         // args
         const args = [];
         const text = `${interaction.options.getString('indicator')}`;

@@ -1,5 +1,7 @@
-const discord = require("discord.js");
 const crypto = require("crypto");
+
+const discord = require("discord.js");
+
 const { createCanvas, loadImage } = require('canvas');
 const OptionType = require('../util/optiontype');
 

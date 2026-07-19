@@ -79,7 +79,7 @@ class Command {
 
             const video = ffmpeg(inputVideoPath);
             const { width, height, frameRate, frameCount } = await getVideoProperties(video);
-            const serializableData = this.createSerializableData(message, args, util, imageBuffer, video, width, height, frameRate, frameCount);
+            const serializableData = await this.createSerializableData(message, args, util, imageBuffer, video, width, height, frameRate, frameCount);
             
             // This only works well because ffmpeg wants filenames for inputs & we cant just give it a bunch of buffers or something
             await runNewThread(

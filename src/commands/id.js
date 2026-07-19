@@ -1,33 +1,31 @@
-const Discord = require("discord.js");
 const OptionType = require('../util/optiontype');
 
 class Command {
     constructor() {
         this.name = "id";
-        this.description = "Get discord id";
+        this.description = "Get a user's Discord ID";
         this.attributes = {
             unlisted: false,
             permission: 0,
         };
     }
 
+    /** @param {import("discord.js").Message} message  */
     invoke(message, args) {
-        // Create an array to hold the response lines
-        const responseLines = [];
-
-        // Add the message author's ID
-        responseLines.push(`${message.author.username}'s id: \`\`\`${message.author.id}\`\`\``);
-
-        // Check if the message contains mentions
-        if (message.mentions.users.size > 0) {
-            // Add each mentioned user's ID
-            message.mentions.users.forEach(user => {
-                responseLines.push(`${user.username}'s id: \`\`\`${user.id}\`\`\``);
-            });
-        }
-
-        // Send the response message with all the IDs
-        message.channel.send({content:responseLines.join('\n')});
+        return message.reply({
+            content: [
+                message.author,
+                ...(message.mentions.users.size > 0 ? message.mentions.users.values() : []),
+            ]
+                .map(user => `${user.username}'s ID: \`\`${user.id}\`\``)
+                .join('\n'),
+            allowedMentions: {
+                parse: [],
+                users: [],
+                roles: [],
+                repliedUser: false
+            }
+        });
     }
 }
 

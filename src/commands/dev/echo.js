@@ -1,3 +1,5 @@
+const discord = require("discord.js");
+
 const configuration = require("../../config");
 
 class Command {
@@ -8,45 +10,38 @@ class Command {
             unlisted: true,
             permission: 3,
         };
-        this.aliases = ["say"]
+
+        this.aliases = ["say"];
     }
 
     reject(message) {
-        message.reply({
+        return message.reply({
             content: '<:haha:1124199185021927528>'
         });
     }
 
-    extractMessageFromReply(message) {
-        if (!(message.reference && message.reference.messageId)) {
-            throw new Error('Message is not a reply');
-        }
-        const reply = message.reference.messageId;
-        return message.channel.messages.fetch(reply);
-    }
-    async invoke(message, args) {
-        if (!configuration.permissions.echo.includes(message.author.id)) {
-            this.reject(message);
-            return;
-        }
+    async invoke(message, args, util) {
+        if (!configuration.permissions.echo.includes(message.author.id))
+            return this.reject(message);
 
-        const messageOpts = {
+        // delete the root message first
+        await message.delete();
+
+        // check for reply
+        const replyMsg = await util.getReply(message);
+        const sendFunction = replyMsg
+            ? (payload) => replyMsg.reply(payload)
+            : (payload) => message.channel.send(payload);
+        return sendFunction({
             content: args.join(' '),
+            files: message.attachments.toJSON().map(file => new discord.MessageAttachment(file.url, file.name)),
             allowedMentions: {
                 parse: [],
                 users: [],
                 roles: [],
                 repliedUser: false
             }
-        };
-
-        message.delete();
-        if (message.reference && message.reference.messageId) {
-            const replyMsg = await this.extractMessageFromReply(message);
-            replyMsg.reply(messageOpts);
-            return;
-        }
-        message.channel.send(messageOpts);
+        });
     }
 }
 

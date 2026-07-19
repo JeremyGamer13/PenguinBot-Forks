@@ -1,0 +1,3151 @@
+// NOTE: Strip out the nicer defined ones
+const LAST_RUN = {
+    "DebuggerExtensionTS": {
+        "id": "DebuggerExtensionTS",
+        "url": "https://extensions.penguinmod.com/extensions/TheShovel/shoveldebugger.js",
+        "name": "Debugger",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "ikeleneServerStorage": {
+        "id": "ikeleneServerStorage",
+        "url": "https://extensions.penguinmod.com/extensions/Ikelene/serverStorageExtension.js",
+        "name": "Server Storage",
+        "color": "#ff6bfd",
+        "hsv": {
+            "h": 300.8108108108108,
+            "s": 0.580392156862745,
+            "v": 1
+        }
+    },
+    "g1nxBettererStorage": {
+        "id": "g1nxBettererStorage",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/storage_plus.js",
+        "name": "Storage+",
+        "color": "#b19cd9",
+        "hsv": {
+            "h": 260.65573770491807,
+            "s": 0.2811059907834101,
+            "v": 0.8509803921568627
+        }
+    },
+    "qoanrenderer": {
+        "id": "qoanrenderer",
+        "url": "https://extensions.penguinmod.com/extensions/TheShovel/qoan-renderer.js",
+        "name": "MotionSprite 1.0-Beta",
+        "color": "#6359d5",
+        "hsv": {
+            "h": 244.8387096774194,
+            "s": 0.5821596244131456,
+            "v": 0.8352941176470589
+        }
+    },
+    "P7BoxPhys": {
+        "id": "P7BoxPhys",
+        "url": "https://extensions.penguinmod.com/extensions/pooiod/Box2D.js",
+        "name": "Boxed Physics",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "g1nxLighting": {
+        "id": "g1nxLighting",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/lighting.js",
+        "name": "Lighting",
+        "color": "#4a5568",
+        "hsv": {
+            "h": 218.00000000000003,
+            "s": 0.2884615384615384,
+            "v": 0.40784313725490196
+        }
+    },
+    "obviousAlexCMath3d": {
+        "id": "obviousAlexCMath3d",
+        "url": "https://extensions.penguinmod.com/extensions/ObviousAlexC/3DMath.js",
+        "name": "3D Math",
+        "color": "#ADC213",
+        "hsv": {
+            "h": 67.19999999999999,
+            "s": 0.9020618556701031,
+            "v": 0.7607843137254902
+        }
+    },
+    "gpusb3": {
+        "id": "gpusb3",
+        "url": "https://extensions.penguinmod.com/extensions/derpygamer2142/gpusb3.js",
+        "name": "GPU.sb3",
+        "color": "#27c90e",
+        "hsv": {
+            "h": 111.97860962566844,
+            "s": 0.9303482587064676,
+            "v": 0.788235294117647
+        }
+    },
+    "beatSync": {
+        "id": "beatSync",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/beat_sync.js",
+        "name": "Beat Sync",
+        "color": "#790612",
+        "hsv": {
+            "h": 353.7391304347826,
+            "s": 0.9504132231404958,
+            "v": 0.4745098039215686
+        }
+    },
+    "skyhigh173object": {
+        "id": "skyhigh173object",
+        "url": "https://extensions.penguinmod.com/extensions/skyhigh173/object.js",
+        "name": "Object",
+        "color": "#9999FF",
+        "hsv": {
+            "h": 240,
+            "s": 0.4,
+            "v": 1
+        }
+    },
+    "0zCsv": {
+        "id": "0zCsv",
+        "url": "https://extensions.penguinmod.com/extensions/0znzw/ScopeVars.js",
+        "name": "Scope Variables (Compiled)",
+        "color": "#9999FF",
+        "hsv": {
+            "h": 240,
+            "s": 0.4,
+            "v": 1
+        }
+    },
+    "steve0greatnesstimers": {
+        "id": "steve0greatnesstimers",
+        "url": "https://extensions.penguinmod.com/extensions/steve0greatness/timers.js",
+        "name": "Extra Timers",
+        "color": "#1166CC",
+        "hsv": {
+            "h": 212.72727272727272,
+            "s": 0.9166666666666667,
+            "v": 0.8
+        }
+    },
+    "pooiod7Dictation": {
+        "id": "pooiod7Dictation",
+        "url": "https://extensions.penguinmod.com/extensions/pooiod/Dictation.js",
+        "name": "Dictation",
+        "color": "#b969cf",
+        "hsv": {
+            "h": 287.05882352941177,
+            "s": 0.4927536231884058,
+            "v": 0.8117647058823529
+        }
+    },
+    "imagevisionquickdraw": {
+        "id": "imagevisionquickdraw",
+        "url": "https://extensions.penguinmod.com/extensions/TheShovel/doodlerec.js",
+        "name": "Doodle Recognition",
+        "color": "#ffd139",
+        "hsv": {
+            "h": 46.060606060606055,
+            "s": 0.7764705882352941,
+            "v": 1
+        }
+    },
+    "SDStylusExtension": {
+        "id": "SDStylusExtension",
+        "url": "https://extensions.penguinmod.com/extensions/sourdoggy/stylus extension.js",
+        "name": "Stylus",
+        "color": "#694baf",
+        "hsv": {
+            "h": 258,
+            "s": 0.5714285714285714,
+            "v": 0.6862745098039216
+        }
+    },
+    "puzzlinggggttsrv2": {
+        "id": "puzzlinggggttsrv2",
+        "url": "https://extensions.penguinmod.com/extensions/PuzzlingGGG/ttsrV2.js",
+        "name": "Text to Speech: Redone",
+        "color": "#1be758",
+        "hsv": {
+            "h": 137.94117647058823,
+            "s": 0.8831168831168832,
+            "v": 0.9058823529411765
+        }
+    },
+    "e2ee": {
+        "id": "e2ee",
+        "url": "https://extensions.penguinmod.com/extensions/MikeDev101/e2ee.js",
+        "name": "ECDH",
+        "color": "#767676",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.4627450980392157
+        }
+    },
+    "webrtc": {
+        "id": "webrtc",
+        "url": "https://extensions.penguinmod.com/extensions/MikeDev101/webrtc.js",
+        "name": "WebRTC",
+        "color": "#f6a639",
+        "hsv": {
+            "h": 34.60317460317461,
+            "s": 0.7682926829268293,
+            "v": 0.9647058823529412
+        }
+    },
+    "spritesheeter": {
+        "id": "spritesheeter",
+        "url": "https://extensions.penguinmod.com/extensions/MubiLop/spritesheeter.js",
+        "name": "Spritesheeter",
+        "color": "#ff8800",
+        "hsv": {
+            "h": 32,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "dumzdevBGRemover": {
+        "id": "dumzdevBGRemover",
+        "url": "https://extensions.penguinmod.com/extensions/dumzdev/removebg.js",
+        "name": "Background Remover",
+        "color": "#FFC536",
+        "hsv": {
+            "h": 42.6865671641791,
+            "s": 0.788235294117647,
+            "v": 1
+        }
+    },
+    "penguinGPT": {
+        "id": "penguinGPT",
+        "url": "https://extensions.penguinmod.com/extensions/MubiLop/penguingpt.js",
+        "name": "PenguinAI",
+        "color": "#009CCC",
+        "hsv": {
+            "h": 194.11764705882354,
+            "s": 1,
+            "v": 0.8
+        }
+    },
+    "pangpalgemini": {
+        "id": "pangpalgemini",
+        "url": "https://extensions.penguinmod.com/extensions/TheShovel/blockAI.js",
+        "name": "Block AI",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "mubiloppenguinhook": {
+        "id": "mubiloppenguinhook",
+        "url": "https://extensions.penguinmod.com/extensions/MubiLop/penguinhook.js",
+        "name": "PenguinHook",
+        "color": "#02b4e0",
+        "hsv": {
+            "h": 191.89189189189187,
+            "s": 0.9910714285714286,
+            "v": 0.8784313725490196
+        }
+    },
+    "numberUtilities": {
+        "id": "numberUtilities",
+        "url": "https://extensions.penguinmod.com/extensions/MubiLop/numutils.js",
+        "name": "Number Utilities",
+        "color": "#59c059",
+        "hsv": {
+            "h": 120,
+            "s": 0.5364583333333334,
+            "v": 0.7529411764705882
+        }
+    },
+    "jwklongmathematics": {
+        "id": "jwklongmathematics",
+        "url": "https://extensions.penguinmod.com/extensions/jwklong/mathematics.js",
+        "name": "Mathematics",
+        "color": "#7ac94f",
+        "hsv": {
+            "h": 98.85245901639344,
+            "s": 0.6069651741293532,
+            "v": 0.788235294117647
+        }
+    },
+    "qxsckbignumber": {
+        "id": "qxsckbignumber",
+        "url": "https://extensions.penguinmod.com/extensions/qxsck/big-decimal.js",
+        "name": "qxsckbignumber",
+        "color": "#ff8c3b",
+        "hsv": {
+            "h": 24.795918367346935,
+            "s": 0.7686274509803921,
+            "v": 1
+        }
+    },
+    "formatNumbers": {
+        "id": "formatNumbers",
+        "url": "https://extensions.penguinmod.com/extensions/DogeisCut/FormatNumbers.js",
+        "name": "Format Numbers (OUTDATED)",
+        "color": "#419873",
+        "hsv": {
+            "h": 154.48275862068965,
+            "s": 0.5723684210526316,
+            "v": 0.596078431372549
+        }
+    },
+    "ddeDateFormatV2": {
+        "id": "ddeDateFormatV2",
+        "url": "https://extensions.penguinmod.com/extensions/ddededodediamante/dateFormatV2.js",
+        "name": "Date Format",
+        "color": "#59c074",
+        "hsv": {
+            "h": 135.72815533980582,
+            "s": 0.5364583333333334,
+            "v": 0.7529411764705882
+        }
+    },
+    "embintranslation": {
+        "id": "embintranslation",
+        "url": "https://extensions.penguinmod.com/extensions/Embin/embintranslation.js",
+        "name": "Translation Keys",
+        "color": "#00565b",
+        "hsv": {
+            "h": 183.2967032967033,
+            "s": 1,
+            "v": 0.3568627450980392
+        }
+    },
+    "dogeiscutyetanotherstringextension": {
+        "id": "dogeiscutyetanotherstringextension",
+        "url": "https://extensions.penguinmod.com/extensions/DogeisCut/YetAnotherStringExtension.js",
+        "name": "Yet Another String Extension",
+        "color": "#59C059",
+        "hsv": {
+            "h": 120,
+            "s": 0.5364583333333334,
+            "v": 0.7529411764705882
+        }
+    },
+    "dogeiscutRegularExpressions": {
+        "id": "dogeiscutRegularExpressions",
+        "url": "https://extensions.penguinmod.com/extensions/DogeisCut/dogeiscutRegularExpressions.js",
+        "name": "Regular Expressions",
+        "color": "#BB2EAD",
+        "hsv": {
+            "h": 305.9574468085106,
+            "s": 0.7540106951871657,
+            "v": 0.7333333333333333
+        }
+    },
+    "dogeiscutSet": {
+        "id": "dogeiscutSet",
+        "url": "https://extensions.penguinmod.com/extensions/DogeisCut/dogeiscutSet.js",
+        "name": "Sets",
+        "color": "#1ABC9C",
+        "hsv": {
+            "h": 168.14814814814815,
+            "s": 0.8617021276595745,
+            "v": 0.7372549019607844
+        }
+    },
+    "divIterator": {
+        "id": "divIterator",
+        "url": "https://extensions.penguinmod.com/extensions/Div/divIterators.js",
+        "name": "Iterators",
+        "color": "#ff3662",
+        "hsv": {
+            "h": 346.86567164179104,
+            "s": 0.788235294117647,
+            "v": 1
+        }
+    },
+    "divAlgEffects": {
+        "id": "divAlgEffects",
+        "url": "https://extensions.penguinmod.com/extensions/Div/divAlgEffects.js",
+        "name": "Algebraic Effects",
+        "color": "#5c25d4",
+        "hsv": {
+            "h": 258.85714285714283,
+            "s": 0.8254716981132075,
+            "v": 0.8313725490196079
+        }
+    },
+    "FaunksBlobs": {
+        "id": "FaunksBlobs",
+        "url": "https://extensions.penguinmod.com/extensions/Faunks/Blobs.js",
+        "name": "Blobs",
+        "color": "#41964c",
+        "hsv": {
+            "h": 127.76470588235294,
+            "s": 0.5666666666666668,
+            "v": 0.5882352941176471
+        }
+    },
+    "randomutils": {
+        "id": "randomutils",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/random_utils.js",
+        "name": "Random Utilities",
+        "color": "#ad3931",
+        "hsv": {
+            "h": 3.8709677419354804,
+            "s": 0.7167630057803469,
+            "v": 0.6784313725490196
+        }
+    },
+    "toastnotifs": {
+        "id": "toastnotifs",
+        "url": "https://extensions.penguinmod.com/extensions/MubiLop/toastnotifs.js",
+        "name": "Toast Notifs",
+        "color": "#4CAF50",
+        "hsv": {
+            "h": 122.42424242424244,
+            "s": 0.5657142857142857,
+            "v": 0.6862745098039216
+        }
+    },
+    "lordcatprojectinterfaces": {
+        "id": "lordcatprojectinterfaces",
+        "url": "https://extensions.penguinmod.com/extensions/LordCat0/ProjectInterfaces.js",
+        "name": "Project interfaces",
+        "color": "#707eff",
+        "hsv": {
+            "h": 234.12587412587413,
+            "s": 0.5607843137254902,
+            "v": 1
+        }
+    },
+    "gitpenguin": {
+        "id": "gitpenguin",
+        "url": "https://extensions.penguinmod.com/extensions/justablock/gitpenguin.js",
+        "name": "GitHub File Extension",
+        "color": "#303030",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.18823529411764706
+        }
+    },
+    "sammerpenguinapi": {
+        "id": "sammerpenguinapi",
+        "url": "https://extensions.penguinmod.com/extensions/SammerLOL/pangapi.js",
+        "name": "Pang API",
+        "color": "#00b3ff",
+        "hsv": {
+            "h": 197.88235294117646,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "turboweather": {
+        "id": "turboweather",
+        "url": "https://extensions.penguinmod.com/extensions/RubyDevs/turboweather.js",
+        "name": "TurboWeather",
+        "color": "#e0bb4a",
+        "hsv": {
+            "h": 45.19999999999999,
+            "s": 0.6696428571428571,
+            "v": 0.8784313725490196
+        }
+    },
+    "BPixelCockatiel": {
+        "id": "BPixelCockatiel",
+        "url": "https://extensions.penguinmod.com/extensions/bruhbeast-pixel/CockatielLocation.js",
+        "name": "Cockatiel Location",
+        "color": "#FFA500",
+        "hsv": {
+            "h": 38.82352941176471,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "nkcorsproxy": {
+        "id": "nkcorsproxy",
+        "url": "https://extensions.penguinmod.com/extensions/NamelessCat/corsproxy.js",
+        "name": "CORS Proxy",
+        "color": "#376661",
+        "hsv": {
+            "h": 173.61702127659572,
+            "s": 0.4607843137254902,
+            "v": 0.4
+        }
+    },
+    "jodieextexp": {
+        "id": "jodieextexp",
+        "url": "https://extensions.penguinmod.com/extensions/TheShovel/extexp.js",
+        "name": "Extension Exposer",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "0znzwMoreFields": {
+        "id": "0znzwMoreFields",
+        "url": "https://extensions.penguinmod.com/extensions/Ashime/MoreFields.js",
+        "name": "field_${extId}_${onu}",
+        "color": "#9566d3",
+        "hsv": {
+            "h": 265.8715596330275,
+            "s": 0.5165876777251184,
+            "v": 0.8274509803921568
+        }
+    },
+    "dogeiscutbeepboxplayer": {
+        "id": "dogeiscutbeepboxplayer",
+        "url": "https://extensions.penguinmod.com/extensions/DogeisCut/BeepBoxPlayer.js",
+        "name": "BeepBox Player",
+        "color": "#000000",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0
+        }
+    },
+    "ACatUpdateFile": {
+        "id": "ACatUpdateFile",
+        "url": "https://extensions.penguinmod.com/extensions/Anonymous_cat1/updateFile.js",
+        "name": "Update File (Direct Access)",
+        "color": "#e8ab1c",
+        "hsv": {
+            "h": 42.05882352941176,
+            "s": 0.8793103448275863,
+            "v": 0.9098039215686274
+        }
+    },
+    "yeetyourfiles": {
+        "id": "yeetyourfiles",
+        "url": "https://extensions.penguinmod.com/extensions/MubiLop/yeetyourfiles.js",
+        "name": "YeetYourFiles",
+        "color": "#FF8C00",
+        "hsv": {
+            "h": 32.94117647058824,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "cfupload": {
+        "id": "cfupload",
+        "url": "https://extensions.penguinmod.com/extensions/Codefoxy/cfupload.js",
+        "name": "Upload",
+        "color": "#a69776",
+        "hsv": {
+            "h": 41.25,
+            "s": 0.2891566265060241,
+            "v": 0.6509803921568628
+        }
+    },
+    "p7videosharing": {
+        "id": "p7videosharing",
+        "url": "https://extensions.penguinmod.com/extensions/pooiod/VideoSharing.js",
+        "name": "Video Sharing",
+        "color": "#00a1ff",
+        "hsv": {
+            "h": 202.11764705882354,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "p7windowhash": {
+        "id": "p7windowhash",
+        "url": "https://extensions.penguinmod.com/extensions/pooiod/WindowHasher.js",
+        "name": "Window Hasher",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "scratchblocks": {
+        "id": "scratchblocks",
+        "url": "https://extensions.penguinmod.com/extensions/pooiod/Scratchblocks.js",
+        "name": "Scratch​Blocks",
+        "color": "#e1a91a",
+        "hsv": {
+            "h": 43.11557788944724,
+            "s": 0.8844444444444445,
+            "v": 0.8823529411764706
+        }
+    },
+    "authpenguin": {
+        "id": "authpenguin",
+        "url": "https://extensions.penguinmod.com/extensions/MubiLop/authpenguin.js",
+        "name": "AuthPenguin",
+        "color": "#00c3ff",
+        "hsv": {
+            "h": 194.11764705882354,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "googleAuth": {
+        "id": "googleAuth",
+        "url": "https://extensions.penguinmod.com/extensions/Ikelene/googleAuthExtension.js",
+        "name": "Google Auth",
+        "color": "#4285F4",
+        "hsv": {
+            "h": 217.41573033707866,
+            "s": 0.7295081967213114,
+            "v": 0.9568627450980393
+        }
+    },
+    "discordauth": {
+        "id": "discordauth",
+        "url": "https://extensions.penguinmod.com/extensions/NotHouse/DiscordAuth.js",
+        "name": "Discord Auth Extension",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "bopTwitch": {
+        "id": "bopTwitch",
+        "url": "https://extensions.penguinmod.com/extensions/bop_tw/Twitch.js",
+        "name": "Twitch",
+        "color": "#772CE8",
+        "hsv": {
+            "h": 263.93617021276594,
+            "s": 0.810344827586207,
+            "v": 0.9098039215686274
+        }
+    },
+    "chessG1nX": {
+        "id": "chessG1nX",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/chess-ext.js",
+        "name": "Chess Extension",
+        "color": "#B58863",
+        "hsv": {
+            "h": 27.073170731707314,
+            "s": 0.4530386740331492,
+            "v": 0.7098039215686275
+        }
+    },
+    "ginxilovecats": {
+        "id": "ginxilovecats",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/CATS.js",
+        "name": "CATS",
+        "color": "#7868B5",
+        "hsv": {
+            "h": 252.46753246753246,
+            "s": 0.425414364640884,
+            "v": 0.7098039215686275
+        }
+    },
+    "FreeServers": {
+        "id": "FreeServers",
+        "url": "https://extensions.penguinmod.com/extensions/WAYLIVES/FreeServers.js",
+        "name": "Free Servers",
+        "color": "#E22648",
+        "hsv": {
+            "h": 349.1489361702128,
+            "s": 0.831858407079646,
+            "v": 0.8862745098039215
+        }
+    },
+    "vgscompiledvalues": {
+        "id": "vgscompiledvalues",
+        "url": "https://extensions.penguinmod.com/extensions/VeryGoodScratcher42/More-Types.js",
+        "name": "More Types",
+        "color": "#B300FF",
+        "hsv": {
+            "h": 282.11764705882354,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "onkeoPetExtension": {
+        "id": "onkeoPetExtension",
+        "url": "https://extensions.penguinmod.com/extensions/TheShovel/oneko.js",
+        "name": "oneko",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "redstoniacounterplusplus": {
+        "id": "redstoniacounterplusplus",
+        "url": "https://extensions.penguinmod.com/extensions/MrRedstonia/counterplusplus.js",
+        "name": "Counter++",
+        "color": "#4A4A5E",
+        "hsv": {
+            "h": 240,
+            "s": 0.21276595744680848,
+            "v": 0.3686274509803922
+        }
+    },
+    "monochromasityhml": {
+        "id": "monochromasityhml",
+        "url": "https://extensions.penguinmod.com/extensions/Monochromasity/howmanylines.js",
+        "name": "How Many Lines?",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "fruitsPaintUtils": {
+        "id": "fruitsPaintUtils",
+        "url": "https://extensions.penguinmod.com/extensions/Fruits555000/PaintUtils.js",
+        "name": "Paint Utils",
+        "color": "#d1d1d1",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.8196078431372549
+        }
+    },
+    "dogeiscutResolution": {
+        "id": "dogeiscutResolution",
+        "url": "https://extensions.penguinmod.com/extensions/DogeisCut/Resolution.js",
+        "name": "Resolution",
+        "color": "#009dff",
+        "hsv": {
+            "h": 203.05882352941177,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "gaimeriDeviceMotionExtension": {
+        "id": "gaimeriDeviceMotionExtension",
+        "url": "https://extensions.penguinmod.com/extensions/gaimerI17/DeviceMotion.js",
+        "name": "Device Motion",
+        "color": "#55e9fc",
+        "hsv": {
+            "h": 186.82634730538922,
+            "s": 0.6626984126984128,
+            "v": 0.9882352941176471
+        }
+    },
+    "gaimeriCryptoExtension": {
+        "id": "gaimeriCryptoExtension",
+        "url": "https://extensions.penguinmod.com/extensions/gaimerI17/crypto.js",
+        "name": "Cryptography",
+        "color": "#676767",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.403921568627451
+        }
+    },
+    "onlinecaptcha": {
+        "id": "onlinecaptcha",
+        "url": "https://extensions.penguinmod.com/extensions/NotHouse/OnlineCaptcha.js",
+        "name": "Online Captcha",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "g1nxbetterstorage": {
+        "id": "g1nxbetterstorage",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/better_storage.js",
+        "name": "Better Server Storage",
+        "color": "#42a9cf",
+        "hsv": {
+            "h": 196.17021276595744,
+            "s": 0.6811594202898551,
+            "v": 0.8117647058823529
+        }
+    },
+    "mouthwasher": {
+        "id": "mouthwasher",
+        "url": "https://extensions.penguinmod.com/extensions/Gen1x/mouth_washer.js",
+        "name": "Mouth Washer",
+        "color": "#afcf46",
+        "hsv": {
+            "h": 74.01459854014598,
+            "s": 0.6618357487922705,
+            "v": 0.8117647058823529
+        }
+    },
+    "beep": {
+        "id": "beep",
+        "url": "https://extensions.penguinmod.com/extensions/electricfuzzball_pm/firealarm.js",
+        "name": "Beep",
+        "color": "#808080",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.5019607843137255
+        }
+    },
+    "stagecompanion": {
+        "id": "stagecompanion",
+        "url": "https://extensions.penguinmod.com/extensions/electricfuzzball_pm/StageBrah.js",
+        "name": "Stage Brah",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "midi": {
+        "id": "midi",
+        "url": "https://extensions.penguinmod.com/extensions/electricfuzzball_pm/MIDI.js",
+        "name": "MIDI",
+        "color": "#960000",
+        "hsv": {
+            "h": 0,
+            "s": 1,
+            "v": 0.5882352941176471
+        }
+    },
+    "agBuffer": {
+        "id": "agBuffer",
+        "url": "https://extensions.penguinmod.com/extensions/AndrewGaming587/agBuffer.js",
+        "name": "Array Buffers",
+        "color": "#0078e2",
+        "hsv": {
+            "h": 208.141592920354,
+            "s": 1,
+            "v": 0.8862745098039215
+        }
+    },
+    "blackMold": {
+        "id": "blackMold",
+        "url": "https://extensions.penguinmod.com/extensions/electricfuzzball_pm/blackMold.js",
+        "name": "Black Mold",
+        "color": "#111111",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.06666666666666667
+        }
+    },
+    "text": {
+        "id": "text",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratchLab_animatedText/index.js",
+        "name": "Animated Text",
+        "color": "#9966ff",
+        "hsv": {
+            "h": 260,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "Gamepad": {
+        "id": "Gamepad",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/GamepadExtension/index.js",
+        "name": "Gamepad",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "griffpatch": {
+        "id": "griffpatch",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/griffpatch_box2d/index.js",
+        "name": "griffpatch",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "xeltallivclipblend": {
+        "id": "xeltallivclipblend",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/xeltalliv_clippingblending/index.js",
+        "name": "Clipping and Blending",
+        "color": "#9966FF",
+        "hsv": {
+            "h": 260,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "shovelcss": {
+        "id": "shovelcss",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/theshovel_customStyles/index.js",
+        "name": "Custom Styles",
+        "color": "#0072d6",
+        "hsv": {
+            "h": 208.0373831775701,
+            "s": 1,
+            "v": 0.8392156862745098
+        }
+    },
+    "shovelColorPicker": {
+        "id": "shovelColorPicker",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/theshovel_colorPicker/index.js",
+        "name": "ColorPicker",
+        "color": "#ff7db5",
+        "hsv": {
+            "h": 334.15384615384613,
+            "s": 0.5098039215686274,
+            "v": 1
+        }
+    },
+    "SPtuneShark3": {
+        "id": "SPtuneShark3",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Tune-Shark-V3.js",
+        "name": "Tune Shark V3",
+        "color": "#666666",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.4
+        }
+    },
+    "lmsTempVars2": {
+        "id": "lmsTempVars2",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/lily_tempVars2/index.js",
+        "name": "Temporary Variables",
+        "color": "#FF791A",
+        "hsv": {
+            "h": 24.89082969432314,
+            "s": 0.8980392156862745,
+            "v": 1
+        }
+    },
+    "DTcameracontrols": {
+        "id": "DTcameracontrols",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/dt_cameracontrols/index.js",
+        "name": "Camera",
+        "color": "#ff4da7",
+        "hsv": {
+            "h": 329.6629213483146,
+            "s": 0.6980392156862745,
+            "v": 1
+        }
+    },
+    "theshovelcanvaseffects": {
+        "id": "theshovelcanvaseffects",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/theshovel_canvasEffects/index.js",
+        "name": "Canvas Effects",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "lmsutilsblocks": {
+        "id": "lmsutilsblocks",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/lmsutilsblocks/index.js",
+        "name": "LMS Utilities",
+        "color": "#1cd6ff",
+        "hsv": {
+            "h": 190.83700440528634,
+            "s": 0.8901960784313725,
+            "v": 1
+        }
+    },
+    "SPyoutubeoperations": {
+        "id": "SPyoutubeoperations",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/YouTube-Operations.js",
+        "name": "YouTube Operations",
+        "color": "#ff0000",
+        "hsv": {
+            "h": 0,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "SPcomments": {
+        "id": "SPcomments",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Better-Comments.js",
+        "name": "Better Comments",
+        "color": "#b8af37",
+        "hsv": {
+            "h": 55.81395348837209,
+            "s": 0.7010869565217391,
+            "v": 0.7215686274509804
+        }
+    },
+    "SPmbpCST": {
+        "id": "SPmbpCST",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/My-Blocks-Plus.js",
+        "name": "My Blocks+",
+        "color": "#FF6680",
+        "hsv": {
+            "h": 349.80392156862746,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "speechSP": {
+        "id": "speechSP",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Speech-Bubbles.js",
+        "name": "Speech Bubbles",
+        "color": "#9966ff",
+        "hsv": {
+            "h": 260,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "SPPause": {
+        "id": "SPPause",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Pause-Utilities.js",
+        "name": "Pause Utilities",
+        "color": "#5f5b49",
+        "hsv": {
+            "h": 49.09090909090909,
+            "s": 0.2315789473684211,
+            "v": 0.37254901960784315
+        }
+    },
+    "SPturboSkins": {
+        "id": "SPturboSkins",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Turbo-Skins.js",
+        "name": "Turbo Skins",
+        "color": "#e81c48",
+        "hsv": {
+            "h": 347.05882352941177,
+            "s": 0.8793103448275863,
+            "v": 0.9098039215686274
+        }
+    },
+    "DICandSPmonitorsPlus": {
+        "id": "DICandSPmonitorsPlus",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Variables-Expanded.js",
+        "name": "Variables Expanded",
+        "color": "#FF8C1A",
+        "hsv": {
+            "h": 29.868995633187776,
+            "s": 0.8980392156862745,
+            "v": 1
+        }
+    },
+    "BetterInputSP": {
+        "id": "BetterInputSP",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Better-Input.js",
+        "name": "Submit\", image: \"",
+        "color": "#9400ff",
+        "hsv": {
+            "h": 274.8235294117647,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "SPjson": {
+        "id": "SPjson",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/JSON-Array.js",
+        "name": "Swift JSON",
+        "color": "#677cd6",
+        "hsv": {
+            "h": 228.64864864864865,
+            "s": 0.5186915887850467,
+            "v": 0.8392156862745098
+        }
+    },
+    "SPprogress": {
+        "id": "SPprogress",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Fetch-Progress.js",
+        "name": "Fetch+",
+        "color": "#00be1e",
+        "hsv": {
+            "h": 129.47368421052633,
+            "s": 1,
+            "v": 0.7450980392156863
+        }
+    },
+    "filesExpanded": {
+        "id": "filesExpanded",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Files-Expanded.js",
+        "name": "Files Expanded",
+        "color": "#fcb103",
+        "hsv": {
+            "h": 41.9277108433735,
+            "s": 0.9880952380952381,
+            "v": 0.9882352941176471
+        }
+    },
+    "SPevents": {
+        "id": "SPevents",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Runtime-Events.js",
+        "name": "Runtime Events",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "SPrenderControl": {
+        "id": "SPrenderControl",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Renderer-Control.js",
+        "name": "Renderer Control",
+        "color": "#5386b5",
+        "hsv": {
+            "h": 208.77551020408166,
+            "s": 0.5414364640883979,
+            "v": 0.7098039215686275
+        }
+    },
+    "SPlooksExpanded": {
+        "id": "SPlooksExpanded",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Looks-Expanded.js",
+        "name": "Looks Expanded",
+        "color": "#9966FF",
+        "hsv": {
+            "h": 260,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "SPspriteEffects": {
+        "id": "SPspriteEffects",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Sprite-Effects.js",
+        "name": "Sprite Effects",
+        "color": "#9966FF",
+        "hsv": {
+            "h": 260,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "SPpartEngine": {
+        "id": "SPpartEngine",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Particle-Engine.js",
+        "name": "Particle Engine",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "SPdisplayTextV2": {
+        "id": "SPdisplayTextV2",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Display-Text-V2.js",
+        "name": "Display Text V2",
+        "color": "#647b91",
+        "hsv": {
+            "h": 209.33333333333334,
+            "s": 0.3103448275862069,
+            "v": 0.5686274509803921
+        }
+    },
+    "SPtempVars": {
+        "id": "SPtempVars",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Temporary-Variables.js",
+        "name": "Temporary Variables",
+        "color": "#FF8C1A",
+        "hsv": {
+            "h": 29.868995633187776,
+            "s": 0.8980392156862745,
+            "v": 1
+        }
+    },
+    "SPmessagePlus": {
+        "id": "SPmessagePlus",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Messages-Plus.js",
+        "name": "Messages+",
+        "color": "#FFBF00",
+        "hsv": {
+            "h": 44.94117647058823,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "HyperSenseSP": {
+        "id": "HyperSenseSP",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Hyper-Sense.js",
+        "name": "Hyper Sense",
+        "color": "#5cb1d6",
+        "hsv": {
+            "h": 198.19672131147541,
+            "s": 0.5700934579439253,
+            "v": 0.8392156862745098
+        }
+    },
+    "WebExtension": {
+        "id": "WebExtension",
+        "url": "https://gabsthecuriouskid.github.io/DinosaurModExtensions/extensions/webextension.js",
+        "name": "Site Runtime",
+        "color": "#8361ff",
+        "hsv": {
+            "h": 252.9113924050633,
+            "s": 0.6196078431372549,
+            "v": 1
+        }
+    },
+    "iStimezones": {
+        "id": "iStimezones",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Timezones.js",
+        "name": "Timezones",
+        "color": "#e7900d",
+        "hsv": {
+            "h": 36.05504587155963,
+            "s": 0.9437229437229436,
+            "v": 0.9058823529411765
+        }
+    },
+    "SPpopups": {
+        "id": "SPpopups",
+        "url": "https://sharkpools-extensions.vercel.app/extension-code/Popup-Phoenix.js",
+        "name": "Popup Phoenix",
+        "color": "#a812ff",
+        "hsv": {
+            "h": 277.9746835443038,
+            "s": 0.9294117647058824,
+            "v": 1
+        }
+    },
+    "coreExample": {
+        "id": "coreExample",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../blocks/scratch3_core_example/index.js",
+        "name": "coreExample",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "pen": {
+        "id": "pen",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_pen/index.js",
+        "name": "Pen",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "wedo2": {
+        "id": "wedo2",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_wedo2/index.js",
+        "name": "WeDo 2.0",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "music": {
+        "id": "music",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_music/index.js",
+        "name": "(1) Snare Drum",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "microbit": {
+        "id": "microbit",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_microbit/index.js",
+        "name": "microbit",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "text2speech": {
+        "id": "text2speech",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_text2speech/index.js",
+        "name": "alto",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "translate": {
+        "id": "translate",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_translate/index.js",
+        "name": "Translate",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "videoSensing": {
+        "id": "videoSensing",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_video_sensing/index.js",
+        "name": "motion",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "ev3": {
+        "id": "ev3",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_ev3/index.js",
+        "name": "LEGO EV3",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "makeymakey": {
+        "id": "makeymakey",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_makeymakey/index.js",
+        "name": "Makey Makey",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "boost": {
+        "id": "boost",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_boost/index.js",
+        "name": "BOOST",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "gdxfor": {
+        "id": "gdxfor",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/scratch3_gdx_for/index.js",
+        "name": "gdxfor",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "tw": {
+        "id": "tw",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/tw/index.js",
+        "name": "TurboWarp",
+        "color": "#ff4c4c",
+        "hsv": {
+            "h": 0,
+            "s": 0.7019607843137254,
+            "v": 1
+        }
+    },
+    "twFiles": {
+        "id": "twFiles",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/tw_files/index.js",
+        "name": "Files",
+        "color": "#fcb103",
+        "hsv": {
+            "h": 41.9277108433735,
+            "s": 0.9880952380952381,
+            "v": 0.9882352941176471
+        }
+    },
+    "pmMotionExpansion": {
+        "id": "pmMotionExpansion",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/pm_motionExpansion/index.js",
+        "name": "Motion Expansion",
+        "color": "#4C97FF",
+        "hsv": {
+            "h": 214.86033519553072,
+            "s": 0.7019607843137254,
+            "v": 1
+        }
+    },
+    "pmOperatorsExpansion": {
+        "id": "pmOperatorsExpansion",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/pm_operatorsExpansion/index.js",
+        "name": "Operators Expansion",
+        "color": "#59C059",
+        "hsv": {
+            "h": 120,
+            "s": 0.5364583333333334,
+            "v": 0.7529411764705882
+        }
+    },
+    "pmSensingExpansion": {
+        "id": "pmSensingExpansion",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/pm_sensingExpansion/index.js",
+        "name": "Sensing Expansion",
+        "color": "#5CB1D6",
+        "hsv": {
+            "h": 198.19672131147541,
+            "s": 0.5700934579439253,
+            "v": 0.8392156862745098
+        }
+    },
+    "pmControlsExpansion": {
+        "id": "pmControlsExpansion",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/pm_controlsExpansion/index.js",
+        "name": "Controls Expansion",
+        "color": "#FFAB19",
+        "hsv": {
+            "h": 38.086956521739125,
+            "s": 0.9019607843137255,
+            "v": 1
+        }
+    },
+    "pmEventsExpansion": {
+        "id": "pmEventsExpansion",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/pm_eventsExpansion/index.js",
+        "name": "Events Expansion",
+        "color": "#FFBF00",
+        "hsv": {
+            "h": 44.94117647058823,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "pmInlineBlocks": {
+        "id": "pmInlineBlocks",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/pm_inlineblocks/index.js",
+        "name": "Inline Blocks",
+        "color": "#FFAB19",
+        "hsv": {
+            "h": 38.086956521739125,
+            "s": 0.9019607843137255,
+            "v": 1
+        }
+    },
+    "jgFiles": {
+        "id": "jgFiles",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_files/index.js",
+        "name": "Files (legacy)",
+        "color": "#ffbb00",
+        "hsv": {
+            "h": 44,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "jgWebsiteRequests": {
+        "id": "jgWebsiteRequests",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_websiteRequests/index.js",
+        "name": "Website Requests",
+        "color": "#004299",
+        "hsv": {
+            "h": 214.1176470588235,
+            "s": 1,
+            "v": 0.6
+        }
+    },
+    "jgJSON": {
+        "id": "jgJSON",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_json/index.js",
+        "name": "JSON",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "jgJSONParsed": {
+        "id": "jgJSONParsed",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_jsonParsed/index.js",
+        "name": "jgJSONParsed",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "jgRuntime": {
+        "id": "jgRuntime",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_runtime/index.js",
+        "name": "Runtime",
+        "color": "#777777",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.4666666666666667
+        }
+    },
+    "jgPrism": {
+        "id": "jgPrism",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_prism/index.js",
+        "name": "Prism",
+        "color": "#BC7FFF",
+        "hsv": {
+            "h": 268.59375,
+            "s": 0.5019607843137255,
+            "v": 1
+        }
+    },
+    "jgIframe": {
+        "id": "jgIframe",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_iframe/index.js",
+        "name": "IFrame",
+        "color": "#F36518",
+        "hsv": {
+            "h": 21.0958904109589,
+            "s": 0.9012345679012346,
+            "v": 0.9529411764705882
+        }
+    },
+    "jgExtendedAudio": {
+        "id": "jgExtendedAudio",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_audio/index.js",
+        "name": "Sound Systems",
+        "color": "#E256A1",
+        "hsv": {
+            "h": 327.8571428571429,
+            "s": 0.6194690265486725,
+            "v": 0.8862745098039215
+        }
+    },
+    "jgScratchAuthenticate": {
+        "id": "jgScratchAuthenticate",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_scratchAuth/index.js",
+        "name": "Scratch Auth",
+        "color": "#FFA01C",
+        "hsv": {
+            "h": 34.88986784140969,
+            "s": 0.8901960784313725,
+            "v": 1
+        }
+    },
+    "JgPermissionBlocks": {
+        "id": "JgPermissionBlocks",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_permissions/index.js",
+        "name": "Permissions",
+        "color": "#00C4FF",
+        "hsv": {
+            "h": 193.88235294117646,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "jgClones": {
+        "id": "jgClones",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_clones/index.js",
+        "name": "Clone Communication",
+        "color": "#FFAB19",
+        "hsv": {
+            "h": 38.086956521739125,
+            "s": 0.9019607843137255,
+            "v": 1
+        }
+    },
+    "jgTween": {
+        "id": "jgTween",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_tween/index.js",
+        "name": "Tweening",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "jgDebugging": {
+        "id": "jgDebugging",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_debugging/index.js",
+        "name": "Debugging",
+        "color": "#878787",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.5294117647058824
+        }
+    },
+    "jgEasySave": {
+        "id": "jgEasySave",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_easySave/index.js",
+        "name": "Easy Save",
+        "color": "#48a3d4",
+        "hsv": {
+            "h": 201,
+            "s": 0.6603773584905661,
+            "v": 0.8313725490196079
+        }
+    },
+    "jgPackagerApplications": {
+        "id": "jgPackagerApplications",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_packagerApplications/index.js",
+        "name": "Packager Applications",
+        "color": "#66b8ff",
+        "hsv": {
+            "h": 207.84313725490196,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "jgTailgating": {
+        "id": "jgTailgating",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_tailgating/index.js",
+        "name": "Tailgating",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "jgScripts": {
+        "id": "jgScripts",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_scripts/index.js",
+        "name": "Scripts",
+        "color": "#8c8c8c",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.5490196078431373
+        }
+    },
+    "jg3dVr": {
+        "id": "jg3dVr",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_3dVr/index.js",
+        "name": "3D VR",
+        "color": "#B100FE",
+        "hsv": {
+            "h": 281.81102362204723,
+            "s": 1,
+            "v": 0.996078431372549
+        }
+    },
+    "jgVr": {
+        "id": "jgVr",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_vr/index.js",
+        "name": "Virtual Reality",
+        "color": "#3888cf",
+        "hsv": {
+            "h": 208.21192052980132,
+            "s": 0.7294685990338164,
+            "v": 0.8117647058823529
+        }
+    },
+    "jgInterfaces": {
+        "id": "jgInterfaces",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_interfaces/index.js",
+        "name": "Interfaces",
+        "color": "#ac96b5",
+        "hsv": {
+            "h": 282.58064516129036,
+            "s": 0.1712707182320442,
+            "v": 0.7098039215686275
+        }
+    },
+    "jgCostumeDrawing": {
+        "id": "jgCostumeDrawing",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_costumeDrawing/index.js",
+        "name": "jgCostumeDrawing",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "jgJavascript": {
+        "id": "jgJavascript",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_javascript/index.js",
+        "name": "JavaScript",
+        "color": "#EFC900",
+        "hsv": {
+            "h": 50.4602510460251,
+            "s": 1,
+            "v": 0.9372549019607843
+        }
+    },
+    "jgPathfinding": {
+        "id": "jgPathfinding",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_pathfinding/index.js",
+        "name": "Pathfinding",
+        "color": "#5386E2",
+        "hsv": {
+            "h": 218.6013986013986,
+            "s": 0.6327433628318584,
+            "v": 0.8862745098039215
+        }
+    },
+    "jgAnimation": {
+        "id": "jgAnimation",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_animation/index.js",
+        "name": "Animation",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "jgStorage": {
+        "id": "jgStorage",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_storage/index.js",
+        "name": "Storage",
+        "color": "#76A8FE",
+        "hsv": {
+            "h": 217.94117647058823,
+            "s": 0.5354330708661417,
+            "v": 0.996078431372549
+        }
+    },
+    "jgTimers": {
+        "id": "jgTimers",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_timers/index.js",
+        "name": "Multiple Timers",
+        "color": "#0093FE",
+        "hsv": {
+            "h": 205.2755905511811,
+            "s": 1,
+            "v": 0.996078431372549
+        }
+    },
+    "jgAdvancedText": {
+        "id": "jgAdvancedText",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_advancedText/index.js",
+        "name": "jgAdvancedText",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "jgDev": {
+        "id": "jgDev",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_dev/index.js",
+        "name": "Test Extension",
+        "color": "#4275f5",
+        "hsv": {
+            "h": 222.9050279329609,
+            "s": 0.7306122448979591,
+            "v": 0.9607843137254902
+        }
+    },
+    "jgDooDoo": {
+        "id": "jgDooDoo",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_doodoo/index.js",
+        "name": "doo doo",
+        "color": "#59C059",
+        "hsv": {
+            "h": 120,
+            "s": 0.5364583333333334,
+            "v": 0.7529411764705882
+        }
+    },
+    "jgBestExtension": {
+        "id": "jgBestExtension",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_bestextensioin/index.js",
+        "name": "the great",
+        "color": "#ff0000",
+        "hsv": {
+            "h": 0,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "jgChristmas": {
+        "id": "jgChristmas",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jg_christmas/index.js",
+        "name": "Christmas",
+        "color": "#ff0000",
+        "hsv": {
+            "h": 0,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "jwUnite": {
+        "id": "jwUnite",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jw_unite/index.js",
+        "name": "Unite",
+        "color": "#7ddcff",
+        "hsv": {
+            "h": 196.15384615384616,
+            "s": 0.5098039215686274,
+            "v": 1
+        }
+    },
+    "jwProto": {
+        "id": "jwProto",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jw_proto/index.js",
+        "name": "Labels",
+        "color": "#969696",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.5882352941176471
+        }
+    },
+    "jwPostLit": {
+        "id": "jwPostLit",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jw_postlit/index.js",
+        "name": "postLit",
+        "color": "#0fd173",
+        "hsv": {
+            "h": 150.9278350515464,
+            "s": 0.9282296650717703,
+            "v": 0.8196078431372549
+        }
+    },
+    "jwReflex": {
+        "id": "jwReflex",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jw_reflex/index.js",
+        "name": "Reflex",
+        "color": "#000000",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0
+        }
+    },
+    "blockly2math": {
+        "id": "blockly2math",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/blockly-2/math.js",
+        "name": "Math",
+        "color": "#5b67a5",
+        "hsv": {
+            "h": 230.27027027027026,
+            "s": 0.4484848484848485,
+            "v": 0.6470588235294118
+        }
+    },
+    "jwXml": {
+        "id": "jwXml",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jw_xml/index.js",
+        "name": "XML",
+        "color": "#ffbb3d",
+        "hsv": {
+            "h": 38.96907216494845,
+            "s": 0.7607843137254902,
+            "v": 1
+        }
+    },
+    "jwVector": {
+        "id": "jwVector",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwVector/index.js",
+        "name": "Vector",
+        "color": "#6babff",
+        "hsv": {
+            "h": 214.05405405405406,
+            "s": 0.580392156862745,
+            "v": 1
+        }
+    },
+    "jwArray": {
+        "id": "jwArray",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwArray/index.js",
+        "name": "Arrays",
+        "color": "#ff513d",
+        "hsv": {
+            "h": 6.185567010309276,
+            "s": 0.7607843137254902,
+            "v": 1
+        }
+    },
+    "jwTargets": {
+        "id": "jwTargets",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwTargets/index.js",
+        "name": "Targets",
+        "color": "#4254f5",
+        "hsv": {
+            "h": 233.96648044692736,
+            "s": 0.7306122448979591,
+            "v": 0.9607843137254902
+        }
+    },
+    "jwPsychic": {
+        "id": "jwPsychic",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwPsychic/index.js",
+        "name": "Psychic",
+        "color": "#b16bed",
+        "hsv": {
+            "h": 272.3076923076923,
+            "s": 0.5485232067510548,
+            "v": 0.9294117647058824
+        }
+    },
+    "jwLambda": {
+        "id": "jwLambda",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwLambda/index.js",
+        "name": "Lambda",
+        "color": "#c71a4b",
+        "hsv": {
+            "h": 343.0057803468208,
+            "s": 0.8693467336683417,
+            "v": 0.7803921568627451
+        }
+    },
+    "jwNum": {
+        "id": "jwNum",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwNum/index.js",
+        "name": "Infinity",
+        "color": "#3bd471",
+        "hsv": {
+            "h": 141.1764705882353,
+            "s": 0.7216981132075473,
+            "v": 0.8313725490196079
+        }
+    },
+    "jwColor": {
+        "id": "jwColor",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwColor/index.js",
+        "name": "Color",
+        "color": "#f04a87",
+        "hsv": {
+            "h": 337.95180722891564,
+            "s": 0.6916666666666665,
+            "v": 0.9411764705882353
+        }
+    },
+    "jwStorage": {
+        "id": "jwStorage",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwStorage/index.js",
+        "name": "Assets",
+        "color": "#6f6df0",
+        "hsv": {
+            "h": 240.91603053435114,
+            "s": 0.5458333333333333,
+            "v": 0.9411764705882353
+        }
+    },
+    "jwDate": {
+        "id": "jwDate",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwDate/index.js",
+        "name": "Dates",
+        "color": "#ff788a",
+        "hsv": {
+            "h": 352,
+            "s": 0.5294117647058824,
+            "v": 1
+        }
+    },
+    "jwScope": {
+        "id": "jwScope",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwScope/index.js",
+        "name": "Scope",
+        "color": "#4f85f3",
+        "hsv": {
+            "h": 220.2439024390244,
+            "s": 0.6748971193415637,
+            "v": 0.9529411764705882
+        }
+    },
+    "jwXML": {
+        "id": "jwXML",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwXML/index.js",
+        "name": "#text",
+        "color": "#8dd941",
+        "hsv": {
+            "h": 90,
+            "s": 0.7004608294930875,
+            "v": 0.8509803921568627
+        }
+    },
+    "jwPointer": {
+        "id": "jwPointer",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwPointer/index.js",
+        "name": "Pointers",
+        "color": "#8511d3",
+        "hsv": {
+            "h": 275.8762886597938,
+            "s": 0.9194312796208531,
+            "v": 0.8274509803921568
+        }
+    },
+    "jwInt": {
+        "id": "jwInt",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jwInt/index.js",
+        "name": "Integers",
+        "color": "#fc874a",
+        "hsv": {
+            "h": 20.561797752808985,
+            "s": 0.7063492063492063,
+            "v": 0.9882352941176471
+        }
+    },
+    "jwStructs": {
+        "id": "jwStructs",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/jw_structs/index.js",
+        "name": "Structs",
+        "color": "#7ddcff",
+        "hsv": {
+            "h": 196.15384615384616,
+            "s": 0.5098039215686274,
+            "v": 1
+        }
+    },
+    "cl": {
+        "id": "cl",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/cl/index.js",
+        "name": "cl",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "shovellzcompresss": {
+        "id": "shovellzcompresss",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/theshovel_lzString/index.js",
+        "name": "LZ Compress",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "profanityAPI": {
+        "id": "profanityAPI",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/theshovel_profanity/index.js",
+        "name": "Censorship",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "canvas": {
+        "id": "canvas",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/gsa_canvas_old/index.js",
+        "name": "html canvas",
+        "color": "#0069c2",
+        "hsv": {
+            "h": 207.5257731958763,
+            "s": 1,
+            "v": 0.7607843137254902
+        }
+    },
+    "newCanvas": {
+        "id": "newCanvas",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/gsa_canvas/index.js",
+        "name": "HTML Canvas",
+        "color": "#0069c2",
+        "hsv": {
+            "h": 207.5257731958763,
+            "s": 1,
+            "v": 0.7607843137254902
+        }
+    },
+    "tempVars": {
+        "id": "tempVars",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/gsa_tempVars/index.js",
+        "name": "Temporary Variables",
+        "color": "#0069c2",
+        "hsv": {
+            "h": 207.5257731958763,
+            "s": 1,
+            "v": 0.7607843137254902
+        }
+    },
+    "colors": {
+        "id": "colors",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/gsa_colorUtilBlocks/index.js",
+        "name": "Colors",
+        "color": "#ff4c4c",
+        "hsv": {
+            "h": 0,
+            "s": 0.7019607843137254,
+            "v": 1
+        }
+    },
+    "pmCamera": {
+        "id": "pmCamera",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/pm_camera/index.js",
+        "name": "Camera",
+        "color": "#0586FF",
+        "hsv": {
+            "h": 209.04,
+            "s": 0.9803921568627451,
+            "v": 1
+        }
+    },
+    "sharkpoolPrinting": {
+        "id": "sharkpoolPrinting",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/sharkpool_printing/index.js",
+        "name": "Printing",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "SPjavascriptV2": {
+        "id": "SPjavascriptV2",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/sp_javascriptV2/index.js",
+        "name": "JavaScript V2",
+        "color": "#f7df1e",
+        "hsv": {
+            "h": 53.364055299539174,
+            "s": 0.8785425101214575,
+            "v": 0.9686274509803922
+        }
+    },
+    "oddMessage": {
+        "id": "oddMessage",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/silvxrcat_oddmessages/index.js",
+        "name": "Odd Messages",
+        "color": "#BE00FF",
+        "hsv": {
+            "h": 284.70588235294116,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "iygPerlin": {
+        "id": "iygPerlin",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/iyg_perlin_noise/index.js",
+        "name": "Perlin Noise",
+        "color": "#525252",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.3215686274509804
+        }
+    },
+    "fr3d": {
+        "id": "fr3d",
+        "url": "https://raw.githubusercontent.com/PenguinMod/PenguinMod-Vm/develop//src/extensions/../extensions/fr_3d/index.js",
+        "name": "3D Physics",
+        "color": "#D066FE",
+        "hsv": {
+            "h": 281.8421052631579,
+            "s": 0.5984251968503936,
+            "v": 0.996078431372549
+        }
+    },
+    "penP": {
+        "id": "penP",
+        "url": "https://extensions.turbowarp.org/obviousAlexC/penPlus.js",
+        "name": "Pen+ V7",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "cloudlink": {
+        "id": "cloudlink",
+        "url": "https://extensions.turbowarp.org/cloudlink.js",
+        "name": "CloudLink V4",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "lmsAllMenus": {
+        "id": "lmsAllMenus",
+        "url": "https://extensions.turbowarp.org/Lily/AllMenus.js",
+        "name": "All Menus",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "faceSensing": {
+        "id": "faceSensing",
+        "url": "https://extensions.turbowarp.org/lab/face-sensing.js",
+        "name": "Face Sensing",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "videoSprites": {
+        "id": "videoSprites",
+        "url": "https://extensions.turbowarp.org/lab/video-sprites.js",
+        "name": "Video Sprites",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "stretch": {
+        "id": "stretch",
+        "url": "https://extensions.turbowarp.org/stretch.js",
+        "name": "Stretch",
+        "color": "#4287f5",
+        "hsv": {
+            "h": 216.87150837988827,
+            "s": 0.7306122448979591,
+            "v": 0.9607843137254902
+        }
+    },
+    "files": {
+        "id": "files",
+        "url": "https://extensions.turbowarp.org/files.js",
+        "name": "Files",
+        "color": "#fcb103",
+        "hsv": {
+            "h": 41.9277108433735,
+            "s": 0.9880952380952381,
+            "v": 0.9882352941176471
+        }
+    },
+    "pointerlock": {
+        "id": "pointerlock",
+        "url": "https://extensions.turbowarp.org/pointerlock.js",
+        "name": "Pointerlock",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "MouseCursor": {
+        "id": "MouseCursor",
+        "url": "https://extensions.turbowarp.org/cursor.js",
+        "name": "Mouse Cursor",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "runtimeoptions": {
+        "id": "runtimeoptions",
+        "url": "https://extensions.turbowarp.org/runtime-options.js",
+        "name": "Runtime Options",
+        "color": "#8c9abf",
+        "hsv": {
+            "h": 223.52941176470588,
+            "s": 0.26701570680628267,
+            "v": 0.7490196078431373
+        }
+    },
+    "fetch": {
+        "id": "fetch",
+        "url": "https://extensions.turbowarp.org/fetch.js",
+        "name": "Fetch",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "strings": {
+        "id": "strings",
+        "url": "https://extensions.turbowarp.org/text.js",
+        "name": "Text",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "localstorage": {
+        "id": "localstorage",
+        "url": "https://extensions.turbowarp.org/local-storage.js",
+        "name": "Local Storage",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "truefantombase": {
+        "id": "truefantombase",
+        "url": "https://extensions.turbowarp.org/true-fantom/base.js",
+        "name": "Base",
+        "color": "#e200ca",
+        "hsv": {
+            "h": 306.37168141592923,
+            "s": 1,
+            "v": 0.8862745098039215
+        }
+    },
+    "Bitwise": {
+        "id": "Bitwise",
+        "url": "https://extensions.turbowarp.org/bitwise.js",
+        "name": "Bitwise",
+        "color": "#17cde6",
+        "hsv": {
+            "h": 187.24637681159422,
+            "s": 0.9,
+            "v": 0.9019607843137255
+        }
+    },
+    "skyhigh173BigInt": {
+        "id": "skyhigh173BigInt",
+        "url": "https://extensions.turbowarp.org/Skyhigh173/bigint.js",
+        "name": "BigInt",
+        "color": "#59C093",
+        "hsv": {
+            "h": 153.78640776699027,
+            "s": 0.5364583333333334,
+            "v": 0.7529411764705882
+        }
+    },
+    "utilities": {
+        "id": "utilities",
+        "url": "https://extensions.turbowarp.org/utilities.js",
+        "name": "Utilities",
+        "color": "#8BC34A",
+        "hsv": {
+            "h": 87.76859504132231,
+            "s": 0.6205128205128204,
+            "v": 0.7647058823529411
+        }
+    },
+    "notSound": {
+        "id": "notSound",
+        "url": "https://extensions.turbowarp.org/sound.js",
+        "name": "URL Playback",
+        "color": "#cf63cf",
+        "hsv": {
+            "h": 300,
+            "s": 0.5217391304347826,
+            "v": 0.8117647058823529
+        }
+    },
+    "lmsVideo": {
+        "id": "lmsVideo",
+        "url": "https://extensions.turbowarp.org/Lily/Video.js",
+        "name": "Video",
+        "color": "#557882",
+        "hsv": {
+            "h": 193.33333333333331,
+            "s": 0.34615384615384615,
+            "v": 0.5098039215686274
+        }
+    },
+    "iframe": {
+        "id": "iframe",
+        "url": "https://extensions.turbowarp.org/iframe.js",
+        "name": "Iframe",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "clayhtmlencode": {
+        "id": "clayhtmlencode",
+        "url": "https://extensions.turbowarp.org/Clay/htmlEncode.js",
+        "name": "HTML Encode",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "clipboard": {
+        "id": "clipboard",
+        "url": "https://extensions.turbowarp.org/clipboard.js",
+        "name": "Clipboard",
+        "color": "#008080",
+        "hsv": {
+            "h": 180,
+            "s": 1,
+            "v": 0.5019607843137255
+        }
+    },
+    "betterpen": {
+        "id": "betterpen",
+        "url": "https://extensions.turbowarp.org/penplus.js",
+        "name": "Pen+ V5",
+        "color": "#0e9a6b",
+        "hsv": {
+            "h": 159.85714285714286,
+            "s": 0.9090909090909091,
+            "v": 0.6039215686274509
+        }
+    },
+    "xeltallivSimple3D": {
+        "id": "xeltallivSimple3D",
+        "url": "https://extensions.turbowarp.org/Xeltalliv/simple3D.js",
+        "name": "Simple 3D",
+        "color": "#5CB1D6",
+        "hsv": {
+            "h": 198.19672131147541,
+            "s": 0.5700934579439253,
+            "v": 0.8392156862745098
+        }
+    },
+    "lmsSkins": {
+        "id": "lmsSkins",
+        "url": "https://extensions.turbowarp.org/Lily/Skins.js",
+        "name": "Skins",
+        "color": "#6b56ff",
+        "hsv": {
+            "h": 247.45562130177515,
+            "s": 0.6627450980392157,
+            "v": 1
+        }
+    },
+    "obviousalexsensing": {
+        "id": "obviousalexsensing",
+        "url": "https://extensions.turbowarp.org/obviousAlexC/SensingPlus.js",
+        "name": "Sensing+",
+        "color": "#5cb1d6",
+        "hsv": {
+            "h": 198.19672131147541,
+            "s": 0.5700934579439253,
+            "v": 0.8392156862745098
+        }
+    },
+    "cubesterKeySimulation": {
+        "id": "cubesterKeySimulation",
+        "url": "https://extensions.turbowarp.org/CubesterYT/KeySimulation.js",
+        "name": "Key Simulation",
+        "color": "#BF0000",
+        "hsv": {
+            "h": 0,
+            "s": 1,
+            "v": 0.7490196078431373
+        }
+    },
+    "lmsclonesplus": {
+        "id": "lmsclonesplus",
+        "url": "https://extensions.turbowarp.org/Lily/ClonesPlus.js",
+        "name": "Clones+",
+        "color": "#FFAB19",
+        "hsv": {
+            "h": 38.086956521739125,
+            "s": 0.9019607843137255,
+            "v": 1
+        }
+    },
+    "lmsLooksPlus": {
+        "id": "lmsLooksPlus",
+        "url": "https://extensions.turbowarp.org/Lily/LooksPlus.js",
+        "name": "Looks+",
+        "color": "#9966FF",
+        "hsv": {
+            "h": 260,
+            "s": 0.6,
+            "v": 1
+        }
+    },
+    "lmsMoreEvents": {
+        "id": "lmsMoreEvents",
+        "url": "https://extensions.turbowarp.org/Lily/MoreEvents.js",
+        "name": "More Events",
+        "color": "#FFBF00",
+        "hsv": {
+            "h": 44.94117647058823,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "lmsListTools": {
+        "id": "lmsListTools",
+        "url": "https://extensions.turbowarp.org/Lily/ListTools.js",
+        "name": "List Tools",
+        "color": "#ff661a",
+        "hsv": {
+            "h": 19.912663755458514,
+            "s": 0.8980392156862745,
+            "v": 1
+        }
+    },
+    "mobilekeyboard0419": {
+        "id": "mobilekeyboard0419",
+        "url": "https://extensions.turbowarp.org/veggiecan/mobilekeyboard.js",
+        "name": "Mobile Keyboard",
+        "color": "#999999",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.6
+        }
+    },
+    "nkmoremotion": {
+        "id": "nkmoremotion",
+        "url": "https://extensions.turbowarp.org/NexusKitten/moremotion.js",
+        "name": "More Motion",
+        "color": "#4c97ff",
+        "hsv": {
+            "h": 214.86033519553072,
+            "s": 0.7019607843137254,
+            "v": 1
+        }
+    },
+    "cubesterWindowControls": {
+        "id": "cubesterWindowControls",
+        "url": "https://extensions.turbowarp.org/CubesterYT/WindowControls.js",
+        "name": "Window Controls",
+        "color": "#359ed4",
+        "hsv": {
+            "h": 200.37735849056602,
+            "s": 0.75,
+            "v": 0.8313725490196079
+        }
+    },
+    "fullscreen0419": {
+        "id": "fullscreen0419",
+        "url": "https://extensions.turbowarp.org/veggiecan/browserfullscreen.js",
+        "name": "Browser Fullscreen",
+        "color": "#F39016",
+        "hsv": {
+            "h": 33.12217194570136,
+            "s": 0.9094650205761317,
+            "v": 0.9529411764705882
+        }
+    },
+    "shreder95resolution": {
+        "id": "shreder95resolution",
+        "url": "https://extensions.turbowarp.org/shreder95ua/resolution.js",
+        "name": "Screen resolution",
+        "color": "#FFAB19",
+        "hsv": {
+            "h": 38.086956521739125,
+            "s": 0.9019607843137255,
+            "v": 1
+        }
+    },
+    "xmerclosecontrol": {
+        "id": "xmerclosecontrol",
+        "url": "https://extensions.turbowarp.org/XmerOriginals/closecontrol.js",
+        "name": "Ask Before Closing Tab",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "navigatorinfo": {
+        "id": "navigatorinfo",
+        "url": "https://extensions.turbowarp.org/navigator.js",
+        "name": "Navigator Info",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "battery": {
+        "id": "battery",
+        "url": "https://extensions.turbowarp.org/battery.js",
+        "name": "Battery",
+        "color": "#cf8436",
+        "hsv": {
+            "h": 30.588235294117652,
+            "s": 0.7391304347826086,
+            "v": 0.8117647058823529
+        }
+    },
+    "pwldevvibration": {
+        "id": "pwldevvibration",
+        "url": "https://extensions.turbowarp.org/PwLDev/vibration.js",
+        "name": "Vibration",
+        "color": "#45a15c",
+        "hsv": {
+            "h": 135,
+            "s": 0.5714285714285714,
+            "v": 0.6313725490196078
+        }
+    },
+    "nkcontrols": {
+        "id": "nkcontrols",
+        "url": "https://extensions.turbowarp.org/NexusKitten/controlcontrols.js",
+        "name": "Control Controls",
+        "color": "#ffab19",
+        "hsv": {
+            "h": 38.086956521739125,
+            "s": 0.9019607843137255,
+            "v": 1
+        }
+    },
+    "mdwaltersnotifications": {
+        "id": "mdwaltersnotifications",
+        "url": "https://extensions.turbowarp.org/mdwalters/notifications.js",
+        "name": "Notifications",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "dtbyxeroname": {
+        "id": "dtbyxeroname",
+        "url": "https://extensions.turbowarp.org/XeroName/Deltatime.js",
+        "name": "Delta Time",
+        "color": "#333333",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.2
+        }
+    },
+    "AR": {
+        "id": "AR",
+        "url": "https://extensions.turbowarp.org/ar.js",
+        "name": "AR: combined",
+        "color": "#d10000",
+        "hsv": {
+            "h": 0,
+            "s": 1,
+            "v": 0.8196078431372549
+        }
+    },
+    "Encoding": {
+        "id": "Encoding",
+        "url": "https://extensions.turbowarp.org/encoding.js",
+        "name": "Encoding",
+        "color": "#6495ed",
+        "hsv": {
+            "h": 218.54014598540147,
+            "s": 0.5780590717299579,
+            "v": 0.9294117647058824
+        }
+    },
+    "lmsSoundExpanded": {
+        "id": "lmsSoundExpanded",
+        "url": "https://extensions.turbowarp.org/Lily/SoundExpanded.js",
+        "name": "Sound Expanded",
+        "color": "#CF63CF",
+        "hsv": {
+            "h": 300,
+            "s": 0.5217391304347826,
+            "v": 0.8117647058823529
+        }
+    },
+    "lmsTimers": {
+        "id": "lmsTimers",
+        "url": "https://extensions.turbowarp.org/Lily/MoreTimers.js",
+        "name": "More Timers",
+        "color": "#5cb1d6",
+        "hsv": {
+            "h": 198.19672131147541,
+            "s": 0.5700934579439253,
+            "v": 0.8392156862745098
+        }
+    },
+    "clouddataping": {
+        "id": "clouddataping",
+        "url": "https://extensions.turbowarp.org/clouddata-ping.js",
+        "name": "Ping Cloud Data",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "truefantomnetwork": {
+        "id": "truefantomnetwork",
+        "url": "https://extensions.turbowarp.org/true-fantom/network.js",
+        "name": "Network",
+        "color": "#146600",
+        "hsv": {
+            "h": 108.23529411764706,
+            "s": 1,
+            "v": 0.4
+        }
+    },
+    "truefantommath": {
+        "id": "truefantommath",
+        "url": "https://extensions.turbowarp.org/true-fantom/math.js",
+        "name": "Math",
+        "color": "#59c059",
+        "hsv": {
+            "h": 120,
+            "s": 0.5364583333333334,
+            "v": 0.7529411764705882
+        }
+    },
+    "truefantomregexp": {
+        "id": "truefantomregexp",
+        "url": "https://extensions.turbowarp.org/true-fantom/regexp.js",
+        "name": "RegExp",
+        "color": "#e6282a",
+        "hsv": {
+            "h": 359.3684210526316,
+            "s": 0.8260869565217391,
+            "v": 0.9019607843137255
+        }
+    },
+    "truefantomcouplers": {
+        "id": "truefantomcouplers",
+        "url": "https://extensions.turbowarp.org/true-fantom/couplers.js",
+        "name": "Couplers",
+        "color": "#404040",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.25098039215686274
+        }
+    },
+    "samuelloufgeolocation": {
+        "id": "samuelloufgeolocation",
+        "url": "https://extensions.turbowarp.org/SamuelLouf/Geolocation.js",
+        "name": "geolocation",
+        "color": "#036e15",
+        "hsv": {
+            "h": 130.09345794392522,
+            "s": 0.9727272727272727,
+            "v": 0.43137254901960786
+        }
+    },
+    "dogeiscutformatnumbers": {
+        "id": "dogeiscutformatnumbers",
+        "url": "https://extensions.turbowarp.org/DogeisCut/FormatNumbers.js",
+        "name": "Format Numbers",
+        "color": "#419873",
+        "hsv": {
+            "h": 154.48275862068965,
+            "s": 0.5723684210526316,
+            "v": 0.596078431372549
+        }
+    },
+    "lmsHackedBlocks": {
+        "id": "lmsHackedBlocks",
+        "url": "https://extensions.turbowarp.org/Lily/HackedBlocks.js",
+        "name": "Hidden Blocks",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "lmsCast": {
+        "id": "lmsCast",
+        "url": "https://extensions.turbowarp.org/Lily/Cast.js",
+        "name": "Cast",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "sipctime": {
+        "id": "sipctime",
+        "url": "https://extensions.turbowarp.org/-SIPC-/time.js",
+        "name": "Time",
+        "color": "#ff8000",
+        "hsv": {
+            "h": 30.11764705882353,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "sipcconsole": {
+        "id": "sipcconsole",
+        "url": "https://extensions.turbowarp.org/-SIPC-/consoles.js",
+        "name": "Consoles",
+        "color": "#808080",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.5019607843137255
+        }
+    },
+    "zxmushroom63searchparams": {
+        "id": "zxmushroom63searchparams",
+        "url": "https://extensions.turbowarp.org/ZXMushroom63/searchApi.js",
+        "name": "Search Params",
+        "color": "#b4b4b4",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.7058823529411765
+        }
+    },
+    "ShovelUtils": {
+        "id": "ShovelUtils",
+        "url": "https://extensions.turbowarp.org/TheShovel/ShovelUtils.js",
+        "name": "ShovelUtils",
+        "color": "#f54242",
+        "hsv": {
+            "h": 0,
+            "s": 0.7306122448979591,
+            "v": 0.9607843137254902
+        }
+    },
+    "lmsAssets": {
+        "id": "lmsAssets",
+        "url": "https://extensions.turbowarp.org/Lily/Assets.js",
+        "name": "Asset Manager",
+        "color": "#5779ca",
+        "hsv": {
+            "h": 222.26086956521738,
+            "s": 0.5693069306930693,
+            "v": 0.792156862745098
+        }
+    },
+    "SPASfontManager": {
+        "id": "SPASfontManager",
+        "url": "https://extensions.turbowarp.org/SharkPool/Font-Manager.js",
+        "name": "Font Manager",
+        "color": "#2b7d6e",
+        "hsv": {
+            "h": 169.02439024390245,
+            "s": 0.6559999999999999,
+            "v": 0.49019607843137253
+        }
+    },
+    "dninwakelock": {
+        "id": "dninwakelock",
+        "url": "https://extensions.turbowarp.org/DNin/wake-lock.js",
+        "name": "Wake Lock",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "skyhigh173JSON": {
+        "id": "skyhigh173JSON",
+        "url": "https://extensions.turbowarp.org/Skyhigh173/json.js",
+        "name": "JSON",
+        "color": "#3271D0",
+        "hsv": {
+            "h": 216.0759493670886,
+            "s": 0.7596153846153847,
+            "v": 0.8156862745098039
+        }
+    },
+    "mbwxml": {
+        "id": "mbwxml",
+        "url": "https://extensions.turbowarp.org/mbw/xml.js",
+        "name": "XML",
+        "color": "#6c2b5f",
+        "hsv": {
+            "h": 312,
+            "s": 0.6018518518518519,
+            "v": 0.4235294117647059
+        }
+    },
+    "numericalencoding2": {
+        "id": "numericalencoding2",
+        "url": "https://extensions.turbowarp.org/numerical-encoding-2.js",
+        "name": "Numerical Encoding V2",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "cs2627883NumericalEncoding": {
+        "id": "cs2627883NumericalEncoding",
+        "url": "https://extensions.turbowarp.org/cs2627883/numericalencoding.js",
+        "name": "Numerical Encoding V1",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "SPcamera": {
+        "id": "SPcamera",
+        "url": "https://extensions.turbowarp.org/SharkPool/Camera.js",
+        "name": "default",
+        "color": "#517af5",
+        "hsv": {
+            "h": 225,
+            "s": 0.6693877551020408,
+            "v": 0.9607843137254902
+        }
+    },
+    "lbdrawtest": {
+        "id": "lbdrawtest",
+        "url": "https://extensions.turbowarp.org/Longboost/color_channels.js",
+        "name": "RGB Channels",
+        "color": "#aaaaaa",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.6666666666666666
+        }
+    },
+    "cst1229zip": {
+        "id": "cst1229zip",
+        "url": "https://extensions.turbowarp.org/CST1229/zip.js",
+        "name": "Zip",
+        "color": "#a49a3a",
+        "hsv": {
+            "h": 54.33962264150942,
+            "s": 0.6463414634146342,
+            "v": 0.6431372549019608
+        }
+    },
+    "images": {
+        "id": "images",
+        "url": "https://extensions.turbowarp.org/CST1229/images.js",
+        "name": "Images",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "shovellzcompress": {
+        "id": "shovellzcompress",
+        "url": "https://extensions.turbowarp.org/TheShovel/LZ-String.js",
+        "name": "LZ Compress",
+        "color": "#2f3463",
+        "hsv": {
+            "h": 234.23076923076925,
+            "s": 0.5252525252525252,
+            "v": 0.38823529411764707
+        }
+    },
+    "0832rxfs2": {
+        "id": "0832rxfs2",
+        "url": "https://extensions.turbowarp.org/0832/rxFS2.js",
+        "name": "rxFS",
+        "color": "#192d50",
+        "hsv": {
+            "h": 218.1818181818182,
+            "s": 0.6875,
+            "v": 0.3137254901960784
+        }
+    },
+    "nexuskittensgrab": {
+        "id": "nexuskittensgrab",
+        "url": "https://extensions.turbowarp.org/NexusKitten/sgrab.js",
+        "name": "S-Grab",
+        "color": "#ECA90B",
+        "hsv": {
+            "h": 42.13333333333333,
+            "s": 0.9533898305084746,
+            "v": 0.9254901960784314
+        }
+    },
+    "nonameawagraph": {
+        "id": "nonameawagraph",
+        "url": "https://extensions.turbowarp.org/NOname-awa/graphics2d.js",
+        "name": "nonameawagraph",
+        "color": "#ff976c",
+        "hsv": {
+            "h": 17.551020408163264,
+            "s": 0.5764705882352941,
+            "v": 1
+        }
+    },
+    "nonameawacomparisons": {
+        "id": "nonameawacomparisons",
+        "url": "https://extensions.turbowarp.org/NOname-awa/more-comparisons.js",
+        "name": "More Comparisons",
+        "color": "#00a889",
+        "hsv": {
+            "h": 168.92857142857144,
+            "s": 1,
+            "v": 0.6588235294117647
+        }
+    },
+    "jeremygamerTweening": {
+        "id": "jeremygamerTweening",
+        "url": "https://extensions.turbowarp.org/JeremyGamer13/tween.js",
+        "name": "Tweening",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "RixxyX": {
+        "id": "RixxyX",
+        "url": "https://extensions.turbowarp.org/rixxyx.js",
+        "name": "RixxyX",
+        "color": "#773c00",
+        "hsv": {
+            "h": 30.252100840336134,
+            "s": 1,
+            "v": 0.4666666666666667
+        }
+    },
+    "qxsckdataanalysis": {
+        "id": "qxsckdataanalysis",
+        "url": "https://extensions.turbowarp.org/qxsck/data-analysis.js",
+        "name": "qxsckdataanalysis",
+        "color": "#0FBD8C",
+        "hsv": {
+            "h": 163.10344827586206,
+            "s": 0.9206349206349206,
+            "v": 0.7411764705882353
+        }
+    },
+    "qxsckvarandlist": {
+        "id": "qxsckvarandlist",
+        "url": "https://extensions.turbowarp.org/qxsck/var-and-list.js",
+        "name": "qxsckvarandlist",
+        "color": "#FF661A",
+        "hsv": {
+            "h": 19.912663755458514,
+            "s": 0.8980392156862745,
+            "v": 1
+        }
+    },
+    "verctedictionaries": {
+        "id": "verctedictionaries",
+        "url": "https://extensions.turbowarp.org/vercte/dictionaries.js",
+        "name": "Dictionaries",
+        "color": "#008cff",
+        "hsv": {
+            "h": 207.05882352941177,
+            "s": 1,
+            "v": 1
+        }
+    },
+    "gsaHTTPRequests": {
+        "id": "gsaHTTPRequests",
+        "url": "https://extensions.turbowarp.org/godslayerakp/http.js",
+        "name": "HTTP",
+        "color": "#307eff",
+        "hsv": {
+            "h": 217.3913043478261,
+            "s": 0.8117647058823529,
+            "v": 1
+        }
+    },
+    "gsaWebsocket": {
+        "id": "gsaWebsocket",
+        "url": "https://extensions.turbowarp.org/godslayerakp/ws.js",
+        "name": "WebSocket",
+        "color": "#307eff",
+        "hsv": {
+            "h": 217.3913043478261,
+            "s": 0.8117647058823529,
+            "v": 1
+        }
+    },
+    "cubesterWebhooks": {
+        "id": "cubesterWebhooks",
+        "url": "https://extensions.turbowarp.org/CubesterYT/Webhooks.js",
+        "name": "Webhooks",
+        "color": "#C73A63",
+        "hsv": {
+            "h": 342.55319148936167,
+            "s": 0.7085427135678393,
+            "v": 0.7803921568627451
+        }
+    },
+    "lmscomments": {
+        "id": "lmscomments",
+        "url": "https://extensions.turbowarp.org/Lily/CommentBlocks.js",
+        "name": "Comment Blocks",
+        "color": "#e4db8c",
+        "hsv": {
+            "h": 53.863636363636346,
+            "s": 0.38596491228070173,
+            "v": 0.8941176470588236
+        }
+    },
+    "longvegdictionary": {
+        "id": "longvegdictionary",
+        "url": "https://extensions.turbowarp.org/veggiecan/LongmanDictionary.js",
+        "name": "Longman Dictionary",
+        "color": "#6BBBD1",
+        "hsv": {
+            "h": 192.94117647058823,
+            "s": 0.4880382775119617,
+            "v": 0.8196078431372549
+        }
+    },
+    "alestorenfc": {
+        "id": "alestorenfc",
+        "url": "https://extensions.turbowarp.org/Alestore/nfcwarp.js",
+        "name": "NFCWarp",
+        "color": "#FF4646",
+        "hsv": {
+            "h": 0,
+            "s": 0.7254901960784313,
+            "v": 1
+        }
+    },
+    "nishiowoDectalk": {
+        "id": "nishiowoDectalk",
+        "url": "https://extensions.turbowarp.org/NishiOwO/dectalk.js",
+        "name": "DECtalk Text to Speech",
+        "color": "#b3353f",
+        "hsv": {
+            "h": 355.23809523809524,
+            "s": 0.7039106145251396,
+            "v": 0.7019607843137254
+        }
+    },
+    "steamworks": {
+        "id": "steamworks",
+        "url": "https://extensions.turbowarp.org/steamworks.js",
+        "name": "Steamworks",
+        "color": "#136C9F",
+        "hsv": {
+            "h": 201.85714285714286,
+            "s": 0.8805031446540881,
+            "v": 0.6235294117647059
+        }
+    },
+    "itch": {
+        "id": "itch",
+        "url": "https://extensions.turbowarp.org/itchio.js",
+        "name": "itch.io",
+        "color": "#858585",
+        "hsv": {
+            "h": 0,
+            "s": 0,
+            "v": 0.5215686274509804
+        }
+    },
+    "GameJoltAPI": {
+        "id": "GameJoltAPI",
+        "url": "https://extensions.turbowarp.org/gamejolt.js",
+        "name": "Game Jolt API",
+        "color": "#2F7F6F",
+        "hsv": {
+            "h": 168,
+            "s": 0.6299212598425197,
+            "v": 0.4980392156862745
+        }
+    },
+    "NGIO": {
+        "id": "NGIO",
+        "url": "https://extensions.turbowarp.org/obviousAlexC/newgroundsIO.js",
+        "name": "NGIO",
+        "color": "#EB7522",
+        "hsv": {
+            "h": 24.776119402985074,
+            "s": 0.8553191489361702,
+            "v": 0.9215686274509803
+        }
+    },
+    "lmsmcutils": {
+        "id": "lmsmcutils",
+        "url": "https://extensions.turbowarp.org/Lily/McUtils.js",
+        "name": "McUtils",
+        "color": "#ec2020",
+        "hsv": {
+            "h": 0,
+            "s": 0.864406779661017,
+            "v": 0.9254901960784314
+        }
+    }
+};
+
+module.exports = LAST_RUN;

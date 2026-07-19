@@ -19,7 +19,7 @@ class Command {
         
         const provided = args.join(' ');
         if (!provided) return message.reply('Provide a commit name!');
-        const commitName = JSON.stringify(provided.substring(0, 35));
+        const commitName = JSON.stringify(provided.substring(0, 35).replace(/[^a-z0-9 ]/gi, ""));
         const repliedMessage = await message.reply('Pushing changes to the GitHub, please wait... <:juice:1158872031211831377>');
         childProcess.execSync('git commit -a -m ' + commitName);
         childProcess.execSync('git push origin main');

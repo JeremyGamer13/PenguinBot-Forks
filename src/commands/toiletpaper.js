@@ -1,5 +1,3 @@
-const OptionType = require('../util/optiontype');
-
 class Command {
     constructor() {
         this.name = "toiletpaper";
@@ -11,7 +9,7 @@ class Command {
     }
 
     invoke(message) {
-        message.reply({
+        return message.reply({
             files: ["./assets/randomImages/toiletpaper.png"]
         });
     }

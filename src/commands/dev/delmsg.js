@@ -8,32 +8,22 @@ class Command {
             unlisted: true,
             permission: 2,
         };
+
+        this.alias = ["deletemessage", "deletemsg", "delmessage"];
     }
 
     reject(message) {
-        message.reply({
+        return message.reply({
             content: '<:haha:1124199185021927528>'
         });
     }
 
-    extractMessageFromReply(message) {
-        if (!(message.reference && message.reference.messageId)) {
-            throw new Error('Message is not a reply');
-        }
-        const reply = message.reference.messageId;
-        return message.channel.messages.fetch(reply);
-    }
-    async invoke(message, args) {
-        if (!configuration.permissions.delmsg.includes(message.author.id)) {
-            this.reject(message);
-            return;
-        }
+    async invoke(message, args, util) {
+        if (!configuration.permissions.delmsg.includes(message.author.id))
+            return this.reject(message);
 
-        if (message.reference && message.reference.messageId) {
-            const replyMsg = await this.extractMessageFromReply(message);
-            replyMsg.delete();
-            return;
-        }
+        const replyMsg = await util.getReply(message);
+        return replyMsg.delete();
     }
 }
 

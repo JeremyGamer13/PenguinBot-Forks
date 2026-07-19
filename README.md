@@ -35,7 +35,7 @@ If you do not do this, many commands relating to managing the GitHub repository 
 1. Install Node.js, preferably v18 or v20. **Newer versions of Node may not be compatible out of the box with Canvas or other modules yet.**
 2. Install FFMPEG. Easiest way to check if it's setup properly is to run `ffmpeg` in a terminal with no arguments.
 3. Install Git
-4. Create a `cache`, `databases`, `temp`, and `memes` folder in the root folder for PenguinBot.
+4. Create a `cache`, `databases`, `data`, `temp`, and `memes` folder in the root folder for PenguinBot.
 5. Download the `assets` folder in the link found in the Notes section, and put it in the root folder for PenguinBot.
 6. Install all of the node modules with `npm ci` or `npm i`
     - If you have `nvm` installed to switch between Node installations, you may need to rebuild canvas when switching versions by using `npm rebuild canvas`

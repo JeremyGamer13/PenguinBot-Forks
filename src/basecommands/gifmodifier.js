@@ -41,8 +41,8 @@ class Command {
             usingGif = isGif(imageBuffer);
         }
 
-        const [width, height] = this.getGIFWidthHeight(message, args, util, imageBuffer);
-        const serializableData = this.createSerializableData(message, args, util, imageBuffer);
+        const [width, height] = await this.getGIFWidthHeight(message, args, util, imageBuffer);
+        const serializableData = await this.createSerializableData(message, args, util, imageBuffer);
 
         // start
         const loadingMessage = await message.reply('Creating GIF... <a:loading:1243400787980456006>');

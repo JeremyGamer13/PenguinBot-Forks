@@ -25,6 +25,7 @@ src/commands/textmodifier/joyous.js
 # runtime folders
 cache/*
 databases/*
+data/*
 memes/*
 temp/*
 

@@ -7,7 +7,7 @@ class Command {
         };
     }
 
-    invoke(message, args, util) {
+    invoke(message) {
         message.reply("erm,,, incorrect");
     }
 }
