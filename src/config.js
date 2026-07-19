@@ -48,11 +48,6 @@ const configuration = {
             "gemma3-cpu:4b",
             "gemma3-cpu:1b",
             "gemma3-cpu:270m",
-            "mapler/gpt2:latest",
-            "atel3134/gpt2:124m",
-            "atel3134/gpt2:355m",
-            "atel3134/gpt2:774m",
-            "atel3134/gpt2:1.5b",
         ],
 
         // jg: which ollama configs are available
