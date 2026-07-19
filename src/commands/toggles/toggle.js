@@ -16,11 +16,11 @@ class Command {
 
         if (!args[0]) {
             util.state.enabledAi = !util.state.enabledAi;
-            message.reply(`enabledAi = ${util.state.enabledAi}`);
+            message.reply(`${util.state.enabledAi ? "hello" : ":("}`);
             return;
         }
         util.state.enabledAi = String(args[0]).toLowerCase().trim() !== 'true';
-        message.reply(`enabledAi = ${util.state.enabledAi}`);
+        message.reply(`${util.state.enabledAi ? "hello" : ":("}`);
     }
 }
 
