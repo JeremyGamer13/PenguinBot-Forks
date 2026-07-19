@@ -6,6 +6,7 @@ const getDay365 = () => {
     return (month * 30) + day;
 };
 
+// DISCLOSURE: This list is ai (obviously)
 const items = [
     "Sparkling Diamonds",
     "Golden Sunsets",
