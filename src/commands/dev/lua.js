@@ -9,10 +9,6 @@ class Command {
         this.attributes = {
             unlisted: true,
             permission: 3,
-            permissionInclusive: [
-                "1264445751723823245",
-                "694587798598058004",
-            ],
         };
     }
 
