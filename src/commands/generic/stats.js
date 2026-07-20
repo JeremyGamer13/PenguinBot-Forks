@@ -75,6 +75,7 @@ class Command {
         };
 
         this.client = client;
+        this.alias = ["specs", "spec"];
     }
 
     async invoke(message, _, util) {
@@ -89,14 +90,16 @@ class Command {
         const deviceLabel = env.get("DEVICE_LABEL");
         const penguinBotPath = path.resolve(__dirname, __filename);
         const penguinBotName = configuration.nameBotReference;
-        const cpu = await systemInformation.cpu();
-        const cpuLoad = await systemInformation.currentLoad();
-        const cpuSpeedData = await systemInformation.cpuCurrentSpeed();
-        const cpuTempData = await systemInformation.cpuTemperature();
-        const mem = await systemInformation.mem();
-        const graphics = await systemInformation.graphics();
-        const battery = await systemInformation.battery();
-        const disk = await systemInformation.fsSize();
+        const [cpu, cpuLoad, cpuSpeedData, cpuTempData, mem, graphics, battery, disk] = await Promise.all([
+            systemInformation.cpu(),
+            systemInformation.currentLoad(),
+            systemInformation.cpuCurrentSpeed(),
+            systemInformation.cpuTemperature(),
+            systemInformation.mem(),
+            systemInformation.graphics(),
+            systemInformation.battery(),
+            systemInformation.fsSize(),
+        ]);
         // remove virtual controllers
         const gpus = graphics.controllers.filter(controller => !!controller.bus);
         gpus.sort((a, b) => (b.vram || 0) - (a.vram || 0));

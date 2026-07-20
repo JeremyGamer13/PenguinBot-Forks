@@ -28,41 +28,27 @@ class TextModifierCommand {
         };
     }
 
-    extractContentFromReply(message) {
-        if (!(message.reference && message.reference.messageId)) {
-            throw new Error('Message is not a reply');
-        }
-        const reply = message.reference.messageId;
-        return message.channel.messages.fetch(reply).then(repliedMessage => {
-            if (!repliedMessage) {
-                return '';
-            }
-            return repliedMessage.cleanContent || '';
-        });
-    }
-
     convertSlashCommand(interaction, util) {
         const text = `${interaction.options.getString('text')}`;
         return [interaction, text.split(' '), util];
     }
 
     async invoke(message, args, util) {
-        if (!util.automodAllows(message, true)) { // dont allow bad shit
+        if (!util.automodAllows(message, true))
             return message.reply("nuh uh");
-        }
 
         let text = '';
         if (!(message.reference && message.reference.messageId)) {
             text = args.join(' ');
         } else {
-            text = await this.extractContentFromReply(message);
+            const reply = await util.getReply(message);
+            text = reply.content || text;
         }
         if (!text) {
             return message.reply('you needa type something');
         }
-        /**
-         * @type {string}
-         */
+
+        /** @type {string} */
         let uwuText = this.modify(String(text));
         if ((typeof uwuText === 'object') && ('then' in uwuText) && ('catch' in uwuText)) {
             uwuText = await uwuText;

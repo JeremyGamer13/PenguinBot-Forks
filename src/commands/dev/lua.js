@@ -1,39 +1,28 @@
 const nodeUtil = require('node:util');
 
-const configuration = require("../../config");
-const tryCatch = require('../../util/try-catch');
-const evalEnvironment = tryCatch(() => require("../../util/eval-environment")) || eval;
+const Lua = require("../../util/lua.js");
 
 class Command {
-    constructor(client) {
-        this.name = "eval";
-        this.description = "admin";
+    constructor() {
+        this.name = 'lua';
+        this.description = 'Run sandboxed Lua code in Discord.';
         this.attributes = {
             unlisted: true,
             permission: 3,
         };
-
-        this.client = client;
     }
 
-    reject(message) {
-        return message.reply({
-            files: ['./assets/randomImages/pleasespeed.png']
-        });
-    }
-
-    async invoke(message, args, util) {
-        if (!configuration.permissions.eval.includes(message.author.id))
-            return this.reject(message);
-
-        const javascript = args.join(' ');
-        console.log('\n');
-        console.log(`${message.author.username}: ${message.author.id};`);
-        console.log(javascript);
-        console.log('\n');
+    async invoke(message, args) {
+        let luaCode = args.join(" ");
+        const luaAttachment = message.attachments.first();
+        if (luaAttachment) {
+            const attachmentFetch = await fetch(luaAttachment.url);
+            const attachmentString = await attachmentFetch.text();
+            luaCode = attachmentString;
+        }
 
         try {
-            const result = await eval(javascript);
+            const result = await Lua.evaluate(luaCode);
             const display = typeof result === "object" && result ? `ansi\n${nodeUtil.inspect(result, { showHidden: true, colors: true }).slice(0, 1989)}` : result;
             message.reply({
                 content: `\`\`\`${display}\`\`\``.substring(0, 2000),
@@ -46,7 +35,7 @@ class Command {
             });
         } catch (err) {
             message.reply({
-                content: `❌ - epic fucking fail loser\n\`\`\`${err.stack ? err.stack : err}\`\`\``.substring(0, 2000),
+                content: `❌ - Error running Lua code\n\`\`\`${err.stack ? err.stack : err}\`\`\``.substring(0, 2000),
                 allowedMentions: { // ping NO ONE. this can DEFINETLY be abused if we did allow pings
                     parse: [],
                     users: [],
@@ -58,5 +47,4 @@ class Command {
     }
 }
 
-// needs to do new Command() in index.js because typing static every time STINKS!
 module.exports = Command;

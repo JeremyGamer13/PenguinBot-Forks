@@ -1,6 +1,7 @@
 const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
+const configuration = require("../../config.js");
 
 class Command {
     constructor() {
@@ -8,12 +9,14 @@ class Command {
         this.description = "Pull from branch";
         this.attributes = {
             unlisted: true,
-            permissionInclusive: ['462098932571308033'],
             permission: 4,
         };
     }
 
     async invoke(message, args, util) {
+        if (!configuration.permissions.pull.includes(message.author.id))
+            return message.reply("You don't have permission to do this.");
+
         if (util.request('preventRuntimeChanges')) return message.reply('Variable `PREVENT_UPDATES` is set to true on this host.');
         if (env.getBool("DISABLE_GIT")) return message.reply('Variable `DISABLE_GIT` is set to true on this host.');
 

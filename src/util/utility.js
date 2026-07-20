@@ -47,7 +47,7 @@ class CommandUtility {
         return `https://discord.com/channels/${channel.guildId}/${channel.id}`;
     }
 
-    /** @returns {Promise<import("discord.js").Message?>} */
+    /** @param {import("discord.js").Message} message  @returns {Promise<import("discord.js").Message?>} */
     static getReply(message) {
         return new Promise((resolve) => {
             if (!(message.reference && message.reference.messageId)) {
@@ -57,6 +57,8 @@ class CommandUtility {
             const reply = message.reference.messageId;
             message.channel.messages.fetch(reply).then(repliedMessage => {
                 resolve(repliedMessage);
+            }).catch(() => {
+                resolve(undefined);
             });
         });
     }

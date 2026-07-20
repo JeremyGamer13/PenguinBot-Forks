@@ -33,7 +33,9 @@ const runNewThread = (workerSrc, commandSrc, serializableData, timeout) => {
         commandSrc = path.resolve(commandSrc);
 
         // We provide commandSrc so all command logic is still in the same file.
-        const child = childProcess.fork(workerSrc);
+        const child = childProcess.fork(workerSrc, {
+            execArgv: ['--max-old-space-size=1536']
+        });
         child.send({ workerSrc, commandSrc, ...serializableData });
 
         let completed = false;
