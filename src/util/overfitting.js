@@ -43,6 +43,7 @@ const ngramStrict = { index: createNgramIndex(datasetRawMessages, 3), n: 3 };
 
 /**
  * Whether or not the response can be found in the dataset.
+ * Checks 8 words in a row.
  * @param {string} response A response from PenguinAI
  * @returns {boolean}
  */
@@ -65,6 +66,23 @@ const isOverfitting = (response = "") => {
 }
 
 /**
+ * Whether or not the response can be found in the dataset.
+ * Checks 3 words in a row.
+ * @param {string} response A response from PenguinAI
+ * @returns {boolean}
+ */
+const isOverfittingStrict = (response = "") => {
+    // be more sensitive if the response also contains a username
+    const responses = response.split("\n");
+    for (const response of responses) {
+        const overfitting = checkOverfitting(ngramStrict.index, response, ngramStrict.n);
+        if (overfitting) return true;
+    }
+
+    return false;
+}
+
+/**
  * Appends the overfitting warning to the response if detected.
  * @param {string} response A response from PenguinAI
  * @returns {string}
@@ -77,5 +95,6 @@ const appendOverfitting = (response = "") => {
 
 module.exports = {
     isOverfitting,
+    isOverfittingStrict,
     appendOverfitting,
 };

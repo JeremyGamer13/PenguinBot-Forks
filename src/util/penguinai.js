@@ -11,6 +11,7 @@ const env = require("./env-util.js");
 const tryCatch = require("./try-catch.js");
 const configuration = require("../config.js");
 const CommandUtility = require("./utility.js");
+const overfitting = require("./overfitting.js");
 const cleanResponse = require("./clean-response.js");
 const isMessageUnsafeForAgent = tryCatch(() => require('./ai-unsafe.js')) || (() => false);
 
@@ -174,39 +175,54 @@ class PenguinAI {
     }
     /** @private */
     static async _generateMarkov(inputText = "") {
-        const maxTries = 3000;
+        const maxTries = 5000;
         const keywords = this.extractKeywords(inputText.toLowerCase());
         console.log("PenguinAI Markov found these keywords;", keywords);
 
+        // DISCLOSURE: ai extended (logic was simpler but caused iffy output)
+        // maybe liiittle faster to pre-do some of this
+        const halfTries = maxTries / 2;
+        const permutationWords = inputText.toLowerCase()
+            .split(" ")
+            .map(word => word.slice(0, -Math.floor(Math.random() * word.length)))
+            .filter(word => !!word);
+        const segmentSizeFirst = halfTries / keywords.length;
+        const segmentSizeSecond = halfTries / permutationWords.length;
         const result = markov.generate({
             maxTries: maxTries,
             filter: (result) => {
                 // i think anything past 200 chars is just too much garbage
                 const str = result.string.toLowerCase();
                 if (str.length > 200) return false;
+                if (overfitting.isOverfitting(str)) return false;
 
-                // DISCLOSURE: ai extended (this originally only looked for 1 keyword before maxTries/2)
-                if (result.tries < maxTries / 2) {
-                    // we dont wanna find thenm in order we wanan find the keywords in any random order
+                const words = str.split(" ");
+                if (words.length <= 3) return false;
+                if (words.length <= 6 && overfitting.isOverfittingStrict(str.replace(regexDiscordEmoji, "")))
+                    return false;
+
+                // First half: strict keyword matching on a sliding scale
+                if (result.tries < halfTries) {
                     keywords.sort(() => Math.random() - 0.5);
-                    // 2. Determine how many keywords are required based on tries
-                    // 0-250: 4, 250-500: 3, 500-750: 2, 750-1000: 1
-                    const segmentSize = (maxTries / 2) / keywords.length;
-                    const requiredCount = keywords.length - Math.floor(result.tries / segmentSize);
-
-                    // 3. Count how many keywords are present in the string
+                    const requiredCount = keywords.length - Math.floor(result.tries / segmentSizeFirst);
                     const foundCount = keywords.filter(k => str.includes(k)).length;
-
-                    // 4. Return true only if we meet the dynamic requirement
                     return foundCount >= requiredCount;
                 }
 
-                // create permutations from the input and try to find them
-                const permutationWords = inputText.toLowerCase()
-                    .split(" ")
-                    .map(word => word.slice(0, -Math.floor(Math.random() * word.length)))
-                    .filter(word => !!word);
-                return permutationWords.some(word => str.includes(word));
+                // Second half: sliding scale for permutations
+                // 1. Generate the pool of permutation words once (or outside if performance matters)
+                if (permutationWords.length === 0) return false;
+
+                // 2. Adjust tries relative to the second half window (0 to halfTries)
+                const currentTriesInSecondHalf = result.tries - halfTries;
+
+                // 3. As tries increase, required matches scale down from total down to 1
+                const requiredCount = Math.max(1, permutationWords.length - Math.floor(currentTriesInSecondHalf / segmentSizeSecond));
+
+                // 4. Count how many permutation fragments are present in the string
+                const foundCount = permutationWords.filter(word => str.includes(word)).length;
+
+                return foundCount >= requiredCount;
             }
         })
 
