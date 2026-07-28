@@ -28,7 +28,8 @@ class Command {
     async invoke(message, args, util) {
         const searchQuery = args.join(" ").trim();
         if (searchQuery.length <= 0) return message.reply("Hey dipshit i cant search for nothing");
-        if (!util.automodAllows(searchQuery, true)) return message.reply("thats Illegal");
+        if (util.getPermissionLevel(message) < 4 && !util.automodAllows(searchQuery, true))
+            return message.reply("thats Illegal");
         
         // start asking chattus geepitus get the response
         message.channel.sendTyping();
