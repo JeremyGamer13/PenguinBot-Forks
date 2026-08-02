@@ -49,7 +49,7 @@ class Command {
         };
         for (const arg of args) {
             const split = arg.split("=");
-            const target = split[0];
+            const target = String(split[0]).toLowerCase();
             const value = Number(split[1]);
             if (isNaN(value) || !isFinite(value))
                 throw new Error("One of your semitone values is invalid");
