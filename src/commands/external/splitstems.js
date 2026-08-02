@@ -17,7 +17,8 @@ class Command {
             + "\n" + "`drums`, `bass`, `other`, `guitar`, `piano`, `vocals`"
             + "\n" + "If you specify 4, it's split into:"
             + "\n" + "`drums`, `bass`, `other`, `vocals`"
-            + "\n" + "Any other value is invalid dont use them";
+            + "\n" + "Any other value is invalid dont use them"
+            + "\n" + "Piano is typically dirty, and the \"other\" track is just other sounds that dont fit into the other categories";
         this.attributes = {
             unlisted: false,
             permission: 0,
