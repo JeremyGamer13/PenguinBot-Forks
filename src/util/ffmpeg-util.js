@@ -255,6 +255,30 @@ class FFmpegUtilCommands {
         const command = `ffmpeg -y -i "${absolutePathInput}" -i "${absolutePathInput2}" -filter_complex "${filter}" "${absolutePathOutput}"`;
         await execPromise(command);
     }
+    // DISCLOSURE: ai generate Ohhj my god hes vibe coding
+    static async mixAudioAll(absolutePathOutput, ...absolutePathInputs) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (absolutePathInputs.length <= 0) throw new Error("No paths to mix");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+        for (const absolutePathInput of absolutePathInputs) {
+            if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+            if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot add non-existent path");
+        }
+
+        // NOTE: REMOVE the volumeAdjustment code because we dont have that here
+        // NOTE: This is where you should begin reworking the code
+        // 1. Build the input arguments (-i "path1" -i "path2" ...)
+        const inputArgs = absolutePathInputs.map(p => `-i "${p}"`).join(" ");
+
+        // 2. Build the filter complex dynamically for N inputs
+        // Example for 3 inputs: [0:a][1:a][2:a]amix=inputs=3:duration=longest[out]
+        const inputLabels = absolutePathInputs.map((_, index) => `[${index}:a]`).join("");
+        const filter = `${inputLabels}amix=inputs=${absolutePathInputs.length}:duration=longest[out]`;
+
+        // 3. Construct and execute the FFmpeg command
+        const command = `ffmpeg -y ${inputArgs} -filter_complex "${filter}" -map "[out]" "${absolutePathOutput}"`;
+        await execPromise(command);
+    }
     // ai generate Ohhj my god hes vibe coding
     static async adjustVolume(absolutePathInput, absolutePathOutput, volumeAdjustment = 1) {
         // my security checks so random shit doesnt get passed into CLI
@@ -264,6 +288,28 @@ class FFmpegUtilCommands {
 
         // We wrap paths in double quotes to prevent errors with spaces in filenames.
         const command = `ffmpeg -y -i "${absolutePathInput}" -af "volume=${Number(volumeAdjustment)}" "${absolutePathOutput}"`;
+        await execPromise(command);
+    }
+
+    // DISCLOSURE: ai generate Ohhj my god hes vibe coding
+    static async changePitch(absolutePathInput, absolutePathOutput, octaveChange) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        // aieye
+        const parsedPitch = Number(octaveChange);
+        if (isNaN(parsedPitch) || !isFinite(parsedPitch) || parsedPitch <= 0) {
+            throw new Error("Pitch change factor must be a valid number greater than 0");
+        }
+
+        // NOTE: i saw an example that this wasnt octave change but in testing it seems like it is so
+        // rubberband filter handles pitch independently while keeping timing intact.
+        // It naturally supports an extremely wide range of values.
+        const filter = `rubberband=pitch=${parsedPitch}`;
+
+        const command = `ffmpeg -y -i "${absolutePathInput}" -filter:a "${filter}" "${absolutePathOutput}"`;
         await execPromise(command);
     }
     
