@@ -91,7 +91,7 @@ class Command {
 
                 // search for the font colors using the whole letter, and the background color through the corner colors
                 // NOTE: this is probably stinky smelly low performance code to avoid duplicating prominent color grabbing code
-                // NOTE: we could do a complicated thing by sampling everywhere AROUND the letters, but i dont feel like doing that
+                // TODO: We should probably just grab the colors around the text string from the original image rather than doing this
                 const plausibleFontColors = [];
                 const plausibleBackgroundColors = [];
                 for (const letter of letters) {
@@ -153,8 +153,21 @@ class Command {
                     }
                 }
 
+                // enforce contrast between font and background colors
+                // DISCLOSURE: ai
+                const [lFont, aFont, bFont] = cssColor.convert.colorToOklab(bestFontColor);
+                const [lBg, aBg, bBg] = cssColor.convert.colorToOklab(bestBgColor);
+                const colorDist = Math.hypot(lFont - lBg, aFont - aBg, bFont - bBg);
+                // if colors are too similar, fallback to black or white based on background luminance
+                const minContrastDist = 0.15; // empirical threshold for noticeable contrast
+                let finalFontColor = bestFontColor;
+                if (colorDist < minContrastDist) {
+                    const bgLuma = lBg; // Oklab lightness component
+                    finalFontColor = bgLuma > 0.5 ? "#000000" : "#FFFFFF";
+                }
+
                 // ok all that silly ai math got us here so we can do this
-                const fontColor = bestFontColor;
+                const fontColor = finalFontColor;
                 const backgroundColor = bestBgColor;
 
                 // draw bg
