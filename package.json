@@ -16,6 +16,7 @@
     "tar": "^7.5.16"
   },
   "dependencies": {
+    "@asamuzakjp/css-color": "^5.1.11",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@jimp/plugin-circle": "^1.6.0",
     "@lancedb/lancedb": "^0.30.0",
@@ -32,10 +33,10 @@
     "jsdom": "^26.1.0",
     "json5": "^2.2.3",
     "jsonrepair": "^3.14.0",
+    "mathjs": "^15.2.0",
     "ollama-chatting": "^2.0.3",
     "omggif": "^1.0.10",
     "penguinmod": "github:PenguinMod/PenguinMod-ApiModule",
-    "mathjs": "^15.2.0",
     "sharp": "^0.34.5",
     "slash": "^5.1.0",
     "sync-json-database": "^1.0.5",

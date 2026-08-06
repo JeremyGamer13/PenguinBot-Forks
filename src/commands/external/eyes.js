@@ -26,7 +26,7 @@ class Command {
         if (!imageBuffer) return;
         
         // actually start doing stuff
-        const jobName = TempFolder.makeTempName("where");
+        const jobName = TempFolder.makeTempName("eyes");
         const temporaryFolder = new TempFolder(jobName);
         await temporaryFolder.createAndDestroy(async (tempDir) => {
             const image = await Canvas.loadImage(imageBuffer);
