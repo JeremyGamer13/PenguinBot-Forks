@@ -52,9 +52,8 @@ class Command {
             await message.channel.sendTyping();
 
             // NOTE: I believe mentioning unnecessary objects can help it find sub-elements important
-            const objectList = ["text", "writing", "letter"];
             console.log("objdtc");
-            const objects = await ObjectDetection.predict(imagePath, objectList);
+            const objects = await ObjectDetection.predict(imagePath, ["text", "writing", "letter"]);
             console.log("objdone");
             
             const textStrings = objects.text;
@@ -64,8 +63,8 @@ class Command {
             const colorCanvas = Canvas.createCanvas(6, 6);
             const colorCtx = colorCanvas.getContext("2d");
             for (const box of textStrings) {
-                const width = box.box[2] - box.box[0];
-                const height = box.box[3] - box.box[1];
+                const width = Math.max(1, box.box[2] - box.box[0]);
+                const height = Math.max(1, box.box[3] - box.box[1]);
 
                 // perform that object detection
                 // NOTE: we just assume the text is longer than it is tall
@@ -73,15 +72,15 @@ class Command {
                 const textCtx = textCanvas.getContext("2d");
                 textCtx.drawImage(image, box.box[0], box.box[1], width, height, 0, 0, textCanvas.width, textCanvas.height);
 
-                // download the text image
-                const imagePath = path.join(tempDir, "textsegment.png");
-                const resizedImage = await resizePng(canvas.toBuffer("image/png"), 640 * 640);
-                await fs.writeFile(imagePath, resizedImage);
+                // save the text image
+                const textSegmentPath = path.join(tempDir, "textsegment.png");
+                const resizedSegment = await resizePng(textCanvas.toBuffer("image/png"), 640 * 640);
+                const resizedImage = await Canvas.loadImage(resizedSegment);
+                await fs.writeFile(textSegmentPath, resizedSegment);
 
                 // NOTE: this object list seems to get it to actually mark each letter inside of "letter"
-                const objectList = ["text", "word", "letter", "character", "alphabet", "punctuation"];
                 console.log("objdtc");
-                const objects = await ObjectDetection.predict(imagePath, objectList);
+                const objects = await ObjectDetection.predict(textSegmentPath, ["text", "word", "letter", "character", "alphabet", "punctuation"]);
                 console.log("objdone");
 
                 // if the dumb model didnt find any letters then just add a default box that covers the whole text string
@@ -96,21 +95,21 @@ class Command {
                 const plausibleFontColors = [];
                 const plausibleBackgroundColors = [];
                 for (const letter of letters) {
-                    const width = box.box[2] - box.box[0];
-                    const height = box.box[3] - box.box[1];
+                    const width = letter.box[2] - letter.box[0];
+                    const height = letter.box[3] - letter.box[1];
                     
                     // first get the font color from each letter
-                    colorCtx.drawImage(resizedImage, box.box[0], box.box[1], width, height, 0, 0, colorCanvas.width, colorCanvas.height);
+                    colorCtx.drawImage(resizedImage, letter.box[0], letter.box[1], width, height, 0, 0, colorCanvas.width, colorCanvas.height);
 
                     const fontColorDrawnBuffer = colorCanvas.toBuffer("image/png");
                     const fontColorProminent = await getProminentColor(fontColorDrawnBuffer);
                     plausibleFontColors.push(fontColorProminent);
 
                     // now try to get the background colors from the corners, draw each corner in the corners of the colorCanvas
-                    colorCtx.drawImage(resizedImage, box.box[0], box.box[1], 1, 1, 0, 0, colorCanvas.width / 2, colorCanvas.height / 2);
-                    colorCtx.drawImage(resizedImage, box.box[0] + (width - 1), box.box[1], 1, 1, colorCanvas.width / 2, 0, colorCanvas.width / 2, colorCanvas.height / 2);
-                    colorCtx.drawImage(resizedImage, box.box[0], box.box[1] + (height - 1), 1, 1, 0, colorCanvas.height / 2, colorCanvas.width / 2, colorCanvas.height / 2);
-                    colorCtx.drawImage(resizedImage, box.box[0] + (width - 1), box.box[1] + (height - 1), 1, 1, colorCanvas.width / 2, colorCanvas.height / 2, colorCanvas.width / 2, colorCanvas.height / 2);
+                    colorCtx.drawImage(resizedImage, letter.box[0], letter.box[1], 1, 1, 0, 0, colorCanvas.width / 2, colorCanvas.height / 2);
+                    colorCtx.drawImage(resizedImage, letter.box[0] + (width - 1), letter.box[1], 1, 1, colorCanvas.width / 2, 0, colorCanvas.width / 2, colorCanvas.height / 2);
+                    colorCtx.drawImage(resizedImage, letter.box[0], letter.box[1] + (height - 1), 1, 1, 0, colorCanvas.height / 2, colorCanvas.width / 2, colorCanvas.height / 2);
+                    colorCtx.drawImage(resizedImage, letter.box[0] + (width - 1), letter.box[1] + (height - 1), 1, 1, colorCanvas.width / 2, colorCanvas.height / 2, colorCanvas.width / 2, colorCanvas.height / 2);
 
                     const bgColorDrawnBuffer = colorCanvas.toBuffer("image/png");
                     const bgColorProminent = await getProminentColor(bgColorDrawnBuffer);
@@ -157,9 +156,14 @@ class Command {
                 // ok all that silly ai math got us here so we can do this
                 const fontColor = bestFontColor;
                 const backgroundColor = bestBgColor;
-                ctx.font = `bold ${height}px Arial`;
+
+                // draw bg
                 ctx.fillStyle = backgroundColor;
                 ctx.fillRect(box.box[0], box.box[1], width, height);
+
+                // draw text
+                ctx.font = `bold ${height}px Arial`;
+                ctx.textBaseline = "top";
                 ctx.fillStyle = fontColor;
                 ctx.fillText(overwrittenText, box.box[0], box.box[1], width);
             }
