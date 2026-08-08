@@ -148,6 +148,7 @@ const configuration = {
             '983532566822916106', // lunair
             '1470133853200060477', // ddededodediamanto
             '1121567701303824574', // picreator
+            '402803671689068544', // catto4
         ],
 
         // jg: Role IDs that can use AI cover commands with approval (instant approval in personal mode)
