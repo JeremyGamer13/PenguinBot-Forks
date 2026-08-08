@@ -42,6 +42,11 @@ import time
 start_time = time.time()
 
 # akjlsdjasld
+# Force standard streams to use UTF-8 encoding to prevent raw byte-escape translation errors from Node.js stdin
+if sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stdin.encoding.lower() != 'utf-8':
+    sys.stdin.reconfigure(encoding='utf-8')
 # Configuration variables
 # INPUT_CONDITIONAL_SCHEME is a path pattern with all the conditionals (from 0-2 exaggeration)
 # EX: INPUT_CONDITIONAL_SCHEME + str(exaggeration) + ".pt"
@@ -102,20 +107,30 @@ HiFTGenerator._istft = patched_istft
 # This is the only cleanup we need to do because ChatterboxTTS replaces characters like ’ and … for us
 # maybe we shouold do more fleanup idk i dont care
 def replace_emojis_with_em_dash(text):
-    # Regex pattern defining common emoji Unicode ranges
     # what the FUCK is this regex syntax python this is genuinely horrid
+    if not isinstance(text, str):
+        text = str(text)
+        
+    # Expanded regex pattern covering supplementary planes, modifiers, and ZWJ sequences
     emoji_pattern = re.compile(
-        r'['
-        r'\U0001f300-\U0001f64f'
-        r'\U0001f680-\U0001f6ff'
-        r'\U0001f900-\U0001f9ff'
-        r'\U0001fa70-\U0001faff'
-        r'\U00002600-\U000026ff'
-        r'\U00002700-\U000027bf'
-        r']+', flags=re.UNICODE)
+        r'('
+        r'[\U0001f000-\U0001faff]|'
+        r'[\U00002600-\U000027bf]|'
+        r'[\U0001f1e6-\U0001f1ff]|'
+        r'[\U0001f900-\U0001f9ff]|'
+        r'[\U00002300-\U000023ff]'
+        r')[\ufe00-\ufe0f\u200d\U0001f3fb-\U0001f3ff]*', flags=re.UNICODE)
     
-    return emoji_pattern.sub('—', text)
+    # Strip variation selectors and zero-width joiners often attached to complex emojis
+    cleaned = emoji_pattern.sub('—', text)
+    cleaned = re.sub(r'[—\s]+—', '—', cleaned)
+    return cleaned
 def process_and_generate(text):
+    if isinstance(text, bytes):
+        text = text.decode('utf-8', errors='ignore')
+    elif not isinstance(text, str):
+        text = str(text)
+
     preprocessed_text = replace_emojis_with_em_dash(text)
     
     if len(preprocessed_text) > int(parsed_args.max_length):
@@ -125,46 +140,45 @@ def process_and_generate(text):
     active_tag = TAG_DEFAULT
     current_params = TAG_MAP[active_tag]
 
-    # 1. Split into sentences and extract tags
-    raw_sentences = re.split(r'(?<=[.!?—…\-])\s+', preprocessed_text)
-    processed_data = [] # List of tuples: (text, hyperparams)
+    # 1. Pre-split text by any valid tag in TAG_MAP to isolate them regardless of position
+    tag_pattern = re.compile(r'(' + '|'.join(re.escape(t) for t in TAG_MAP.keys()) + r')')
+    tokens = tag_pattern.split(preprocessed_text)
 
-    for sent in raw_sentences:
-        sent = sent.strip()
-        found_tag = next((tag for tag in TAG_MAP if sent.startswith(tag)), None)
-        
-        is_tagged = False
-        if found_tag:
-            current_params = TAG_MAP[found_tag]
-            sent = sent[len(found_tag):].strip()
+    processed_data = []
+    
+    # The split results in [leading_text, tag1, text1, tag2, text2, ...]
+    current_tag = TAG_DEFAULT
+    for i, token in enumerate(tokens):
+        if not token:
+            continue
+        if token in TAG_MAP:
+            current_tag = token
+            current_params = TAG_MAP[token]
             is_tagged = True
+            continue
         
-        # Cleanup: Replace only trailing separators (dash, ellipsis, em-dash) 
-        # with a full stop, but only if it's acting as a separator.
-        # Target any trailing whitespace followed by one or more separators
-        # This regex: \s*[—…\-]+$
-        # \s* : matches optional trailing spaces
-        # [—…\-]+ : matches one or more dash/ellipsis characters at the end
-        # $ : anchors to the end of the string
-        cleanup_pattern = re.compile(r'\s*[—…\-]+$')
-        
-        if cleanup_pattern.search(sent):
-            # Replace the entire sequence of whitespace + separators with a period
-            sent = cleanup_pattern.sub(".", sent)
+        # This token is text content; split it further into sentences
+        sub_sentences = re.split(r'(?<=[.!?—…\-])\s+|\s+(?=\[[\w]+\])', token)
+        for sent in sub_sentences:
+            sent = sent.strip()
+            if not sent:
+                continue
+                
+            cleanup_pattern = re.compile(r'\s*[—…\-]+$')
+            if cleanup_pattern.search(sent):
+                sent = cleanup_pattern.sub(".", sent)
+            sent = re.sub(r'\.\.+$', '.', sent)
             
-        # Optional: final safety check to ensure no double periods
-        sent = re.sub(r'\.\.+$', '.', sent)
-            
-        processed_data.append({
-            "text": sent, 
-            "params": current_params, 
-            "is_tagged": is_tagged, # Persistent flag for grouping
-            "tag": found_tag # Persistent flag for grouping
-        })
+            processed_data.append({
+                "text": sent, 
+                "params": current_params, 
+                "is_tagged": (i > 0 and token == tokens[i]) or (current_tag != TAG_DEFAULT), 
+                "tag": current_tag
+            })
         
     # 2. Grouping logic
     chunks = []
-    max_len = 80
+    max_len = 50
     i = 0
     while i < len(processed_data):
         item = processed_data[i]
