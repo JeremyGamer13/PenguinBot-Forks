@@ -108,7 +108,13 @@ class Command {
         const canDo = util.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
-        await this.handle(message, args, util);
+        try {
+            await this.handle(message, args, util);
+        } catch (err) {
+            if (`${err}`.includes("torch.OutOfMemoryError"))
+                throw new Error("Ran out of VRAM or memory");
+            throw err;
+        }
     }
 }
 
