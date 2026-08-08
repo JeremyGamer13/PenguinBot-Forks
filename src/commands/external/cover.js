@@ -17,9 +17,15 @@ class Command {
         this.name = "cover";
         this.description = "AI voice will redub the audio";
         this.descriptionLong = "AI voice will redub the audio"
-            + "\n" + "This command has a LOT of options so genuinely just run {{prefix}}cover and see them all"
             + "\n" + "You can add multiple options in the same command & some of them stack (like pitch changes)"
-            + "\n" + "Note that not all voices are available for public use and some voices require approval to use";
+            + "\n" + "the default is `normal mid` (in some cases you might wanna use `low` instead for accuracy)"
+            + "\n" + "- **Speech**: `normal`, `robotic`"
+            + "\n" + "- **Semitones**: `high` (+12), `raise` (+1), `mid` (= 0), `drop` (-1), `low` (-12)"
+            + "\n" + "- **Volume**: `louder` (+0.1), `quieter` (-0.1)"
+            + "\n" + "- **Track**: `instrumental`, `vocals`, `simultaneous`"
+            + "\n"
+            + "\n" + "Note that not all voices are available for public use and some voices require approval to use"
+            + "\n" + "note that ANY AUDIO you upload WILL BE SAVED for the bot to MANUALLY approve / deny so dont upload bad stuff";
         this.attributes = {
             unlisted: false,
             jgAiCoverCommand: true,
@@ -27,9 +33,21 @@ class Command {
         };
 
         this.client = client;
+
+        this.example = [
+            { text: "{{prefix}}cover" },
+            { text: "{{prefix}}cover low" },
+            { text: "{{prefix}}cover low louder louder louder louder louder" },
+            { text: "{{prefix}}cover simultaneous high" },
+        ];
     }
 
     async handle(message, args, util) {
+        if (args.length > 256)
+            return message.reply("you do not need all that");
+
+        // list of allowed args
+        const voiceModelOptions = RVCModels.getModelNames().map(name => `voice${name}`);
         const speechMethodsAllowed = [
             // speech (def: normal)
             "normal", "robotic",
@@ -41,15 +59,7 @@ class Command {
             "instrumental", "vocals", "simultaneous"
         ];
 
-        const voiceModelOptions = RVCModels.getModelNames().map(name => `voice${name}`);
-        speechMethodsAllowed.unshift(...voiceModelOptions);
-
-        if (!args[0]) return message.reply(`listing methods, add \`normal\` to your message to silence:`
-            + "\n" + `\`\`${speechMethodsAllowed.map(m => JSON.stringify(m)).join(", ")}\`\``
-            + "\n" + `these can be added in sequence (however some overwrite others), the default is "normal" + "mid" (you might wanna use "low" for accuracy)`
-            + "\n" + `note that ANY AUDIO you upload WILL BE SAVED for the bot to MANUALLY approve / deny so dont upload bad stuff`);
-        if (args.length > 256) return message.reply("yo thats too many settings bro calm down you do not need allat");
-
+        // parse args
         let voiceModel = RVCModels.default;
         let aiSpeechMethod = "rmvpe";
         let aiSemitones = 0;
@@ -62,7 +72,7 @@ class Command {
                 continue;
             }
 
-            if (!speechMethodsAllowed.includes(method)) return message.reply("Fuck are you talkin bout i cant do that");
+            if (!speechMethodsAllowed.includes(method)) return message.reply("What is that");
             switch (method) {
                 // speech
                 case "normal":
