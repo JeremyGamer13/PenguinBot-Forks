@@ -170,6 +170,7 @@ const configuration = {
             '1274550888706474169', // ash unbravechimp
             '1446263635268735151', // not__bob
             '1264445751723823245', // gen1x
+            '1445330994742951988', // dotun
         ],
 
         // Channels checked for in the lockedToCommands property (excluding commands channel from above & threads within that channel)
