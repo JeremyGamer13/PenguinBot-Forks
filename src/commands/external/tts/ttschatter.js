@@ -33,7 +33,7 @@ class Command {
     async handle(message, args, util) {
         const ttsText = args.join(" ");
         if (ttsText.length <= 0) return message.reply("Fuck do you want me to do");
-        if (ttsText.length > 512) return message.reply("Shut the fuck up");
+        if (ttsText.length > env.getNumber("CHATTERBOX_MAX_LENGTH")) return message.reply("Shut the fuck up");
         if (!util.automodAllows(ttsText, true)) return message.reply("No");
 
         // actually start doing stuff
