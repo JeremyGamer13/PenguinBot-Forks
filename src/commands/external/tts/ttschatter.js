@@ -14,6 +14,16 @@ class Command {
     constructor(client) {
         this.name = "ttschatter";
         this.description = "AI voice will Text to speech (ai chatterbox)";
+        this.descriptionLong = "AI voice will Text to speech (ai chatterbox)"
+            + "\n" + "The following tags control speech exaggeration:"
+            + "\n" + ["[stale]", "[normal]", "[passionate]", "[intense]"].map(tag => `\`${tag}\``).join(", ")
+            + "\n" + "You can use them before a string of text, like \"[passionate]I like tomatoes!\""
+            + "\n"
+            + "\n" + "When using chatterbox-turbo (host dependent), you can also use these tags in the middle of your text:"
+            // https://huggingface.co/ResembleAI/chatterbox-turbo/blob/main/added_tokens.json
+            + "\n" + ["[advertisement]", "[angry]", "[chuckle]", "[clear throat]", "[cough]", "[crying]", "[dramatic]",
+                "[fear]", "[gasp]", "[groan]", "[happy]", "[laugh]", "[narration]", "[sarcastic]", "[shush]", "[sigh]",
+                "[sniff]", "[surprised]", "[whispering]"].map(tag => `\`${tag}\``).join(", ");
         this.attributes = {
             unlisted: true,
             jgAiCoverCommand: true,
