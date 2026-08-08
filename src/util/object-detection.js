@@ -55,15 +55,19 @@ class ObjectDetection {
 
                 output += data;
             });
+            let errorString = "";
             process.stderr.on("data", (err) => {
+                errorString += err;
                 console.error(err);
             });
             process.on("error", (err) => {
-                reject(err);
+                errorString += err;
+                reject(errorString);
             });
 
             process.on("close", (code, signal) => {
-                if (code !== 0) return reject(signal);
+                if (code !== 0)
+                    return reject(`${errorString} ${signal}`);
 
                 const resultingPrediction = output.replace(/[\r\n]/g, " ").trim();
                 if (!resultingPrediction) return resolve({});

@@ -69,15 +69,19 @@ class Chatterbox {
                     console.warn("failed Chatterbox update;", err);
                 }
             });
+            let errorString = "";
             process.stderr.on("data", (err) => {
+                errorString += err;
                 console.error(err);
             });
             process.on("error", (err) => {
-                reject(err);
+                errorString += err;
+                reject(errorString);
             });
 
             process.on("close", (code, signal) => {
-                if (code !== 0) return reject(signal);
+                if (code !== 0)
+                    return reject(`${errorString} ${signal}`);
                 return resolve(absolutePathOutput);
             });
         });
