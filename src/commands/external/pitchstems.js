@@ -16,6 +16,7 @@ class Command {
             + "\n" + "Attach an audio clip and itll be split into 6 stems:"
                 + " " + "drums, bass, \"other\", guitar, piano (dirty), vocals"
             + "\n" + "You can then repitch each stem using `(stem)=(semitones)`"
+            + "\n" + "Semitones is either a number or `random` for -12 to +12"
             + "\n" + "Then they will all be mixed together again";
         this.attributes = {
             unlisted: false,
@@ -50,7 +51,7 @@ class Command {
         for (const arg of args) {
             const split = arg.split("=");
             const target = String(split[0]).toLowerCase();
-            const value = Number(split[1]);
+            const value = Number(split[1] === "random" ? Math.round(Math.random() * 24) - 12 : split[1]);
             if (isNaN(value) || !isFinite(value))
                 throw new Error("One of your semitone values is invalid");
             switch (target) {
