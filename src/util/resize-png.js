@@ -7,23 +7,16 @@ const resizePng = async (buffer, area) => {
 
     // Calculate current pixel count and compare with desired area
     const currentArea = origWidth * origHeight;
-    if (area && currentArea > area) {
-        // Determine scaling factor to fit within the target area while preserving aspect ratio
-        const scale = Math.sqrt(area / currentArea);
-        const newWidth = Math.floor(origWidth * scale);
-        const newHeight = Math.floor(origHeight * scale);
+    
+    // Determine scaling factor to fit within the target area while preserving aspect ratio
+    const scale = Math.sqrt(area / currentArea);
+    const newWidth = Math.max(1, Math.floor(origWidth * scale));
+    const newHeight = Math.max(1, Math.floor(origHeight * scale));
 
-        return await sharp(buffer)
-            .resize(newWidth, newHeight)
-            .png()
-            .toBuffer();
-    }
-
-    // If no resizing needed, just convert to PNG
-    const pngBuffer = await sharp(buffer)
+    return await sharp(buffer)
+        .resize(newWidth, newHeight)
         .png()
         .toBuffer();
-    return pngBuffer;
 };
 
 module.exports = resizePng;

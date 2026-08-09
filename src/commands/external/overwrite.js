@@ -78,6 +78,7 @@ class Command {
                 const resizedImage = await Canvas.loadImage(resizedSegment);
                 await fs.writeFile(textSegmentPath, resizedSegment);
 
+                // TODO: We can probably use the grabbed background color to find the font color in this text string, making the letter scan unnecessary
                 // NOTE: this object list seems to get it to actually mark each letter inside of "letter"
                 console.log("objdtc");
                 const objects = await ObjectDetection.predict(textSegmentPath, ["text", "word", "letter", "character", "alphabet", "punctuation"]);
@@ -85,35 +86,64 @@ class Command {
 
                 // if the dumb model didnt find any letters then just add a default box that covers the whole text string
                 const fullBox = [0, 0, width, height];
-                const letters = objects.letter || [fullBox];
+                const letters = objects.letter || [];
                 if (!letters[0])
                     letters[0] = { box: fullBox };
 
-                // search for the font colors using the whole letter, and the background color through the corner colors
-                // NOTE: this is probably stinky smelly low performance code to avoid duplicating prominent color grabbing code
-                // TODO: We should probably just grab the colors around the text string from the original image rather than doing this
+                // search for the font colors using each letter
                 const plausibleFontColors = [];
-                const plausibleBackgroundColors = [];
                 for (const letter of letters) {
-                    const width = letter.box[2] - letter.box[0];
-                    const height = letter.box[3] - letter.box[1];
-                    
-                    // first get the font color from each letter
-                    colorCtx.drawImage(resizedImage, letter.box[0], letter.box[1], width, height, 0, 0, colorCanvas.width, colorCanvas.height);
+                    const lWidth = letter.box[2] - letter.box[0];
+                    const lHeight = letter.box[3] - letter.box[1];
+
+                    // get the font color from each letter
+                    colorCtx.drawImage(resizedImage, letter.box[0], letter.box[1], lWidth, lHeight, 0, 0, colorCanvas.width, colorCanvas.height);
 
                     const fontColorDrawnBuffer = colorCanvas.toBuffer("image/png");
                     const fontColorProminent = await getProminentColor(fontColorDrawnBuffer);
                     plausibleFontColors.push(fontColorProminent);
+                }
 
-                    // now try to get the background colors from the corners, draw each corner in the corners of the colorCanvas
-                    colorCtx.drawImage(resizedImage, letter.box[0], letter.box[1], 1, 1, 0, 0, colorCanvas.width / 2, colorCanvas.height / 2);
-                    colorCtx.drawImage(resizedImage, letter.box[0] + (width - 1), letter.box[1], 1, 1, colorCanvas.width / 2, 0, colorCanvas.width / 2, colorCanvas.height / 2);
-                    colorCtx.drawImage(resizedImage, letter.box[0], letter.box[1] + (height - 1), 1, 1, 0, colorCanvas.height / 2, colorCanvas.width / 2, colorCanvas.height / 2);
-                    colorCtx.drawImage(resizedImage, letter.box[0] + (width - 1), letter.box[1] + (height - 1), 1, 1, colorCanvas.width / 2, colorCanvas.height / 2, colorCanvas.width / 2, colorCanvas.height / 2);
+                // DISCLOSURE: ai
+                // grab plausible background colors from the edges pad pixels away from the full textString
+                // NOTE: Maybe this could be cahnged later but for now i'd assume this is good enough
+                const pad = 10;
+                const plausibleBackgroundColors = [];
+                const minX = Math.max(0, Math.floor(box.box[0] - pad));
+                const minY = Math.max(0, Math.floor(box.box[1] - pad));
+                const maxX = Math.min(canvas.width, Math.ceil(box.box[2] + pad));
+                const maxY = Math.min(canvas.height, Math.ceil(box.box[3] + pad));
 
-                    const bgColorDrawnBuffer = colorCanvas.toBuffer("image/png");
-                    const bgColorProminent = await getProminentColor(bgColorDrawnBuffer);
-                    plausibleBackgroundColors.push(bgColorProminent);
+                const boxWidth = maxX - minX;
+                const boxHeight = maxY - minY;
+
+                if (boxWidth > 0 && boxHeight > 0) {
+                    const imgData = ctx.getImageData(minX, minY, boxWidth, boxHeight);
+                    const data = imgData.data;
+
+                    const addPixel = (x, y) => {
+                        const localX = x - minX;
+                        const localY = y - minY;
+                        if (localX >= 0 && localX < boxWidth && localY >= 0 && localY < boxHeight) {
+                            const index = (localY * boxWidth + localX) * 4;
+                            const r = data[index];
+                            const g = data[index + 1];
+                            const b = data[index + 2];
+                            const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+                            plausibleBackgroundColors.push(hex);
+                        }
+                    };
+
+                    // this adds the rows top &^ bottom
+                    for (let x = minX; x <= maxX; x++) {
+                        addPixel(x, minY);
+                        addPixel(x, maxY);
+                    }
+                    // this adds the columns left & right
+                    for (let y = minY; y <= maxY; y++) {
+                        addPixel(minX, y);
+                        addPixel(maxX, y);
+                    }
                 }
 
                 // now get the font color and background color from the list of plausible font & bg colors.
@@ -158,17 +188,34 @@ class Command {
                 const [lFont, aFont, bFont] = cssColor.convert.colorToOklab(bestFontColor);
                 const [lBg, aBg, bBg] = cssColor.convert.colorToOklab(bestBgColor);
                 const colorDist = Math.hypot(lFont - lBg, aFont - aBg, bFont - bBg);
-                // if colors are too similar, fallback to black or white based on background luminance
-                const minContrastDist = 0.15; // empirical threshold for noticeable contrast
+
+                // this isnt ai
+                // if colors are too similar, we make the text brighter & bg darker (or the opposite) depending on how similar they are
+                console.log("contrast:", colorDist);
                 let finalFontColor = bestFontColor;
-                if (colorDist < minContrastDist) {
-                    const bgLuma = lBg; // Oklab lightness component
-                    finalFontColor = bgLuma > 0.5 ? "#000000" : "#FFFFFF";
+                let finalBgColor = bestBgColor;
+                if (colorDist <= 0.5) {
+                    // NOTE: Its likely that the background only needs to be affected aswell if the similarity is < 0.2
+                    const fontShouldBeCloserToBlack = lBg > 0.5;
+                    const hslFont = cssColor.convert.colorToHsl(bestFontColor);
+                    const hslBg = cssColor.convert.colorToHsl(bestBgColor);
+                    const mixingColorFont = fontShouldBeCloserToBlack ? 0 : 100;
+                    const mixingColorBg = fontShouldBeCloserToBlack ? 100 : 0;
+                    // intensity, closer to 0 = less mix, closer to 1 = more mix
+                    const mixingIntensityFont = 1 - (colorDist * 2);
+                    const mixingIntensityBg = colorDist <= 0.2 ? 1 - (colorDist * 5) : 0;
+                    // this uses the same interpolation as the tweening extension; we just move S and L closer to mixingColor by mixingIntensity
+                    const finalFontColorArr = [hslFont[0], hslFont[1], mixingIntensityFont * (mixingColorFont - hslFont[2]) + hslFont[2]];
+                    const finalBgColorArr = [hslBg[0], hslBg[1], mixingIntensityBg * (mixingColorBg - hslBg[2]) + hslBg[2]];
+                    const finalFontColorCss = `hsl(${finalFontColorArr[0]} ${finalFontColorArr[1]}% ${finalFontColorArr[2]}%)`;
+                    const finalBgColorCss = `hsl(${finalBgColorArr[0]} ${finalBgColorArr[1]}% ${finalBgColorArr[2]}%)`;
+                    finalFontColor = cssColor.convert.colorToHex(finalFontColorCss);
+                    finalBgColor = cssColor.convert.colorToHex(finalBgColorCss);
                 }
 
                 // ok all that silly ai math got us here so we can do this
                 const fontColor = finalFontColor;
-                const backgroundColor = bestBgColor;
+                const backgroundColor = finalBgColor;
 
                 // draw bg
                 ctx.fillStyle = backgroundColor;
