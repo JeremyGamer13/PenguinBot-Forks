@@ -78,7 +78,7 @@ class Command {
                 const resizedImage = await Canvas.loadImage(resizedSegment);
                 await fs.writeFile(textSegmentPath, resizedSegment);
 
-                // TODO: We can probably use the grabbed background color to find the font color in this text string, making the letter scan unnecessary
+                // TODO: We can probably use the grabbed background color to find the font color easier inside of letter scans
                 // NOTE: this object list seems to get it to actually mark each letter inside of "letter"
                 console.log("objdtc");
                 const objects = await ObjectDetection.predict(textSegmentPath, ["text", "word", "letter", "character", "alphabet", "punctuation"]);
