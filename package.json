@@ -38,6 +38,7 @@
     "omggif": "^1.0.10",
     "penguinmod": "github:PenguinMod/PenguinMod-ApiModule",
     "sharp": "^0.34.5",
+    "skia-canvas": "^3.0.8",
     "slash": "^5.1.0",
     "sync-json-database": "^1.0.5",
     "systeminformation": "^5.31.7",
