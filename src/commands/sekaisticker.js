@@ -16,7 +16,6 @@ class Command {
         this.name = "sekaisticker";
         this.description = "Caption a sticker of a Project SEKAI chibi.";
         this.attributes = {
-            unlisted: true, // TODO: temp
             permission: 0,
             lockedToCommands: true,
         };
