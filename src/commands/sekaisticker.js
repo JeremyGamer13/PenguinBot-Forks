@@ -95,6 +95,8 @@ class Command {
 
         // vaildate the text
         const textToSay = `${args.join(" ")}`;
+        if (!util.request("isInPersonalMode") && util.getPermissionLevel(message) < 4 && !util.automodAllows(textToSay, true))
+            return message.reply("I can't render that caption. Enter something else.");
 
         // load everything we need to render this stickker
         const customSticker = {
