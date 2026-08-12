@@ -1,8 +1,10 @@
-const fs = require("fs");
+const fs = require("fs/promises");
 const path = require("path");
 
 const cssColor = require("@asamuzakjp/css-color");
-const { Jimp, JimpMime } = require("jimp");
+
+const jimp = require("jimp");
+const { Jimp, JimpMime } = jimp;
 
 const env = require("../util/env-util.js");
 const tryCatch = require("../util/try-catch.js");
@@ -18,37 +20,53 @@ class Command {
         };
 
         this.alias = ["sekai", "pjsekai", "pjsekaisticker"];
-        
+
+        // we cant await but hopefully this finishes
+        this.loading = true;
+        this.initialize().finally(() => {
+            this.loading = false;
+        });
+    }
+    async initialize() {
+        // load the font fnt
+        // this font should be white & match fontSize. make sure the fontSize is larger than all sticker defaultText sizes
+        this.font = await jimp.loadFont("./assets/sekaisticker/YurukaStd.fnt");
+        this.fontSize = 64;
+
         // initialize the stickers
         const sekaiPath = env.get("SEKAI_STICKERS_PATH");
         this.sekaiPath = sekaiPath;
         this.configured = !!sekaiPath;
-        if (this.configured) {
-            const stickersJsonPath = path.join(sekaiPath, "src/characters.json");
-            const stickers = JSON.parse(fs.readFileSync(stickersJsonPath, "utf8"));
+        if (!this.configured) return;
 
-            // list of valid chars & sticker variants
-            this.colors = {};
-            this.stickers = {};
-            this.characters = new Set();
-            for (const sticker of stickers) {
-                const characterName = `${sticker.character}`.toLowerCase().replace(/\s/g, "").trim();
-                if (this.characters.has(characterName))
-                    continue;
-                this.characters.add(characterName);
-                this.colors[characterName] = sticker.color;
-                this.stickers[characterName] = sticker;
-            }
+        const stickersJsonPath = path.join(sekaiPath, "src/characters.json");
+        const stickersJsonStr = await fs.readFile(stickersJsonPath, "utf8");
+        const stickers = JSON.parse(stickersJsonStr);
 
-            // make the long description from the list of characters
-            this.descriptionLong = "Caption a sticker of a Project SEKAI chibi."
-                + "\n" + "Either specify a character's name, or attach your own image to caption."
-                + "\n" + "When captioning your own image, provide a hex color rather than a character name."
-                + "\n" + "The valid characters are:" + " " + Array.from(this.characters.values()).map(name => `\`${name}\``).join(", ");
+        // list of valid chars & sticker variants
+        this.colors = {};
+        this.stickers = {};
+        this.characters = new Set();
+        for (const sticker of stickers) {
+            const characterName = `${sticker.character}`.toLowerCase().replace(/\s/g, "").trim();
+            if (this.characters.has(characterName))
+                continue;
+            this.characters.add(characterName);
+            this.colors[characterName] = sticker.color;
+            this.stickers[characterName] = sticker;
         }
+
+        // make the long description from the list of characters
+        this.descriptionLong = "Caption a sticker of a Project SEKAI chibi."
+            + "\n" + "Either specify a character's name, or attach your own image to caption."
+            + "\n" + "When captioning your own image, provide a hex color rather than a character name."
+            + "\n" + "The valid characters are:" + " " + Array.from(this.characters.values()).map(name => `\`${name}\``).join(", ");
     }
 
     async invoke(message, args, util) {
+        if (this.loading)
+            return message.reply("The command is busy loading.");
+
         // see if they provided a custom image
         let customBuffer = null;
         if (message.attachments.first()) {
@@ -73,6 +91,7 @@ class Command {
 
         // render the text we need to draw
         const textToSay = `${args.join(" ")}`;
+        
         return message.reply("Not implemented");
     }
 }
