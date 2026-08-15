@@ -119,7 +119,7 @@ const configuration = {
     // PM AI: Our unique settings
     penguinAi: {
         // Use the markov model when the AI takes longer than 8 seconds to respond (warming up or stuck)
-        markovModelOnLongWait: true,
+        markovModelOnLongWait: false,
 
         // TODO: Add this
         // If true, messages are preprocessed by a formal model to see if PenguinAI should have tool results in the conversation

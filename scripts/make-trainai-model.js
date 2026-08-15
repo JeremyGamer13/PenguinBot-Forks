@@ -1,5 +1,9 @@
 /*
-V4: (CURRENT)
+V5: (CURRENT)
+
+node scripts/make-trainai-model.js artifish/llama3.2-uncensored 1 custom-penguinmod-server-v5 "C:\Users\Jeremy\Documents\GitHub\PenguinAI\.dev\TRAINAI-modelfile.txt"
+
+V4:
 
 node scripts/make-trainai-model.js artifish/llama3.2-uncensored 1 custom-penguinmod-server-v4 "C:\Users\Jeremy\Documents\GitHub\PenguinAI\.dev\TRAINAI-modelfile.txt"
 
