@@ -25,10 +25,9 @@ class Command {
             + "\n" + "- To make a video with a custom name, specify a message string to be used."
             + "\n" + "Attach an image to use a different image for the user.";
         this.attributes = {
-            unlisted: true,
-            permission: 4,
+            permission: 0,
             lockedToCommands: true,
-            jgollamaConfigsInvolved: ["lightText"],
+            jgollamaConfigsInvolved: ["genericIO"],
         };
 
         this.example = [
