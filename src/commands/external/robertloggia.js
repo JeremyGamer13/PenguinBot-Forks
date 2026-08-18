@@ -73,7 +73,7 @@ class Command {
             try {
                 const output = await OllamaChat.generate({
                     ...OllamaModels.genericIO,
-                    prompt: `Write a script where you use sentences to spell out each letter of the target name: \"${targetName}\"`,
+                    prompt: `My exact literal name is \"${targetName}\". This is your target name. Write a script that spells out my name in remark sentences, but try to gramatically fit my name in every remark.`,
                     system: `You are a specialized text-generation engine and scriptwriter. When a user provides a target name, your sole function is to spell out that exact name character by character in a single, continuous, uninterrupted script.`
                         + "\n" + `You must output **zero** conversational filler, zero introductory text, and zero concluding remarks—begin immediately with the first character and end immediately after the final character.`
                         + "\n"
@@ -135,9 +135,9 @@ class Command {
             const videoOutputName = path.join(tempDir, "loggiaName.mp4");
             const videoOutputName2 = path.join(tempDir, "loggiaName2.mp4");
             const videoOutputSpelledOut = path.join(tempDir, "loggiaSpelledOut.mp4");
-            const commandName = `ffmpeg -y -stream_loop -1 -i "${videoLoggiaName}" -i "${pathNameReadaloud}" -vf "scale=480:360" -c:v libx264 -b:v 300k -c:a aac -map 0:v:0 -map 1:a:0 -shortest "${videoOutputName}"`;
-            const commandName2 = `ffmpeg -y -stream_loop -1 -i "${videoLoggiaName2}" -i "${pathNameReadaloud}" -vf "scale=480:360" -c:v libx264 -b:v 300k -c:a aac -map 0:v:0 -map 1:a:0 -shortest "${videoOutputName2}"`;
-            const commandNameSpelledOut = `ffmpeg -y -stream_loop -1 -i "${videoLoggiaSpelledOut}" -i "${pathSpelledOutReadaloud}" -vf "scale=480:360" -c:v libx264 -b:v 300k -c:a aac -map 0:v:0 -map 1:a:0 -shortest "${videoOutputSpelledOut}"`;
+            const commandName = `ffmpeg -y -stream_loop -1 -i "${videoLoggiaName}" -i "${pathNameReadaloud}" -vf "scale=480:360" -c:v libx264 -b:v 128k -c:a aac -map 0:v:0 -map 1:a:0 -shortest "${videoOutputName}"`;
+            const commandName2 = `ffmpeg -y -stream_loop -1 -i "${videoLoggiaName2}" -i "${pathNameReadaloud}" -vf "scale=480:360" -c:v libx264 -b:v 128k -c:a aac -map 0:v:0 -map 1:a:0 -shortest "${videoOutputName2}"`;
+            const commandNameSpelledOut = `ffmpeg -y -stream_loop -1 -i "${videoLoggiaSpelledOut}" -i "${pathSpelledOutReadaloud}" -vf "scale=480:360" -c:v libx264 -b:v 128k -c:a aac -map 0:v:0 -map 1:a:0 -shortest "${videoOutputSpelledOut}"`;
             await execPromise(commandName);
             await execPromise(commandName2);
             await execPromise(commandNameSpelledOut);
@@ -173,7 +173,7 @@ class Command {
             const videoOutputCharacter = path.join(tempDir, "robert-loggia.mp4");
             const commandCharacter = `ffmpeg -y -i "${videoOutputStitch}" -i "${imagePath}"`
                 + " " + `-filter_complex "[1:v]scale=155:231[img];[0:v][img]overlay=x=(W-w)/2:y=(H-h)/2:enable='gte(t,${lengthLoggia1 + lengthOutputName + lengthLoggia3})'[outv]"`
-                + " " + `-map "[outv]" -map 0:a -c:v libx264 -b:v 32k -c:a copy "${videoOutputCharacter}"`;
+                + " " + `-map "[outv]" -map 0:a -c:v libx264 -b:v 48k -c:a copy "${videoOutputCharacter}"`;
             await execPromise(commandCharacter);
 
             reply.edit({
