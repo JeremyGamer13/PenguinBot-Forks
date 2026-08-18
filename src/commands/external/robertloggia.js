@@ -74,7 +74,7 @@ class Command {
 
                 // if this letter is the same as the target name
                 if (targetNameLower.startsWith(letterLower)) {
-                    outputText += `${letter}, as in ${targetName}.` + "\n";
+                    outputText += `${letter.toUpperCase()}, as in ${targetName}.` + "\n";
                     continue;
                 }
 
