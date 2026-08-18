@@ -1,0 +1,206 @@
+{
+    "a": [
+        "A, as in, As in {{NAME}}.",
+        "A, as in, Ah, really, its {{NAME}}!",
+        "A, as in, Are you serious, its {{NAME}}?",
+        "A, as in, Ah damn, its {{NAME}}!",
+        "A, as in, Are you kidding, its {{NAME}}?"
+    ],
+    "b": [
+        "B, as in By god, thats {{NAME}}!",
+        "B, as in By gosh, thats {{NAME}}.",
+        "B, as in Be real, is that {{NAME}}?"
+    ],
+    "c": [
+        "C, as in Certainly. Thats {{NAME}}.",
+        "C, as in Come on, is that really {{NAME}}?",
+        "C, as in Call me {{NAME}}."
+    ],
+    "d": [
+        "D, as in Damn, its {{NAME}}!",
+        "D, as in Dog no way, its {{NAME}}!",
+        "D, as in Dont tell me its {{NAME}}!"
+    ],
+    "e": [
+        "E, as in, Everybody loves {{NAME}}!",
+        "E, as in, Everybody enjoys {{NAME}}!",
+        "E, as in, Everybody wants {{NAME}}!",
+        "E, as in, Excited to meet {{NAME}}!",
+        "E, as in, Everybody knows {{NAME}}!"
+    ],
+    "f": [
+        "F, as in For real, its {{NAME}}!",
+        "F, as in Fantastic, look at {{NAME}}!",
+        "F, as in Finally, its {{NAME}}!",
+        "F, as in Freaking unbelievable, thats {{NAME}}!",
+        "F, as in Forget about it, classic {{NAME}}!"
+    ],
+    "g": [
+        "G, as in Golly gee, its {{NAME}}.",
+        "G, as in Good grief, is that {{NAME}}?",
+        "G, as in Gotta hand it to {{NAME}}.",
+        "G, as in Great scott, its {{NAME}}!",
+        "G, as in Guess who, its {{NAME}}!"
+    ],
+    "h": [
+        "H, as in Holy cow, its {{NAME}}!",
+        "H, as in How on earth is that {{NAME}}?",
+        "H, as in Hard to believe, but its {{NAME}}.",
+        "H, as in Here comes {{NAME}}!",
+        "H, as in Hey look, its {{NAME}}!",
+        "H, as in Hello, {{NAME}}."
+    ],
+    "i": [
+        "I, as in I love {{NAME}}.",
+        "I, as in I knew it was {{NAME}}!",
+        "I, as in I can't believe thats {{NAME}}.",
+        "I, as in Incredible, its really {{NAME}}!",
+        "I, as in Is that actually {{NAME}}?",
+        "I, as in I'll be damned, its {{NAME}}!"
+    ],
+    "j": [
+        "J, as in Joy, its {{NAME}}.",
+        "J, as in Just look at {{NAME}}!",
+        "J, as in Jeez, is that {{NAME}}?",
+        "J, as in Jackpot, its {{NAME}}!",
+        "J, as in Joking aside, thats {{NAME}}."
+    ],
+    "k": [
+        "K, as in Kudos to {{NAME}}.",
+        "K, as in Keep it up, {{NAME}}.",
+        "K, as in Kidding me, its {{NAME}}?",
+        "K, as in Know what? Its {{NAME}}."
+    ],
+    "l": [
+        "L, as in Look, its {{NAME}}!",
+        "L, as in Look who it is, {{NAME}}!",
+        "L, as in Lord have mercy, its {{NAME}}.",
+        "L, as in Leave it to {{NAME}}."
+    ],
+    "m": [
+        "M, as in My gosh, its {{NAME}}.",
+        "M, as in Must be {{NAME}}.",
+        "M, as in Magnificent work, {{NAME}}.",
+        "M, as in My word, is that {{NAME}}?"
+    ],
+    "n": [
+        "N, as in No way, its {{NAME}}.",
+        "N, as in Naturally, its {{NAME}}.",
+        "N, as in Not bad, {{NAME}}.",
+        "N, as in Nice going, {{NAME}}!"
+    ],
+    "o": [
+        "O, as in Oh my god, its {{NAME}}!",
+        "O, as in Only {{NAME}} would do that.",
+        "O, as in Outstanding job, {{NAME}}.",
+        "O, as in Oh boy, here comes {{NAME}}.",
+        "O, as in Obviously, its {{NAME}}."
+    ],
+    "p": [
+        "P, as in Please welcome {{NAME}}.",
+        "P, as in Props to {{NAME}}.",
+        "P, as in Perfectly done by {{NAME}}.",
+        "P, as in Picture this, it's {{NAME}}.",
+        "P, as in Pure genius, {{NAME}}."
+    ],
+    "q": [
+        "Q, as in Quite simply, its {{NAME}}.",
+        "Q, as in Quick question, is that {{NAME}}?",
+        "Q, as in Quite nice to see {{NAME}}."
+    ],
+    "r": [
+        "R, as in Really, its {{NAME}}.",
+        "R, as in Right on time, {{NAME}}.",
+        "R, as in Ridiculous, but it's {{NAME}}!",
+        "R, as in Roll out for {{NAME}}."
+    ],
+    "s": [
+        "S, as in Superb, its {{NAME}}.",
+        "S, as in Speak of the devil, it's {{NAME}}.",
+        "S, as in Seriously, is that {{NAME}}?",
+        "S, as in Smooth move, {{NAME}}.",
+        "S, as in Stunning work by {{NAME}}."
+    ],
+    "t": [
+        "T, as in Tim, look over there! Its {{NAME}}!",
+        "T, as in Talk about a surprise, its {{NAME}}!",
+        "T, as in That has to be {{NAME}}.",
+        "T, as in Total classic {{NAME}}.",
+        "T, as in Time to shine for {{NAME}}!"
+    ],
+    "u": [
+        "U, as in Unremarkable, its {{NAME}}.",
+        "U, as in Unbelievable, it's really {{NAME}}!",
+        "U, as in Usual to see {{NAME}}.",
+        "U, as in Underestimated as always, {{NAME}}.",
+        "U, as in Unstoppable {{NAME}}!"
+    ],
+    "v": [
+        "V, as in Very cool, just like {{NAME}}.",
+        "V, as in Valiant effort by {{NAME}}.",
+        "V, as in Victory belongs to {{NAME}}.",
+        "V, as in Vaguely resembles {{NAME}}.",
+        "V, as in Virtually flawless, {{NAME}}!"
+    ],
+    "w": [
+        "W, as in Wowie Zowie, its {{NAME}}.",
+        "W, as in Well, well, well, its {{NAME}}.",
+        "W, as in What a surprise, its {{NAME}}!",
+        "W, as in Woah, is that actually {{NAME}}?",
+        "W, as in Winner winner, its {{NAME}}!"
+    ],
+    "x": [
+        "X, as in X-tra special guest, its {{NAME}}.",
+        "X, as in X is the spot for {{NAME}}.",
+        "X, as in X-tremely impressive, {{NAME}}."
+    ],
+    "y": [
+        "Y, as in Yes! It really is {{NAME}}.",
+        "Y, as in Yo, check out {{NAME}}.",
+        "Y, as in You've got to be kidding, its {{NAME}}!",
+        "Y, as in Yowza, look at {{NAME}}!",
+        "Y, as in You nailed it, {{NAME}}."
+    ],
+    "z": [
+        "Z, as in Zoomed to see {{NAME}}.",
+        "Z, as in Zero way I'm seeing {{NAME}}!",
+        "Z, as in Zero doubts about {{NAME}}."
+    ],
+    ",": ["Comma."],
+    ".": ["Period."],
+    "/": ["Slash."],
+    "-": ["Dash."],
+    " ": ["Space."],
+    "?": ["Question mark."],
+    "!": ["Exclamation point."],
+    ":": ["Colon."],
+    ";": ["Semicolon."],
+    "'": ["Apostrophe."],
+    "\"": ["Double quote."],
+    "_": ["Underscore."],
+    "@": ["At sign."],
+    "#": ["Hash sign."],
+    "$": ["Dollar sign."],
+    "%": ["Percent sign."],
+    "&": ["Ampersand."],
+    "*": ["Asterisk."],
+    "(": ["Left parenthesis."],
+    ")": ["Right parenthesis."],
+    "[": ["Left bracket."],
+    "]": ["Right bracket."],
+    "{": ["Left brace."],
+    "}": ["Right brace."],
+    "+": ["Plus sign."],
+    "=": ["Equals sign."],
+    "<": ["Less than."],
+    ">": ["Greater than."],
+    "|": ["Vertical bar."],
+    "\\": ["Backslash."],
+    "~": ["Tilde."],
+    "`": ["Backtick."],
+    "^": ["Caret."],
+    "°": ["Degree sign."],
+    "€": ["Euro sign."],
+    "£": ["Pound sign."],
+    "¥": ["Yen sign."]
+}

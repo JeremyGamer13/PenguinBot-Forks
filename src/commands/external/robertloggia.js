@@ -7,13 +7,11 @@ const execPromise = nodeUtil.promisify(childProcess.exec);
 
 const discord = require("discord.js");
 
-const Ollama = require("ollama-chatting");
-const OllamaModels = require("../../util/ollama-models.js");
-const OllamaChat = new Ollama({ host: OllamaModels.url });
-
 const TTS = require("../../util/tts.js");
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
+
+const RobertLoggiaSentences = require("../../resources/robert-loggia.json");
 
 class Command {
     constructor() {
@@ -27,7 +25,6 @@ class Command {
         this.attributes = {
             permission: 0,
             lockedToCommands: true,
-            jgollamaConfigsInvolved: ["genericIO"],
         };
 
         this.example = [
@@ -51,6 +48,8 @@ class Command {
 
         const mentionedUser = message.mentions && message.mentions.members && message.mentions.members.size ? message.mentions.members.first() : null;
         const targetUser = mentionedUser ? mentionedUser : (customText ? null : (message?.member || message?.author));
+        
+        /** @type {string} */
         const targetName = targetUser ? (targetUser.displayName || targetUser.username) : customText;
 
         const [imageBuffer] = await util.getInputImagesForCommand(message);
@@ -66,50 +65,54 @@ class Command {
             const imagePath = path.join(tempDir, "image.png");
             await fs.writeFile(imagePath, imageBuffer);
 
-            // now start
-            const reply = await message.reply(`Generating the ✨🎇✨🌟✨🌟script✨✨🌟✨🎇`);
+            // make the scrip[t]
+            let outputText = "";
+            const sentenceVariants = new Set();
+            for (const letter of targetName) {
+                const letterLower = letter.toLowerCase();
+                const targetNameLower = targetName.toLowerCase();
 
-            let outputText = null;
-            try {
-                const output = await OllamaChat.generate({
-                    ...OllamaModels.genericIO,
-                    prompt: `My exact literal name is \"${targetName}\". This is your target name. Write a script that spells out my name in remark sentences, but try to gramatically fit my name in every remark.`,
-                    system: `You are a specialized text-generation engine and scriptwriter. When a user provides a target name, your sole function is to spell out that exact name character by character in a single, continuous, uninterrupted script.`
-                        + "\n" + `You must output **zero** conversational filler, zero introductory text, and zero concluding remarks—begin immediately with the first character and end immediately after the final character.`
-                        + "\n"
-                        + "\n" + `### Structural and Formatting Rules:`
-                        + "\n"
-                        + "\n" + `1. **Sequential Character Breakdown:**`
-                        + "\n" + `* Iterate through every single alphabetical character of the target name in exact left-to-right order, handling letters and spaces individually.`
-                        + "\n"
-                        + "\n" + `2. **Rigid Acronym Syntax:**`
-                        + "\n" + "* For every alphabetical character in the target name, format your output precisely as: `[Letter], as in '[Sentence].'` (or use `!` or `?` inside the quotation marks if the sentence requires it)."
-                        + "\n" + "* When the target name has a space (` `) character, read it out as `Space.` exactly, and include it as its own sentence to clearly delineate word boundaries."
-                        + "\n"
-                        + "\n" + `3. **Sentence Constraints & Name Integration:**`
-                        + "\n" + `* **Phonetic Starter:** Each sentence must begin with the exact alphabetical letter currently being spelled in plaintext without any formatting.`
-                        + "\n" + `* **Mandatory Name Placement at the End:** Every single generated sentence must conclude with the **full, complete target name** as its final words.`
-                        + "\n" + `* **Deep Name Integration (No Tag-Ons):** The target name must end the sentence, but it **must be grammatically woven directly into the core clause** (e.g., as a direct object, predicate noun, or completion of a verb/preposition). Do **not** use the name as a comma-separated address or afterthought.`
-                        + "\n" + `* **Contextual Variety:** Vary the tone and structure of your sentences (e.g., make an exclamation, a remark, a humorous quip), but ensure every single one references the target name directly.`
-                        + "\n" + `* **Tone & Vocabulary Guidance**: Avoid archaic, medieval, or high-fantasy styling. Instead, use contemporary, everyday, or casual modern phrasing.`
-                        + "\n" + `* **Strict Length:** Keep every sentence **short, punchy, and concise** (maximum 8 to 12 words). Avoid long, rambling clauses.`
-                        + "\n"
-                        + "\n" + `4. **Execution Directive:**`
-                        + "\n" + `* Do not default to generic dictionary definitions or standard phonetic alphabet words. Every entry must be a custom sentence built entirely around the target name.`
-                }, (chunk) => {
-                    if (chunk.chunk.thinking) process.stdout.write(chunk.chunk.thinking);
-                    if (chunk.chunk.response) process.stdout.write(chunk.chunk.response);
-                });
+                // if this letter is the same as the target name
+                if (targetNameLower.startsWith(letterLower)) {
+                    outputText += `${letter}, as in ${targetName}.` + "\n";
+                    continue;
+                }
 
-                outputText = output.response;
-            } catch (err) {
-                return reply.edit("**Took too long to prompt.** If this happens frequently then Ollama is probably not open on my PC right now");
+                // see if we have a list of sentences for this letter
+                /** @type {string[]} */
+                const sentences = RobertLoggiaSentences[letterLower];
+                // if this letter isnt found in our script
+                if (!sentences) {
+                    outputText += `${letter}.` + "\n";
+                    continue;
+                }
+                // if there's only one variant of this letter, it's likely a separator
+                if (sentences.length <= 1) {
+                    outputText += `${sentences[0]}` + "\n";
+                    continue;
+                }
+
+                // use each sentence in order. irst check if we already exhausted our sentence list
+                if (sentences.every(sentence => sentenceVariants.has(sentence))) {
+                    for (const sentence of sentences)
+                        sentenceVariants.delete(sentence);
+                }
+                // get a sentence that we make suree we havent used this before
+                for (const sentence of sentences) {
+                    if (!sentenceVariants.has(sentence)) {
+                        outputText += `${sentence.replace("{{NAME}}", targetName)}` + "\n";
+                        sentenceVariants.add(sentence);
+                        break;
+                    }
+                }
             }
+
+            console.log(outputText);
 
             // make TTS read these
             const spelledOutReading = `Certainly. Thats ${targetName}.`
                 + "\n" + outputText.trim().replace(/[\"“”]/g, "");
-            await reply.edit("Reading aloud the script with TTS");
+            const reply = await message.reply("Reading aloud the script with TTS");
 
             const bufferNameReadaloud = await TTS.speak(targetName, "google");
             const bufferSpelledOutReadaloud = await TTS.speak(spelledOutReading, "google");
