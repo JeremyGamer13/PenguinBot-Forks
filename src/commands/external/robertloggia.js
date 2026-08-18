@@ -174,7 +174,7 @@ class Command {
             const videoOutputCharacter = path.join(tempDir, "robert-loggia.mp4");
             const commandCharacter = `ffmpeg -y -i "${videoOutputStitch}" -i "${imagePath}"`
                 + " " + `-filter_complex "[1:v]scale=155:231[img];[0:v][img]overlay=x=(W-w)/2:y=(H-h)/2:enable='gte(t,${lengthLoggia1 + lengthOutputName + lengthLoggia3})'[outv]"`
-                + " " + `-map "[outv]" -map 0:a -c:v libx264 -b:v 64k -c:a copy "${videoOutputCharacter}"`;
+                + " " + `-map "[outv]" -map 0:a -c:v libx264 -b:v 32k -c:a copy "${videoOutputCharacter}"`;
             await execPromise(commandCharacter);
 
             reply.edit({
