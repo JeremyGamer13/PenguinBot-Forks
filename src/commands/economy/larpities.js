@@ -23,7 +23,7 @@ class Command {
     invoke(message) {
         const info = DatabaseCurrencyLarp.get(message.author.id) || EconomyJSB.createInfoLarp();
         message.reply({
-            content: `🤖🤖 Larp ATM⚡you have ${info.amount || 0} larpities`
+            content: `🤖🤖 Larp ATM⚡you have ${info.amount || 0} ${EconomyJSB.emojiLarp}`
                 + "\n" + `-# looking at your **${EconomyJSB.activeAccount}** account`,
             allowedMentions: {
                 parse: [],

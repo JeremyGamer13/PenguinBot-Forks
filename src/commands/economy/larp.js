@@ -28,10 +28,12 @@ class Command {
         // colects
         const money = Math.floor(Math.random() * 9) + 1;
         info.amount += money;
+        if (info.amount > info.amountHighest)
+            info.amountHighest = info.amount;
         info.delayCollect = Date.now() + 5 * 60 * 1000;
         DatabaseCurrencyLarp.set(userId, info);
         message.reply({
-            content: `Ok you got ${money} larpities`,
+            content: `Ok you got ${money} ${EconomyJSB.emojiLarp}`,
             allowedMentions: {
                 parse: [],
                 users: [],

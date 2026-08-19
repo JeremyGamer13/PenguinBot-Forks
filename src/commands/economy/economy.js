@@ -19,6 +19,10 @@ class Command {
         const info = DatabaseCurrencyLarp.get(message.author.id) || EconomyJSB.createInfoLarp();
         message.reply({
             content: `🤖🤖⚡calculated informations`
+                + "\n" + "-" + " " + `**currencies**: ${EconomyJSB.emojiLarp}`
+                    + `${EconomyJSB.emojiChronos}`
+                    + `${EconomyJSB.emojiElixir}`
+                    + `${EconomyJSB.emojiIris}`
                 + "\n" + "-" + " " + `**account**: ${EconomyJSB.activeAccount}`
                 + "\n" + "-" + " " + `**transfer**: ❌its not done`
                 + "\n" + "-" + " " + `**trading**: ❌its not done`
