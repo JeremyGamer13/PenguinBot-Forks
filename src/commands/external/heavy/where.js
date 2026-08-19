@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const discord = require("discord.js");
-const ObjectDetection = require('../../util/object-detection');
-const TempFolder = require('../../util/temp-folder');
+const ObjectDetection = require('../../../util/object-detection.js');
+const TempFolder = require('../../../util/temp-folder.js');
 const { createCanvas, loadImage } = require('canvas');
 
 class Command {
