@@ -2,11 +2,11 @@ const fs = require("fs/promises");
 const path = require("path");
 const childProcess = require("child_process");
 
-const env = require("../../util/env-util");
-const Demucs = require('../../util/demucs');
-const FFmpegUtil = require('../../util/ffmpeg-util');
-const TempFolder = require('../../util/temp-folder');
-const downloadAttachments = require('../../util/download-attachments');
+const env = require("../../../util/env-util");
+const Demucs = require('../../../util/demucs');
+const FFmpegUtil = require('../../../util/ffmpeg-util');
+const TempFolder = require('../../../util/temp-folder');
+const downloadAttachments = require('../../../util/download-attachments');
 
 class Command {
     constructor() {

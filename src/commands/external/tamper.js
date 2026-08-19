@@ -131,9 +131,6 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        const canDo = util.request("heavyExternalStuff");
-        if (!canDo) return message.reply("disabled (im probably playing a game)");
-
         await this.handle(message, args, util);
     }
 }

@@ -7,16 +7,16 @@ const jimp = require("jimp");
 const { createCanvas, loadImage } = require('canvas');
 
 const Ollama = require("ollama-chatting");
-const OllamaModels = require("../../util/ollama-models.js");
+const OllamaModels = require("../../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
-const configuration = require("../../config");
-const TempFolder = require('../../util/temp-folder');
-const ObjectDetection = require('../../util/object-detection');
-const RemoveBackground = require('../../util/remove-background');
+const configuration = require("../../../config.js");
+const TempFolder = require('../../../util/temp-folder.js');
+const ObjectDetection = require('../../../util/object-detection.js');
+const RemoveBackground = require('../../../util/remove-background.js');
 
-const jsonParseLoose = require('../../util/json-parse-loose.js');
-const SchemaGFXContext = require("../../resources/schemas/gfx-context.json");
+const jsonParseLoose = require('../../../util/json-parse-loose.js');
+const SchemaGFXContext = require("../../../resources/schemas/gfx-context.json");
 
 class Command {
     constructor() {

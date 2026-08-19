@@ -6,10 +6,10 @@ const discord = require("discord.js");
 const Canvas = require('canvas');
 const cssColor = require("@asamuzakjp/css-color");
 
-const resizePng = require("../../util/resize-png.js");
-const TempFolder = require('../../util/temp-folder.js');
-const ObjectDetection = require('../../util/object-detection.js');
-const getProminentColor = require("../../util/get-prominent-color.js");
+const resizePng = require("../../../util/resize-png.js");
+const TempFolder = require('../../../util/temp-folder.js');
+const ObjectDetection = require('../../../util/object-detection.js');
+const getProminentColor = require("../../../util/get-prominent-color.js");
 
 class Command {
     constructor() {

@@ -3,14 +3,14 @@ const path = require("path");
 const discord = require("discord.js");
 const childProcess = require("child_process");
 
-const RVC = require('../../util/rvc');
-const RVCModels = require('../../util/rvc-models');
+const RVC = require('../../../util/rvc');
+const RVCModels = require('../../../util/rvc-models');
 
-const env = require("../../util/env-util");
-const Demucs = require('../../util/demucs');
-const FFmpegUtil = require('../../util/ffmpeg-util');
-const TempFolder = require('../../util/temp-folder');
-const downloadAttachments = require('../../util/download-attachments');
+const env = require("../../../util/env-util");
+const Demucs = require('../../../util/demucs');
+const FFmpegUtil = require('../../../util/ffmpeg-util');
+const TempFolder = require('../../../util/temp-folder');
+const downloadAttachments = require('../../../util/download-attachments');
 
 class Command {
     constructor(client) {

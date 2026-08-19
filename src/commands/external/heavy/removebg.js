@@ -4,8 +4,8 @@ const path = require("path");
 const discord = require("discord.js");
 const { createCanvas, loadImage } = require('canvas');
 
-const TempFolder = require('../../util/temp-folder');
-const RemoveBackground = require('../../util/remove-background');
+const TempFolder = require('../../../util/temp-folder');
+const RemoveBackground = require('../../../util/remove-background');
 
 class Command {
     constructor() {

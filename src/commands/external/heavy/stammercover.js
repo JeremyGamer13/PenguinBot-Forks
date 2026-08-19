@@ -2,13 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const childProcess = require("child_process");
 
-const env = require("../../util/env-util");
-const Demucs = require('../../util/demucs');
-const Stammer = require('../../util/stammer');
-const getFileSize = require('../../util/file-size');
-const FFmpegUtil = require('../../util/ffmpeg-util');
-const TempFolder = require('../../util/temp-folder');
-const downloadAttachments = require('../../util/download-attachments');
+const env = require("../../../util/env-util");
+const Demucs = require('../../../util/demucs');
+const Stammer = require('../../../util/stammer');
+const getFileSize = require('../../../util/file-size');
+const FFmpegUtil = require('../../../util/ffmpeg-util');
+const TempFolder = require('../../../util/temp-folder');
+const downloadAttachments = require('../../../util/download-attachments');
 
 class Command {
     constructor() {

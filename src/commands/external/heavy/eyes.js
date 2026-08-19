@@ -5,8 +5,8 @@ const discord = require("discord.js");
 
 const Canvas = require('canvas');
 
-const ObjectDetection = require('../../util/object-detection');
-const TempFolder = require('../../util/temp-folder');
+const ObjectDetection = require('../../../util/object-detection');
+const TempFolder = require('../../../util/temp-folder');
 
 class Command {
     constructor() {
