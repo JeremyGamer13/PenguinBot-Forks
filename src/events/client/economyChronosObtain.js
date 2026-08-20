@@ -34,7 +34,7 @@ class BotEvent {
         if (message.author.system) return;
         if (message.system) return;
 
-        const isTestingInPublic = isInTestMode && !(env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guildId === "746156168560508950")
+        const isTestingInPublic = state.isInTestMode && !(env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guildId === "746156168560508950")
 
         // ignore #spam
         if (
@@ -43,6 +43,7 @@ class BotEvent {
         ) return;
 
         // british chat
+        /*
         if (false && message.channel.id === configuration.channels.funkyBritishChat) {
             if (message.author.id === env.get("OWNER") && message.content.startsWith("!")) return;
 
@@ -60,7 +61,7 @@ class BotEvent {
             if (message.content.match(/[^\x00-\x7F]/g)) return message.delete();
 
             // dont repost links
-            const urlRegex = /(http[s]?:\/\/)([a-zA-Z0-9.-]+)([\/?].*)*/g;
+            const urlRegex = /(http[s]?:\/\/)([a-zA-Z0-9.-]+)([\/?].*)* /g;
             if (message.content.match(urlRegex)) return message.delete();
 
             // if it's a reply, have a header before the message
@@ -136,6 +137,7 @@ class BotEvent {
             });
             return;
         }
+        */
     }
 }
 
