@@ -139,6 +139,11 @@ Check the Notes section for details on customizing PenguinBot to your liking.
         - Install Python (havent tested other versions)
         - install `rembg` and `onnxruntime`
             - On GPUs you *can* install `onnxruntime-gpu` instead, but it required some CUDA toolkit stuff that i didn't feel like figuring out
+- Vocoding with PSOLA (used in commands) (requires python)
+    - Configured via `.env`.
+    - Setup:
+        - Install Python (havent tested other versions)
+        - install `librosa` `soundfile` `numpy` `psola`
 
 # Basic Commands Template
 ```js
