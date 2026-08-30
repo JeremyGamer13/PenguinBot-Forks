@@ -30,6 +30,7 @@ class Command {
                     + `${EconomyJSB.emojiChronos}`
                     + `${EconomyJSB.emojiElixir}`
                     + `${EconomyJSB.emojiIris}`
+                    + `${EconomyJSB.emojiOPSEC}`
                 + "\n" + "-" + " " + `**account**: ${EconomyJSB.activeAccount}`
                 + "\n" + "-" + " " + `**transfer**: ❌its not done`
                 + "\n" + "-" + " " + `**trading**: ❌its not done`

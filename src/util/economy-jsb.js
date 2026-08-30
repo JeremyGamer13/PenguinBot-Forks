@@ -8,6 +8,7 @@ class EconomyJSB {
     static emojiChronos = `<:chronos:1539499215900647535>`;
     static emojiElixir = `<:elixir:1539499628582670336>`;
     static emojiIris = `<:iris:1539500722385588294>`;
+    static emojiOPSEC = `<:opsec:1543531743473303683>`;
 
     // user infos
     /**
@@ -69,6 +70,18 @@ class EconomyJSB {
             streak: 0,
             streakHighest: 0,
             delayTalk: 0,
+        };
+    }
+    /**
+     * OPSEC is a security so secure currency
+     * you can get them via
+     * - TODO: idk yet
+     * intended values: limited integer 0-99999
+     */
+    static createInfoOPSEC() {
+        return {
+            amount: 0,
+            amountHighest: 0,
         };
     }
 
