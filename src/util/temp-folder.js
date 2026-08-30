@@ -3,6 +3,7 @@ const path = require("path");
 const crypto = require("crypto");
 const childProcess = require("child_process");
 
+// TODO: Maybe this could be made nicer and put into PenguinBot, also maybe env to use real fs mkdirTemp
 const tempFolderPath = path.join(__dirname, `../../temp/`);
 class TempFolder {
     constructor(name) {

@@ -12,6 +12,7 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
 
+// TODO: Eventually move this command to PenguinBot
 class Command {
     constructor() {
         this.name = "webdrivertorso";
