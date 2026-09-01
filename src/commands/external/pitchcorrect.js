@@ -20,7 +20,7 @@ class Command {
             permission: 0,
         };
 
-        this.alias = [
+        this.example = [
             { text: "{{prefix}}pitchcorrect" },
             { text: "{{prefix}}pitchcorrect c5" },
             { text: "{{prefix}}pitchcorrect d#6" },
