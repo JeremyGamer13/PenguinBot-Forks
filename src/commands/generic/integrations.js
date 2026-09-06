@@ -29,7 +29,7 @@ class Command {
             },
             {
                 name: 'jg_node_api',
-                value: `${env.getBool("JGNODEAPI_ENABLED")}`,
+                value: `${env.getBool("JGNODEAPI_ENABLED")} (switches: ${env.getBool("JGNODEAPI_SWITCHES_LISTEN")})`,
                 inline: true
             },
             {
@@ -50,6 +50,11 @@ class Command {
             {
                 name: 'SearXNG',
                 value: `${env.getBool("SEARXNG_ENABLED")}`,
+                inline: true
+            },
+            {
+                name: 'stammer',
+                value: `${env.getBool("STAMMER_ENABLED")}`,
                 inline: true
             },
             {
