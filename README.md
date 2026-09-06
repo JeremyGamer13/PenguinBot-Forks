@@ -149,7 +149,10 @@ Check the Notes section for details on customizing PenguinBot to your liking.
     - Setup:
         - Install [FluidSynth](https://github.com/FluidSynth/fluidsynth/releases)
         - If you want to use the built-in Windows SoundFont by default, make a copy of `gm.dls` from System32 (i recommend a copy for safety) and point to it in `.env`
-
+- SoundFont conversion with [Polyphone](https://www.polyphone.io/en) (used in commands)
+    - Configured via `.env`.
+    - Setup:
+        - Install [Polyphone](https://www.polyphone.io/en/software)
 
 # Basic Commands Template
 ```js
