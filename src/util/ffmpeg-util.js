@@ -196,6 +196,16 @@ class FFmpegUtilCommands {
         const command = `ffmpeg -y -i "${absolutePathInput}" -map_metadata -1 -vn -c:a libmp3lame "${absolutePathOutput}"`;
         await execPromise(command);
     }
+    static async convertToSafeWav(absolutePathInput, absolutePathOutput) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+        // if (!fs.existsSync(absolutePathOutput)) throw new Error("Cannot create non-existent path"); // thats the poiint
+
+        const command = `ffmpeg -y -i "${absolutePathInput}" -map_metadata -1 -vn -c:a pcm_s16le "${absolutePathOutput}"`;
+        await execPromise(command);
+    }
     static async convertToSafeMp4(absolutePathInput, absolutePathOutput) {
         // my security checks so random shit doesnt get passed into CLI
         if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
@@ -310,6 +320,45 @@ class FFmpegUtilCommands {
         const filter = `rubberband=pitch=${parsedPitch}`;
 
         const command = `ffmpeg -y -i "${absolutePathInput}" -filter:a "${filter}" "${absolutePathOutput}"`;
+        await execPromise(command);
+    }
+    // DISCLOSURE: ai generate Ohhj my god hes vibe coding
+    static async normalize(absolutePathInput, absolutePathOutput, peak = 0) {
+        // my security checks so random shit doesnt get passed into CLI
+        if (!path.isAbsolute(absolutePathInput)) throw new Error("Path must be absolute");
+        if (!fs.existsSync(absolutePathInput)) throw new Error("Cannot convert non-existent path");
+        if (!path.isAbsolute(absolutePathOutput)) throw new Error("Path must be absolute");
+
+        // NOTE: peak signifies where we should normalize to. 0 = 0db (standard for JSB)
+        const parsedPeak = Number(peak);
+        if (isNaN(parsedPeak) || !isFinite(parsedPeak)) {
+            throw new Error("Normalize peak must be a valid number");
+        }
+
+        // Pass 1: Run volumedetect to analyze the audio file's peak volume
+        const detectCommand = `ffmpeg -y -i "${absolutePathInput}" -af volumedetect -f null -`;
+        const { stderr } = await execPromise(detectCommand);
+
+        // Parse max_volume from ffmpeg's stderr output (e.g., "max_volume: -5.2 dB")
+        const match = stderr.match(/max_volume:\s*([-\d.]+)\s*dB/);
+        if (!match) {
+            throw new Error("Could not detect maximum volume from audio file.");
+        }
+
+        const maxVolume = parseFloat(match[1]);
+        if (!isFinite(maxVolume)) {
+            // NOTE: evil ai threw error but in our case lets just copy the file
+            // throw new Error("Audio file appears to be completely silent.");
+            fs.copyFileSync(absolutePathInput, absolutePathOutput);
+            return;
+        }
+
+        // Calculate the required gain adjustment (Target Peak - Current Max Volume)
+        // e.g., if target is 0 dB and maxVolume is -5.2 dB, gain needed is +5.2 dB
+        const gain = parsedPeak - maxVolume;
+
+        // Pass 2: Apply the computed volume adjustment and save to output path
+        const command = `ffmpeg -y -i "${absolutePathInput}" -af "volume=${gain}dB" "${absolutePathOutput}"`;
         await execPromise(command);
     }
     
