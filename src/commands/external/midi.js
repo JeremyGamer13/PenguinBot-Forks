@@ -4,9 +4,11 @@ const childProcess = require("child_process");
 
 const { default: slash } = require("slash");
 
+const FluidSynth = require("../../util/fluidsynth.js");
+const FluidSynthSoundFonts = require("../../util/fluidsynth-soundfonts.js");
+
 const env = require("../../util/env-util.js");
 const Polyphone = require("../../util/polyphone.js");
-const FluidSynth = require("../../util/fluidsynth.js");
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
 const downloadAttachments = require('../../util/download-attachments.js');
@@ -16,8 +18,12 @@ class Command {
         this.name = "midi";
         this.description = "Play a MIDI file";
         this.descriptionLong = "Play a MIDI (.mid/.midi) file."
-            + "\n" + "-" + " " + "Attach a MIDI file to render it with the default SoundFont."
-            + "\n" + "-" + " " + "Attach a MIDI file, and an additional sample file (.mp3, .ogg, etc) to use the sample as the only instrument.";
+            + "\n" + "-" + " " + "Attach a MIDI file with no arguments to render it with the default SoundFont."
+            + "\n" + "-" + " " + "Attach a MIDI file and specify a soundfont name to render it with a specific SoundFont."
+            + "\n" + "-" + " " + "Attach a MIDI file, and an additional sample file (.mp3, .ogg, etc) to use the sample as the only instrument."
+            + "\n"
+            + "\n" + "Available SoundFonts:"
+            + "\n" + `${FluidSynthSoundFonts.getSoundFontNames().map(name => `\`${name}\``).join(", ")}`;
         this.attributes = {
             unlisted: false,
             lockedToCommands: true,
@@ -37,6 +43,12 @@ class Command {
         // // check atachemtn size
         if (attachment.size > 1 * 1e+6) throw new Error("MIDI files must be below 1 MB.");
         if (attachmentSample && attachmentSample.size > 5 * 1e+6) throw new Error("Sample files must be below 5 MB.");
+
+        // check soundfont
+        const selectedSoundFont = (!args[0]) || attachmentSample ? FluidSynthSoundFonts.GeneralMIDI
+            : (FluidSynthSoundFonts.getSoundFontNames().includes(args[0]) ? FluidSynthSoundFonts[args[0]] : null);
+        if (!selectedSoundFont)
+            throw new Error("Invalid soundfont");
 
         // actually start doing stuff
         const startTime = Date.now();
@@ -68,8 +80,8 @@ class Command {
             }
 
             // if we have a sample then we need to make a soundfont to render with
-            let soundFontPath = env.get("FLUIDSYNTH_SOUNDFONT");
-            let synthConfigPath = null;
+            let soundFontPath = selectedSoundFont.path;
+            let synthConfigPath = selectedSoundFont.config;
             if (attachmentSample) {
                 const sfzPath = path.join(tempDir, "soundfont_sample.sfz");
                 const sf3Path = path.join(tempDir, "soundfont_sample.sf3");
