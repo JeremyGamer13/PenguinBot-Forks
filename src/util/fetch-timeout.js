@@ -1,7 +1,7 @@
 /**
  * specify `timeout` in options as milliseconds
  * @param {string|URL|globalThis.Request} url 
- * @param {RequestInit} options 
+ * @param {RequestInit & {timeout?: number}} options
  * @returns {Promise<Response>}
  */
 const fetchWithTimeout = async (url, options = {}) => {
@@ -11,13 +11,14 @@ const fetchWithTimeout = async (url, options = {}) => {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
 
-    const response = await fetch(url, {
-        ...options,
-        signal: controller.signal
-    });
-    clearTimeout(id);
-
-    return response;
+    try {
+        return await fetch(url, {
+            ...options,
+            signal: controller.signal
+        });
+    } finally {
+        clearTimeout(id);
+    }
 };
 
 module.exports = fetchWithTimeout;
