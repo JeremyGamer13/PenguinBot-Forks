@@ -1,9 +1,7 @@
-const fs = require("fs");
+const fs = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
-const childProcess = require("child_process");
 
-// TODO: Maybe this could be made nicer and put into PenguinBot, also maybe env to use real fs mkdirTemp
 const tempFolderPath = path.join(__dirname, `../../temp/`);
 class TempFolder {
     constructor(name) {
@@ -29,33 +27,21 @@ class TempFolder {
         return `${prefix || "temp"}-${crypto.randomBytes(10).toString("hex")}`;
     }
 
-    create() {
+    async create() {
         if (this._destroyed) throw new Error("TempFolder instance is already dead");
+
         // mkdir recursive doesnt need to check if exists
-        return new Promise((resolve, reject) => {
-            fs.mkdir(this._tempDir, { recursive: true }, (err) => {
-                if (err) return reject(err);
-                resolve();
-            });
-        });
+        await fs.mkdir(this._tempDir, { recursive: true });
     }
-    destroy() {
+    async destroy() {
         if (!this._tempDir) throw new Error("Invalid tempDir");
         if (!path.isAbsolute(this._tempDir)) throw new Error("Invalid tempDir");
         if (!this._tempDir.startsWith(tempFolderPath)) throw new Error("Temp path leads outside of temp folder");
         if (path.resolve(this._tempDir.toLowerCase()) === path.resolve(tempFolderPath.toLowerCase())) throw new Error("Invalid tempDir");
 
-        if (!fs.existsSync(this._tempDir)) return;
-
+        // NOTE: Scary! long delay since these folders dont really matter much
         this._destroyed = true;
-        return new Promise((resolve, reject) => {
-            // NOTE: Scary!
-            // long delay since these folders dont really matter much
-            fs.rm(this._tempDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 1000 }, (err) => {
-                if (err) return reject(err);
-                resolve();
-            });
-        });
+        await fs.rm(this._tempDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 1000 });
     }
 
     async createAndDestroy(callback) {
