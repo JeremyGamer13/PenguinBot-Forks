@@ -114,8 +114,8 @@ class Command {
                 + "\n" + outputText.trim().replace(/[\"“”]/g, "");
             const reply = await message.reply("Reading aloud the script with TTS");
 
-            const bufferNameReadaloud = await TTS.speak(targetName, "google");
-            const bufferSpelledOutReadaloud = await TTS.speak(spelledOutReading, "google");
+            const bufferNameReadaloud = await TTS.speak(targetName, "balabolka", "en");
+            const bufferSpelledOutReadaloud = await TTS.speak(spelledOutReading, "balabolka", "en");
             const pathNameReadaloud = path.join(tempDir, "name.mp3");
             const pathSpelledOutReadaloud = path.join(tempDir, "spelled.mp3");
             await fs.writeFile(pathNameReadaloud, bufferNameReadaloud);
