@@ -21,8 +21,8 @@ def flatten_audio(target_freq, input_path, output_path):
     print(f"[Python] Audio loaded. Sample Rate: {sr} Hz | Duration: {duration} seconds")
     
     # 1. Track the melody/pitch contour using PYIN (to match frame lengths)
-    fmin = librosa.note_to_hz('C2')
-    fmax = librosa.note_to_hz('C7')
+    fmin = librosa.note_to_hz('C1')
+    fmax = librosa.note_to_hz('C8')
     
     print("[Python] Analyzing vocal melody using PYIN pitch detection...")
     f0, voiced_flag, voiced_probs = librosa.pyin(
@@ -64,8 +64,8 @@ def transfer_pitch(input_path, reference_path, output_path):
     # Load reference audio matching the input's sample rate for alignment ease
     y_ref, sr_ref = librosa.load(reference_path, sr=sr)
     
-    fmin = librosa.note_to_hz('C2')
-    fmax = librosa.note_to_hz('C7')
+    fmin = librosa.note_to_hz('C1')
+    fmax = librosa.note_to_hz('C8')
     
     print("[Python] Analyzing pitch of source input audio...")
     f0_input, _, _ = librosa.pyin(y, fmin=fmin, fmax=fmax, sr=sr)
