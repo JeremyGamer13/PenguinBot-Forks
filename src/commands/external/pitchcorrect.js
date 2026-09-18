@@ -26,6 +26,8 @@ class Command {
             { text: "{{prefix}}pitchcorrect d#6" },
             { text: "{{prefix}}pitchcorrect 1479.98" },
         ];
+
+        this.alias = ["correctpitch"];
     }
 
     async handle(message, args, util) {
