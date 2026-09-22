@@ -21,9 +21,9 @@ class OllamaModels {
     // constant configs (settings dont change on runtime)
     /** @type {Ollama.ChatRequest} */
     static penguinAI = {
-        model: "custom-penguinmod-server-v5",
+        model: "llama-3.2-3b-instruct-penguinmod-server-v6",
         think: false,
-        timeout: 1.5 * 60 * 1000, // 1.5 minute
+        timeout: 60 * 1000, // 60 seconds
     };
     /** must have access to tools @type {Ollama.ChatRequest} */
     static searchOverview = {

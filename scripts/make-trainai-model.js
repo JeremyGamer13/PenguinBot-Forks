@@ -1,3 +1,9 @@
+/**
+ * @deprecated As of V6 you should be using make-trainai-dataset.js to generate GGUF models for much lighter models
+ * @fileoverview Ollama Modelfile System Prompt generator
+ * This generates a Modelfile with a snippet of the messages from the AI training data
+ * Specify a base model with behavior you like (recommended uncensored because the model may reject the system prompt entirely sometimes)
+ */
 /*
 V5: (CURRENT)
 
