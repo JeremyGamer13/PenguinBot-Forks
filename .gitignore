@@ -62,3 +62,6 @@ scripts/*.bat
 .dev/*
 src/commands/.dev/*
 src/resources/**/__pycache__
+desktop.ini
+nohup.out
+.DS_Store
