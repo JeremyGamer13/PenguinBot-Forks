@@ -231,7 +231,9 @@ class CommandUtility {
     static requestApproval(replyMessage, incomingMessage, requestDetails, files) {
         if (this.state.isInPersonalMode)
             return new Promise((resolve) => resolve(incomingMessage.guildId === "1104194940172521524"
-                || incomingMessage.guildId === "746156168560508950" || incomingMessage.guildId === "882334041318232075"));
+                || incomingMessage.guildId === "746156168560508950"
+                || incomingMessage.guildId === "882334041318232075"
+                || incomingMessage.guildId === "1471008862294376591"));
         
         return new Promise(async (resolve) => {
             const requestChannel = await this.client.channels.cache.get(configuration.channels.aiRequests);
