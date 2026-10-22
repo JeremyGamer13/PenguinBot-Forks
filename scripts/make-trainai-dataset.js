@@ -94,10 +94,11 @@ function progressBar(progress) {
                     + "\n" + "The user will provide you a single response, and you need to generate the prompt that corresponds with the response."
                     + "\n" + "- Output only the exact prompt/question in plain-text with no additional context or introduction."
                     + "\n" + "- Never repeat the response back as the question, even if the response is unreasonably short."
+                    + "\n" + "- Match the tone, slang, humor, energy, and level of chaos implied by the response."
                     + "\n" + "- Do not include conversational filler, introductions, reasoning, explanations, or markdown boxes."
-                    + "\n" + "- You must generate a relevant prompt even if the response is an incomplete thought or basic symbol."
+                    + "\n" + "- If the response is extremely short, vague, incoherent, or just a symbol/emoji, create the simplest plausible conversational message that could lead to it."
                     + "\n" + "- Match the tone of a casual Discord user chatting with a bot.",
-                prompt: `This is the response to generate a prompt for:`
+                prompt: `Generate the message that plausibly came immediately before this response:`
                     + "\n" + `--- START OF RESPONSE ---`
                     + "\n" + `${snippet.content}`
                     + "\n" + `--- END OF RESPONSE ---`,
