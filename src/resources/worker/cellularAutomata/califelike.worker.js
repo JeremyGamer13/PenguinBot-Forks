@@ -2,7 +2,7 @@ const fs = require('fs/promises');
 const path = require('path');
 
 const Canvas = require('canvas');
-const GIFEncoder = require('gifencoder');
+const GIFEncoder = require('gif-encoder-2');
 
 const CellularAutomataLifeLike = require("../../../util/cellularAutomata/lifeLike.js");
 
