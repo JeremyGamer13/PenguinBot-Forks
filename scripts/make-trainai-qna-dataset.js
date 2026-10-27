@@ -1,4 +1,5 @@
 /**
+ * @deprecated As of V7 you should be using make-trainai-text-dataset.js to make the user submissions more effective to the AI behavior
  * @fileoverview Call & Response Dataset Generator
  * This generates a call & response dataset from the answer-only messages that users submit
  * The model specified here is not a base model; it is used to generate Questions for the Answers (user-submitted training data)
@@ -6,9 +7,9 @@
  * You can use this dataset in tools like Unsloth to extend another model with the custom training data
  */
 /*
-V6: (CURRENT)
+V6:
 
-node scripts/make-trainai-dataset.js gemma3:270m 0.1 "C:\Users\Jeremy\Documents\GitHub\PenguinAI\.dev\TRAINAI-dataset.jsonl"
+node scripts/make-trainai-qna-dataset.js gemma3:270m 0.1 "C:\Users\Jeremy\Documents\GitHub\PenguinAI\.dev\TRAINAI-dataset.jsonl"
 */
 const fs = require("fs");
 const path = require("path");
