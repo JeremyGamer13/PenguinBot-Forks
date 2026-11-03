@@ -27,9 +27,6 @@ const configuration = {
         '746156168560508953', // general in test thing
     ],
 
-    // Role ID automatically given to members when they join the SERVER_ID. Toggled with ADD_MEMBER_ROLE_ON_JOIN
-    memberRole: "1449641544947597392",
-
     // Used to link to channels within the server. These IDs are the ones we use in PenguinMod.
     channels: {
         // A channel for PenguinBot testing and occasional logging.
@@ -41,25 +38,9 @@ const configuration = {
         // A channel dedicated to bot commands for developers.
         commandsDev: "1174359501688803358",
 
-        // The channel where blocked automod alerts are sent. PenguinBot will send automod bypass alerts here too, if the basic-automod file is added.
-        // See src/util/utility.js to see where basic-automod is used.
-        automod: "746156168560508953",
-
-        // A channel where PenguinBot can send reported users to. Usable via /report
-        userReports: "746156168560508953",
-
-        // A channel where PenguinBot can send reported mods to. Usable via /modreport
-        adminReports: "746156168560508953",
-
         help: "746156168560508953",
         spaces: "746156168560508953",
-        teamWanted: "746156168560508953",
         spam: "1040077506029551647",
-
-        // PenguinMod guess-the-project event. This is the channel people can view for guessing.
-        guessTheProjectMembers: "1560874272929619999",
-        // PenguinMod guess-the-project event. This is the channel event managers receive guesses in.
-        guessTheProjectManager: "1560898144131096686",
     },
     
     // Servers used for different environments (production, testing)
@@ -93,9 +74,6 @@ const configuration = {
 
         // Role IDs considered event managers (for PenguinMod)
         eventManagerRoles: [
-            "1361088428556419383", // Event Manager
-            "1559282557227376861", // Event Manager (testing)
-            "1033551639170273380", // Admin Permissions (PenguinMod)
         ],
 
         // Channels checked for in the lockedToCommands property (excluding commands channel from above & threads within that channel)
@@ -118,25 +96,11 @@ const configuration = {
             "1463077406146301963", // dev-dump
             "1551460701044867172", // dedicated penguinbot test server: penguinbot
             "1563121434903977996", // dedicated penguinbot test server: penguinbot-testing
+            '746156168560508953', // general in test thing
         ],
-
-        // On top of the permission check, who can use pm!eval (run custom code)
-        eval: [env.get("OWNER")],
 
         // On top of the permission check, who can use pm!pull (pull & restart can cause running custom code)
         pull: [env.get("OWNER")],
-
-        // On top of the permission check, who can use pm!echo
-        echo: [env.get("OWNER"), "462098932571308033"],
-
-        // On top of the permission check, who can use pm!delmsg
-        delmsg: [env.get("OWNER"), "462098932571308033"],
-
-        // On top of the permission check, who can use pm!penguinbotupload
-        penguinbotupload: [env.get("OWNER"), "462098932571308033"],
-
-        // Who can use "force" options in pm!exclusiverole
-        exclusiveroleForce: [env.get("OWNER"), "462098932571308033"],
     },
 };
 
