@@ -80,16 +80,6 @@ class CommandUtility {
     async getReply(message = this.message) {
         return await DiscordUtility.getReply(message);
     }
-    /**
-     * Gets the input image for a command and converts it to PNG if necessary.
-     * @param {number} [amount=1] The amoount of images to fetch. Note that more images *can* be added to the command, they will just be ignored if this isnt increased.
-     * @param {boolean?} allowGif `true` = keep gifs as gifs, `false` or default = convert gifs to png. If true, then only supporters can use `.gif` files. `false` by default
-     * @param {boolean?} allowBlocking Replies to the message if input is invalid or failed. If this is used, then imageBuffer === false  means the message was replied to with an error. `true` by default
-     * @returns {Buffer[]} at least 1 image buffer
-     */
-    async getInputImagesForCommand(amount = 1, allowGif = false, allowBlocking = true) {
-        return await DiscordUtility.getInputImagesForCommand(this.message, amount, allowGif, allowBlocking);
-    }
 
     /**
      * Check if this message is sent by someone who can interact with the specified user
