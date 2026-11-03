@@ -43,7 +43,7 @@ class BotEvent extends BaseBotEvent {
             if (!message.content.trim().startsWith('<@750179777637515264>')) return;
         }
 
-        const responseString = await gronkResponse(message, env.getBool('RESPOND_TO_REPLIES') ? repliedMessage : null);
+        const responseString = await gronkResponse(message.cleanContent, message.channel, (env.getBool('RESPOND_TO_REPLIES') && repliedMessage) ? repliedMessage.cleanContent : null);
         return message.reply({
             content: responseString.substring(0, 2000),
             allowedMentions: {

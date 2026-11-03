@@ -1,12 +1,14 @@
 const discord = require("discord.js");
+
 const env = require("./env-util");
 
 /**
  * current behavior is temp incase people wanmt to get pre-picked responses from a local hosted ai's rating
- * @param {discord.Message} message 
- * @param {discord.Channel} channel 
+ * @param {string} text what did they say
+ * @param {discord.TextChannel?} channel where did they say it
+ * @param {string?} reply A message that this was asked upon
  */
-const gronkResponse = async (message, channel) => {
+const gronkResponse = async (text, channel, reply) => {
     const responses = [
         "yea yea",
         "heeeeell no",
