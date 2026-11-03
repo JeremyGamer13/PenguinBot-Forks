@@ -355,7 +355,7 @@ class CommandUtility {
             }
         }
         // PM AI:
-        if (command.attributes.lockedToPenguinAI === true && this.getPermissionLevel(message) < 3) {
+        if (command.attributes.lockedToPenguinAI === true && !this.isFromExclusive(message) && this.getPermissionLevel(message) < 3) {
             // check which channel we are in
             let canBeUsed = true;
             if (message.guild && (message.guild.id === env.get("SERVER_ID")
