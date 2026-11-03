@@ -1,70 +1,16 @@
 const path = require("path");
+
 const discord = require("discord.js");
 const systemInformation = require("systeminformation");
 
 const configuration = require("../../config.js");
 
-/** @param {NodeJS.Platform} platform */
-const getPlatformEmoji = (platform) => {
-    switch (platform) {
-        case 'win32':
-            return '🪟';
-        case 'darwin':
-            return '🍎';
-        case 'linux':
-            return '🐧';
-        case 'freebsd':
-            return '👹';
-        case 'openbsd':
-            return '🐡';
-        case 'aix':
-            return '🔷';
-        case 'sunos':
-            return '☀️';
-        case "android":
-            return '🤖';
-        case "cygwin":
-            return '🔧';
-        case "haiku":
-            return '🍃';
-        case "netbsd":
-            return '🚩';
-        default:
-            return '💻';
-    }
-}
-/** @param {NodeJS.Platform} platform */
-const getPlatformName = (platform) => {
-    switch (platform) {
-        case 'win32':
-            return 'Windows';
-        case 'darwin':
-            return 'Darwin';
-        case 'linux':
-            return 'Linux';
-        case 'freebsd':
-            return 'FreeBSD';
-        case 'openbsd':
-            return 'OpenBSD';
-        case 'aix':
-            return 'AIX';
-        case 'sunos':
-            return 'SunOS';
-        case "android":
-            return 'Android';
-        case "cygwin":
-            return 'Cygwin';
-        case "haiku":
-            return 'Haiku';
-        case "netbsd":
-            return 'NetBSD';
-        default:
-            return typeof platform === "string" ? platform : "(unspecified)";
-    }
-}
+const HostUtility = require("../../util/utility-host.js");
+const BaseCommand = require("../../classes/base-command.js");
 
-class Command {
-    constructor(client) {
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "stats";
         this.description = "Get internal server details about the bot.";
         this.attributes = {
@@ -72,13 +18,24 @@ class Command {
             permission: 0,
             lockedToCommands: true,
         };
+        this.slash = {
+            options: []
+        };
 
-        this.client = client;
+        this.alias = ["specs", "spec"];
     }
 
-    async invoke(message) {
+    convertSlashCommand(interaction, util) {
+        interaction.author = interaction.member.user;
+        interaction.deferReply();
+        interaction.reply = interaction.editReply;
+        return [interaction, [], util, true];
+    }
+
+    async invoke(message, _, __, isSlash) {
         const startTime = Date.now();
-        message.channel.sendTyping();
+        if (!isSlash)
+            message.channel.sendTyping();
 
         const embed = new discord.MessageEmbed();
         embed.setColor("#00ffaa");
@@ -87,14 +44,16 @@ class Command {
         // get Info
         const penguinBotPath = path.resolve(__dirname, __filename);
         const penguinBotName = configuration.nameBotReference;
-        const cpu = await systemInformation.cpu();
-        const cpuLoad = await systemInformation.currentLoad();
-        const cpuSpeedData = await systemInformation.cpuCurrentSpeed();
-        const cpuTempData = await systemInformation.cpuTemperature();
-        const mem = await systemInformation.mem();
-        const graphics = await systemInformation.graphics();
-        const battery = await systemInformation.battery();
-        const disk = await systemInformation.fsSize();
+        const [cpu, cpuLoad, cpuSpeedData, cpuTempData, mem, graphics, battery, disk] = await Promise.all([
+            systemInformation.cpu(),
+            systemInformation.currentLoad(),
+            systemInformation.cpuCurrentSpeed(),
+            systemInformation.cpuTemperature(),
+            systemInformation.mem(),
+            systemInformation.graphics(),
+            systemInformation.battery(),
+            systemInformation.fsSize(),
+        ]);
         // remove virtual controllers
         const gpus = graphics.controllers.filter(controller => !!controller.bus);
         gpus.sort((a, b) => (b.vram || 0) - (a.vram || 0));
@@ -131,7 +90,7 @@ class Command {
         // fill out info
         embed.addFields({
             name: 'Server Host Details',
-            value: `${getPlatformEmoji(process.platform)} ${getPlatformName(process.platform)} ${process.arch} on Node ${process.version}`,
+            value: `${HostUtility.getPlatformEmoji()} ${HostUtility.getPlatformName()} ${process.arch} on Node ${process.version}`,
             inline: false
         }, {
             name: 'CPU',
@@ -166,7 +125,8 @@ class Command {
         });
 
         message.reply({
-            embeds: [embed]
+            embeds: [embed],
+            ephemeral: true,
         });
     }
 }

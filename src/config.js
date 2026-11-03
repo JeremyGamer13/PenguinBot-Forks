@@ -23,8 +23,12 @@ const configuration = {
         '1038236110335266907', // off-topic
         '1038251459843723274', // commands
         '1139749855913316474', // penguinbot-test
-        '746156168560508953', // test thing
+        "1551460701044867172", // dedicated penguinbot test server
+        '746156168560508953', // general in test thing
     ],
+
+    // Role ID automatically given to members when they join the SERVER_ID. Toggled with ADD_MEMBER_ROLE_ON_JOIN
+    memberRole: "1449641544947597392",
 
     // Used to link to channels within the server. These IDs are the ones we use in PenguinMod.
     channels: {
@@ -51,6 +55,22 @@ const configuration = {
         spaces: "746156168560508953",
         teamWanted: "746156168560508953",
         spam: "1040077506029551647",
+
+        // PenguinMod guess-the-project event. This is the channel people can view for guessing.
+        guessTheProjectMembers: "1560874272929619999",
+        // PenguinMod guess-the-project event. This is the channel event managers receive guesses in.
+        guessTheProjectManager: "1560898144131096686",
+    },
+    
+    // Servers used for different environments (production, testing)
+    servers: {
+        production: [
+            env.get("SERVER_ID"),
+        ],
+        testing: [
+            "1551457087274618990", // penguinbot testing
+            "746156168560508950", // older penguinbot testing
+        ],
     },
 
     permissions: {
@@ -71,15 +91,40 @@ const configuration = {
         exclusiveRoles: [
         ],
 
+        // Role IDs considered event managers (for PenguinMod)
+        eventManagerRoles: [
+            "1361088428556419383", // Event Manager
+            "1559282557227376861", // Event Manager (testing)
+            "1033551639170273380", // Admin Permissions (PenguinMod)
+        ],
+
         // Channels checked for in the lockedToCommands property (excluding commands channel from above & threads within that channel)
         lockedToCommands: [
             // These are the channels allowed in PenguinMod's server:
-            '746156168560508953', // epic test channel
+            "1038251459843723274", // commands
+            "1174359501688803358", // dev-commands
+            "1485480777658400819", // staff-commands
             '1139749855913316474', // penguinbot-test
+            "1203112896645832714", // penguinbot-logs
+            '1143305846227476511', // dev-github-logs
+            '1038251742439149661', // dev-chat
+            "1161202733269930075", // vip-chat
+            '1176024649390366780', // admin-chat
+            '1146290116583751681', // web-mod-chat
+            '1038252107846930513', // server-mod-chat
+            '1176024748300443698', // admin-furry-rp
+            '1126699478607470652', // mod-furry-rp
+            "1492317730232336465", // larp-as-a-bot
+            "1463077406146301963", // dev-dump
+            "1551460701044867172", // dedicated penguinbot test server: penguinbot
+            "1563121434903977996", // dedicated penguinbot test server: penguinbot-testing
         ],
 
         // On top of the permission check, who can use pm!eval (run custom code)
-        eval: [env.get("OWNER"), "462098932571308033"],
+        eval: [env.get("OWNER")],
+
+        // On top of the permission check, who can use pm!pull (pull & restart can cause running custom code)
+        pull: [env.get("OWNER")],
 
         // On top of the permission check, who can use pm!echo
         echo: [env.get("OWNER"), "462098932571308033"],
