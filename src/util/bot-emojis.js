@@ -4,11 +4,11 @@
  */
 const botEmojis = {
     /** A loading spinner emoji */
-    loading: "<a:loading:1243400787980456006>",
+    loading: "⏰",
     /** A checkmark for yes/true */
-    check: "<:yes:1530760693026918440>",
+    check: "✔️",
     /** A cross or X for no/false */
-    cross: "<:no:1530760643580399839>",
+    cross: "❌",
 };
 
 module.exports = botEmojis;

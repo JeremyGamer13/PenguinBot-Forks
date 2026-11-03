@@ -18,7 +18,7 @@ const automodKeywords = tryCatch(() => require('../resources/basic-automod')) ||
 class DiscordUtility {
     /** @param {discord.Message} message */
     static getPermissionLevel(message) {
-        if (message.member.id === env.get('OWNER')) return 3; // owner
+        if (message.member.id === env.get('OWNER')) return 4; // owner
         if (message.member.roles.cache.some(role => configuration.permissions.permission3.includes(role.id))) return 3; // developers
         if (message.member.roles.cache.some(role => configuration.permissions.permission2.includes(role.id))) return 2; // mods
         if (message.member.roles.cache.some(role => configuration.permissions.permission1.includes(role.id))) return 1; // bot dev

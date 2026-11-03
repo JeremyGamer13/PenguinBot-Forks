@@ -52,7 +52,7 @@ class BotEvent extends BaseBotEvent {
             mainDiscordLog.push(`- The bot last started <t:${Math.round(HostUtility.lastState.started / 1000)}:R>`,
                 `- Information about the last bot state was updated <t:${Math.round(HostUtility.lastState.written / 1000)}:R>`);
         } else {
-            mainDiscordLog.push("Hello! 👋 You've got PenguinBot setup for the first time! :)"
+            mainDiscordLog.push("Hello! 👋 You've got gronk setup for the first time! :)"
                 + "\n" + "You can configure my channels in `src/config.js`. I'm sending this log here because this is my `botTestingChannel`."
                 + "\n" + "You won't see this specific message again. I'll send future logs here about the last run & boot errors though.");
         }

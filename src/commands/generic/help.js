@@ -19,8 +19,23 @@ class Command extends BaseCommand {
             permission: 0,
             lockedToCommands: true,
         };
+        this.slash = {
+            options: [{
+                type: OptionType.STRING,
+                name: 'command',
+                required: false,
+                description: 'Command to get help for. (optional)'
+            }]
+        };
 
         this.alias = ["commands", "cmds"];
+    }
+
+    convertSlashCommand(interaction, util) {
+        const text = `${interaction.options.getString('command') || ''}`;
+        interaction.author = interaction.member.user;
+        const args = text.split(' ');
+        return [interaction, text ? args : [], util, true];
     }
 
     getCommandIcon(command) {
