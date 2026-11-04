@@ -12,8 +12,16 @@ class Command {
             permission: 0,
             lockedToCommands: true,
         };
+        this.slash = {
+            options: []
+        };
 
         this.alias = ["integration"];
+    }
+
+    convertSlashCommand(interaction, util) {
+        interaction.author = interaction.member.user;
+        return [interaction, [], util];
     }
 
     async invoke(message, _, util) {
@@ -118,7 +126,8 @@ class Command {
         });
 
         message.reply({
-            embeds: [embed]
+            embeds: [embed],
+            ephemeral: true,
         });
     }
 }

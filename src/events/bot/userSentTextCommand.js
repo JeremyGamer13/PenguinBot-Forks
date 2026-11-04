@@ -33,15 +33,7 @@ class BotEvent extends BaseBotEvent {
         const commandName = indexOfFirstWhitespace === -1 ? messageSlice : messageSlice.slice(0, indexOfFirstWhitespace);
         const command = CommandRegistry.commands.get(commandName) || CommandRegistry.alias.get(commandName);
         if (!command) {
-            return message.reply({
-                content: `Command not found. Did you mean something else?\nUse \`${prefix}help\` to see a list of commands.`,
-                allowedMentions: {
-                    parse: [],
-                    users: [],
-                    roles: [],
-                    repliedUser: true
-                }
-            });
+            return;
         }
         
         // create the util for this cmmand, and see if we should block it

@@ -9,7 +9,7 @@ class Command extends BaseCommand {
         this.name = "createwebhook";
         this.description = "makes webhook";
         this.attributes = {
-            permission: 3,
+            permission: 4,
         };
     }
 

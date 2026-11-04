@@ -92,6 +92,94 @@ class CommandUtility {
     }
 
     /**
+     * jg: Request approva in a channel to do thing
+     * @param {import("discord.js").Message} replyMessage a message the bot sent to ask for approval
+     * @param {import("discord.js").Message} incomingMessage a message the bot received (the command message probably)
+     * @param {string} requestDetails Any deails about the request
+     * @param {(string | Buffer<ArrayBufferLike>)[]?} files Any files attached to the request for review
+     * @returns {Promise<boolean>}
+     */
+    requestApproval(replyMessage, incomingMessage, requestDetails, files) {
+        if (this.state.isInPersonalMode)
+            return new Promise((resolve) => resolve(incomingMessage.guildId === "1104194940172521524"
+                || incomingMessage.guildId === "746156168560508950"
+                || incomingMessage.guildId === "882334041318232075"
+                || incomingMessage.guildId === "1471008862294376591"));
+
+        return new Promise(async (resolve) => {
+            const requestChannel = await this.client.channels.cache.get(configuration.channels.aiRequests);
+            if (!requestChannel) throw new Error("Couldnt find the logging channel?");
+
+            const messageLink = this.makeMessageLink(incomingMessage);
+            const rows = [
+                new discord.MessageActionRow().addComponents([
+                    new discord.MessageButton({
+                        customId: 'accept',
+                        style: 'PRIMARY',
+                        label: "Allow",
+                    }),
+                    new discord.MessageButton({
+                        customId: 'deny',
+                        style: 'DANGER',
+                        label: "Deny",
+                    }),
+                ]),
+            ];
+
+            const middleSection = `**<@${incomingMessage.author.id}>:** ${requestDetails}`;
+            const requestMessage = await requestChannel.send({
+                content: `# Request: ${messageLink} ⌛`
+                    + `\n` + middleSection
+                    + `\n` + `<@462098932571308033>`,
+                components: rows,
+                files
+            });
+
+            let completedInteraction = false;
+            const col = requestMessage.createMessageComponentCollector({
+                filter: i => i.user.id === "462098932571308033",
+                time: 10 * 60 * 1000
+            });
+            col.on('collect', async (i) => {
+                if (i.customId === "accept") {
+                    completedInteraction = true;
+                    resolve(true);
+
+                    i.update({
+                        content: `# Request: ${messageLink} ✅ APPROVED`
+                            + `\n` + middleSection
+                    });
+                } else {
+                    // let them know
+                    await replyMessage.edit("Your request was denied."
+                        + "\n" + "-# haha L");
+
+                    completedInteraction = true;
+                    resolve(false);
+
+                    i.update({
+                        content: `# Request: ${messageLink} ❌ DENIED`
+                            + `\n` + middleSection
+                    });
+                }
+            })
+            col.on('end', async () => {
+                if (completedInteraction) return;
+
+                // let them know
+                await replyMessage.edit("Your request was Taking Too Long. So i killed it"
+                    + "\n" + "-# haha L");
+                resolve(false);
+
+                requestMessage.edit({
+                    content: `# Request: ${messageLink} ❌ took too damn long`
+                        + `\n` + middleSection
+                });
+            });
+        });
+    }
+
+    /**
      * Check if this message is sent by someone who can interact with the specified user
      * @param {string|discord.User} userOrId 
      * @returns {boolean}
@@ -150,16 +238,43 @@ class CommandUtility {
         // if the command is for specific roles
         const insideMainServer = (this.message.guild && (configuration.servers.production.includes(this.message.guildId)
             || (configuration.servers.testing.includes(this.message.guildId))));
-        if (this.command.attributes.exclusive === true
+        if (this.command.attributes.exclusive === true && !BotState.state.isInPersonalMode
             || this.command.attributes.eventManagers === true) {
             // supporters; if the user is outside of our target server, then they need to be explicitly defined in exclusiveUsers
             const shouldAllowNonSupporter = (insideMainServer && this.isFromExclusive())
                 || (this.command.attributes.exclusiveInclusive && this._inclusiveAllowsUser(this.message.author.id, this.message.member.roles.cache.map(role => role.id), this.command.attributes.exclusiveInclusive));
             const shouldAllowNonEventManager = (insideMainServer && this.isFromEventManager());
-            if (this.command.attributes.exclusive === true && (!shouldAllowNonSupporter))
+            if (this.command.attributes.exclusive === true && !BotState.state.isInPersonalMode && (!shouldAllowNonSupporter))
                 return await this._commandBlockReject("Only supporters & server boosters can run this command.");
             if (this.command.attributes.eventManagers === true && (!shouldAllowNonEventManager))
                 return await this._commandBlockReject("Only event managers can run this command.");
+        }
+        // jg: ai chat perm
+        if (this.command.attributes.jgAiChatCommand === true && !BotState.state.isInPersonalMode) {
+            let canBeUsed = configuration.permissions.trustedAiChatUsers.includes(this.message.author.id);
+            if (!canBeUsed)
+                return await this._commandBlockReject("Only trustedAiChatUsers can run this command.");
+        }
+        // jg: ai cover perm
+        if (this.command.attributes.jgAiCoverCommand === true && !BotState.state.isInPersonalMode) {
+            const ethicalCoverUser = configuration.permissions.ethicalCoverUsers.includes(this.message.author.id);
+            const hasEthicalCoverRole = this.message.member.roles.cache.some(role => configuration.permissions.ethicalCoverRoles.includes(role.id));
+
+            let canBeUsed = ethicalCoverUser || hasEthicalCoverRole;
+            if (!canBeUsed)
+                return await this._commandBlockReject("Only ethicalCoverUsers can run this command.");
+        }
+        // jg: ollama capability
+        if (this.command.attributes.jgollamaConfigsInvolved) {
+            let canBeUsed = env.getBool("OLLAMA_ENABLED");
+            for (const aiModel of this.command.attributes.jgollamaConfigsInvolved) {
+                if (configuration.funkyCapabilities.ollamaConfigs[aiModel] !== true) {
+                    canBeUsed = false;
+                    break;
+                }
+            }
+            if (!canBeUsed)
+                return await this._commandBlockReject("This command uses **local AI models** not available or enabled on this system at this moment.");
         }
         // if the command is locked to certain channels
         // TODO: This shouldnt matter for most slash commands. The only problem is that slash commands should always be ephemeral replies if done outside of the channel
@@ -193,12 +308,12 @@ class CommandUtility {
             const isBeingRanOutsideOfSpecificChannels = this.command.attributes.lockedToChannels
                 && !this.command.attributes.lockedToChannels.includes(this.message.channel.id);
             if (!allowedToBypass) {
-                if (isBeingRanOutsideOfSpecificChannels)
+                if (isBeingRanOutsideOfSpecificChannels && !BotState.state.isInPersonalMode)
                     return await this._commandBlockReject(`This command can only be used in certain channels. See \`${BotState.request("prefix")}help ${this.command.name}\` for info.`);
-                if (this.command.attributes.lockedToHelp && (!isHelpChannel))
+                if (this.command.attributes.lockedToHelp && (!isHelpChannel) && !BotState.state.isInPersonalMode)
                     return await this._commandBlockReject(`This command can only be used in <#${configuration.channels.help}>.`);
                 // NOTE: We dont care about restricting commands channels for servers other than our server
-                if (this.command.attributes.lockedToCommands && (insideMainServer && !isCommandsChannel))
+                if (this.command.attributes.lockedToCommands && (insideMainServer && !isCommandsChannel) && !BotState.state.isInPersonalMode)
                     return await this._commandBlockReject(`This command can only be used in the commands channel.`);
             }
         }

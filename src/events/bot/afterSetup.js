@@ -24,7 +24,8 @@ class BotEvent extends BaseBotEvent {
      */
     async invoke() {
         // set our status
-        const statusText = this.isInTestMode ? configuration.status.testing : configuration.status.normal;
+        const statusText = this.isInTestMode ? configuration.status.testing
+            : (this.isInPersonalMode ? configuration.status.personal : configuration.status.normal);
         this.client.user.setPresence({
             status: "online",
             activities: [{
@@ -36,8 +37,9 @@ class BotEvent extends BaseBotEvent {
         // Log to discord with one big message containing all the last runtime's information (incase pm!restart) and any loading errors
         const mainChannel = await this.client.channels.fetch(configuration.channels.botTestingChannel);
         const mainDiscordLog = [];
+        const extraSection = ` (device: ${env.get("DEVICE_LABEL")}, personal: ${this.isInPersonalMode})`;
         mainDiscordLog.push(`Bot has restarted; took ${FormatTime.formatTime(Date.now() - HostUtility.startMilliseconds)} to load.`
-            + " " + `Running in \`${HostUtility.launchMode}\` mode${!this.isInTestMode ? "" : "; Certain features will not be enabled"}`);
+            + " " + `Running in \`${HostUtility.launchMode}\` mode${!this.isInTestMode ? "" : "; Certain features will not be enabled"}${extraSection}`);
 
         // All status information is meaningless if this is the first boot ever
         if (HostUtility.lastState.created) {
@@ -52,7 +54,7 @@ class BotEvent extends BaseBotEvent {
             mainDiscordLog.push(`- The bot last started <t:${Math.round(HostUtility.lastState.started / 1000)}:R>`,
                 `- Information about the last bot state was updated <t:${Math.round(HostUtility.lastState.written / 1000)}:R>`);
         } else {
-            mainDiscordLog.push("Hello! 👋 You've got PenguinBot setup for the first time! :)"
+            mainDiscordLog.push("Hello! 👋 You've got Jeremy Stream Bot setup for the first time! :)"
                 + "\n" + "You can configure my channels in `src/config.js`. I'm sending this log here because this is my `botTestingChannel`."
                 + "\n" + "You won't see this specific message again. I'll send future logs here about the last run & boot errors though.");
         }

@@ -91,6 +91,10 @@ class BotEventEmitter extends events.EventEmitter {
             const event = new baseEvent();
             if (event.productionOnly && BotState.state.isInTestMode)
                 continue;
+            if (event.publicOnly && BotState.state.isInPersonalMode)
+                continue;
+            if (event.personalOnly && !BotState.state.isInPersonalMode)
+                continue;
             
             if (event.once) {
                 event.handler.once(event.listener, (...args) => event.invoke(...args));

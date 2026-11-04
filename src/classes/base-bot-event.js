@@ -24,6 +24,16 @@ class BaseBotEvent {
          * @type {boolean}
          */
         this.productionOnly = false;
+        /**
+         * If true, then the event will not fire in personal mode.
+         * @type {boolean}
+         */
+        this.publicOnly = false;
+        /**
+         * If true, then the event will only fire in personal mode.
+         * @type {boolean}
+         */
+        this.personalOnly = false;
         
         /**
          * The Discord client that holds this event.
@@ -41,6 +51,13 @@ class BaseBotEvent {
      */
     get isInTestMode() {
         return !!this.state.isInTestMode;
+    }
+    /**
+     * Whether or not we are running in personal mode
+     * @type {boolean}
+     */
+    get isInPersonalMode() {
+        return !!this.state.isInPersonalMode;
     }
 
     /**
