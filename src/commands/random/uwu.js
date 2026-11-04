@@ -1,4 +1,6 @@
-class Command {
+const BaseCommand = require("../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
         this.name = "uwu";
         this.description = "Command";

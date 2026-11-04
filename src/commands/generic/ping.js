@@ -1,7 +1,10 @@
 const discord = require("discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "ping";
         this.description = "Get the response time of the bot.";
         this.attributes = {
@@ -9,14 +12,20 @@ class Command {
             permission: 0,
             lockedToCommands: true,
         };
+        this.slash = {
+            options: []
+        };
+    }
 
-        /** @type {discord.Client} */
-        this.client = client;
+    convertSlashCommand(interaction, util) {
+        interaction.author = interaction.member.user;
+        return [interaction, [], util];
     }
 
     async invoke(message) {
         message.reply({
-            content: `Ping: ${this.client.ws.ping}ms`
+            content: `Ping: ${this.client.ws.ping}ms`,
+            ephemeral: true,
         });
     }
 }
