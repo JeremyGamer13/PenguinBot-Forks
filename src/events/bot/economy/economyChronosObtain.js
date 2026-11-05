@@ -1,30 +1,33 @@
 const discord = require("discord.js");
-const CommandUtility = require("../../util/utility.js");
 
-const configuration = require("../../config.js");
-const env = require("../../util/env-util.js");
+const configuration = require("../../../config.js");
 
 const Database = require('sync-json-database');
 const DatabaseCurrencyChronos = new Database('./databases/currency-chronos.json');
 
-class BotEvent {
-    constructor(client) {
-        this.listener = "messageCreate";
+const env = require("../../../util/env-util.js");
+const DiscordUtility = require("../../../util/utility-discord.js");
+const BotEventEmitter = require("../../../util/bot-event-emitter.js");
+
+const BaseBotEvent = require("../../../classes/base-bot-event.js");
+
+class BotEvent extends BaseBotEvent {
+    constructor() {
+        super();
+        this.listener = "userSentMessage";
+        this.handler = BotEventEmitter;
         this.once = false;
 
-        this.client = client;
 
         this.publicOnly = true;
         this.productionOnly = true;
     }
 
     /**
-     * @param {discord.Client} client 
-     * @param {*} state 
      * @param {discord.Message} message 
      * @returns 
      */
-    async invoke(client, state, message) {
+    async invoke(message) {
         // see if this feature is enabled
         // TODO: feature toggle
 
@@ -34,7 +37,7 @@ class BotEvent {
         if (message.author.system) return;
         if (message.system) return;
 
-        const isTestingInPublic = state.isInTestMode && !(env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guildId === "746156168560508950")
+        const isTestingInPublic = this.isInTestMode && !(env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guildId === "746156168560508950")
 
         // ignore #spam
         if (
@@ -65,7 +68,7 @@ class BotEvent {
             if (message.content.match(urlRegex)) return message.delete();
 
             // if it's a reply, have a header before the message
-            const replyMessage = await CommandUtility.getReply(message);
+            const replyMessage = await DiscordUtility.getReply(message);
             const replyMessageLink = !replyMessage ? null : `https://discord.com/channels/${replyMessage.guildId}/${replyMessage.channelId}/${replyMessage.id}`;
             const replyMessageContentClean = !replyMessage ? "" :
                 (replyMessage.cleanContent.startsWith("-# ⮣") ? replyMessage.cleanContent.split("\n").slice(1).join("\n") : replyMessage.cleanContent)

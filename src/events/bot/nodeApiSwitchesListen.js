@@ -1,30 +1,29 @@
-const env = require("../../util/env-util");
-const configuration = require("../../config");
+const configuration = require("../../config.js");
 
-const fetchNodeApi = require("../../util/fetch-nodeapi");
+const env = require("../../util/env-util.js");
+const HostUtility = require("../../util/utility-host.js");
+const fetchNodeApi = require("../../util/fetch-nodeapi.js");
 
-class BotEvent {
-    constructor(client) {
+const BaseBotEvent = require("../../classes/base-bot-event.js");
+
+class BotEvent extends BaseBotEvent {
+    constructor() {
+        super();
         this.listener = "ready";
         this.once = true;
 
-        this.client = client;
-        this.state = null;
         /** @type {import("discord.js").TextChannel} */
         this.channel = null;
     }
 
-    async invoke(client, state) {
+    async invoke() {
         if (!env.getBool("JGNODEAPI_SWITCHES_LISTEN")) return;
-        const isInTestMode = state.isInTestMode;
-        const isInPersonalMode = state.isInPersonalMode;
 
-        const mainChannel = await client.channels.cache.get(configuration.channels.botTestingChannel);
+        const mainChannel = await this.client.channels.fetch(configuration.channels.botTestingChannel);
         if (!mainChannel) throw new Error("No channel to log JGNODEAPI_SWITCHES_LISTEN in");
 
         console.log("JGNODEAPI_SWITCHES_LISTEN");
 
-        this.state = state;
         this.channel = mainChannel;
         this.setupPolling();
     }
@@ -66,7 +65,7 @@ class BotEvent {
                 } catch (err) {
                     console.error(`ALERT FAILED: BATTERY IS CRITICAL`, err);
                 }
-                process.exit(1);
+                await HostUtility.shutdown();
             }
             this.lastIsCriticalBattery = switches.isCriticalBattery;
         }
@@ -108,7 +107,7 @@ class BotEvent {
                 } catch (err) {
                     console.error(`ALERT FAILED: Shutdown critical so we are force shutting down`, err);
                 }
-                process.exit(1);
+                await HostUtility.shutdown();
             }
             this.lastIsShuttingDownCritical = switches.isShuttingDownCritical;
         }

@@ -1,50 +1,49 @@
 const discord = require("discord.js");
-const CommandUtility = require("../../util/utility.js");
 
-const configuration = require("../../config.js");
-const env = require("../../util/env-util.js");
+const configuration = require("../../../config.js");
 
 const Ollama = require("ollama-chatting");
-const OllamaModels = require("../../util/ollama-models.js");
+const OllamaModels = require("../../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
-const ToolPause = require("../../util/ollamaTool/function/pause.js");
-const ToolMockReact = require("../../util/ollamaTool/interface/react.js");
-const ToolMockRob = require("../../util/ollamaTool/interface/tell-rob.js");
+const ToolPause = require("../../../util/ollamaTool/function/pause.js");
+const ToolMockReact = require("../../../util/ollamaTool/interface/react.js");
+const ToolMockRob = require("../../../util/ollamaTool/interface/tell-rob.js");
 
-const tryCatch = require("../../util/try-catch.js");
-const jsonParseLoose = require("../../util/json-parse-loose.js");
-const isMessageUnsafeForAgent = tryCatch(() => require('../../util/ai-unsafe')) || (() => false);
+const env = require("../../../util/env-util.js");
+const tryCatch = require("../../../util/try-catch.js");
+const DiscordUtility = require("../../../util/utility-discord.js");
+const jsonParseLoose = require("../../../util/json-parse-loose.js");
+const isMessageUnsafeForAgent = tryCatch(() => require('../../../util/ai-unsafe')) || (() => false);
 
-class BotEvent {
-    constructor(client) {
+const BaseBotEvent = require("../../../classes/base-bot-event.js");
+
+class BotEvent extends BaseBotEvent {
+    constructor() {
+        super();
         this.listener = "ready";
         this.once = true;
-
-        this.client = client;
 
         this.productionOnly = true;
     }
 
     /**
      * 
-     * @param {discord.Client} client 
-     * @param {*} state 
      * @returns 
      */
-    async invoke(client, state) {
+    async invoke() {
         // see if this feature is enabled
         if (!env.getBool("OLLAMA_ENABLED")) return;
+        if (!configuration.channels.funkyRobChat) return;
         if (!configuration.funkyCapabilities.ollamaConfigs.robChatter) return;
-        const isInPersonalMode = state.isInPersonalMode;
         const enabledInPublic = env.getBool("ROB_INTEGRATION_ENABLED");
         const enabledInPersonal = env.getBool("ROB_INTEGRATION_ENABLED_PERSONAL");
-        if (!isInPersonalMode && !enabledInPublic) return;
-        if (isInPersonalMode && !enabledInPersonal) return;
+        if (!this.isInPersonalMode && !enabledInPublic) return;
+        if (this.isInPersonalMode && !enabledInPersonal) return;
 
         // Rob
         /** @type {discord.TextChannel} */
-        const robChannel = await client.channels.fetch(configuration.channels.funkyRobChat);
+        const robChannel = await this.client.channels.fetch(configuration.channels.funkyRobChat);
         if (!robChannel) throw new Error("No channel to talk to Rob in");
         const robUserId = env.get("ROB_INTEGRATION_USER_ID");
         const robUser = await robChannel.guild.members.fetch({ id: robUserId });
@@ -66,7 +65,7 @@ class BotEvent {
             console.log("Rob Integration: Talking to Rob now");
             console.log("-----------------------------------");
             const robContext = lastRobMessages
-                .map(message => `${message.author.id === client.user.id ? `${configuration.nameBotReference} (You)` : (message.author.id === robUserId ? "Rob" : message.author.username)}: ${(message.cleanContent.substring(0, 256) || "Ok Rob").replace(`<@${robUserId}>`, "").trim()}`)
+                .map(message => `${message.author.id === this.client.user.id ? `${configuration.nameBotReference} (You)` : (message.author.id === robUserId ? "Rob" : message.author.username)}: ${(message.cleanContent.substring(0, 256) || "Ok Rob").replace(`<@${robUserId}>`, "").trim()}`)
                 .join("\n");
             await OllamaChat.chat({
                 ...OllamaModels.robChatter,
@@ -93,7 +92,7 @@ class BotEvent {
                         + "\n" + `--- END OF CONTEXT ---`
                         + "\n"
                         + "\n" + `Now I want you to continue the conversation by talking to Rob.`
-                        + "\n" + `Please use the \`${representationToolRob.function.name}\` tool ${toolCallCount} separate times.`
+                        + "\n" + `Please use the \`${representationToolRob.function.name}\` tool at least ${toolCallCount} separate times.`
                         + "\n" + `Talk to him about any topic.`,
                 }],
             }, async (chunk) => {

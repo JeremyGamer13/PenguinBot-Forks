@@ -1,28 +1,27 @@
-const env = require("../../util/env-util");
-const configuration = require("../../config");
+const configuration = require("../../config.js");
 
-class BotEvent {
-    constructor(client) {
+const env = require("../../util/env-util.js");
+
+const BaseBotEvent = require("../../classes/base-bot-event.js");
+
+class BotEvent extends BaseBotEvent {
+    constructor() {
+        super();
         this.listener = "ready";
         this.once = true;
 
-        this.client = client;
-        this.state = null;
         /** @type {import("discord.js").TextChannel} */
         this.channel = null;
     }
 
-    async invoke(client, state) {
+    async invoke() {
         if (!env.getBool("MINECRAFT_WATCHDOG_ENABLED")) return;
-        const isInTestMode = state.isInTestMode;
-        const isInPersonalMode = state.isInPersonalMode;
 
-        const mainChannel = await client.channels.cache.get(configuration.channels.botTestingChannel);
+        const mainChannel = await this.client.channels.fetch(configuration.channels.botTestingChannel);
         if (!mainChannel) throw new Error("No channel to log minecraft watchdog statusChanged in");
 
         console.log("MINECRAFT_WATCHDOG_ENABLED");
 
-        this.state = state;
         this.channel = mainChannel;        
         this.setupPolling();
     }

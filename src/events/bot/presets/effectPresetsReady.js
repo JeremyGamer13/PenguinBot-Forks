@@ -1,9 +1,10 @@
 const jgNodeUtils = require("jg-node-utils");
 
-const env = require("../../util/env-util");
-const configuration = require("../../config");
+const configuration = require("../../../config.js");
 
-const NodeAPIPreset = require("../../basecommands/nodeapipreset.js");
+const env = require("../../../util/env-util.js");
+
+const NodeAPIPreset = require("../../../classes/nodeapipreset.js");
 
 // preset classes
 class NodeAPIPresetAudio extends NodeAPIPreset {
@@ -46,17 +47,17 @@ class NodeAPIPresetOverlay extends NodeAPIPreset {
 }
 
 // event
-class BotEvent {
-    constructor(client) {
+const BaseBotEvent = require("../../../classes/base-bot-event.js");
+
+class BotEvent extends BaseBotEvent {
+    constructor() {
+        super();
         this.listener = "ready";
         this.once = true;
 
-        this.client = client;
     }
 
-    async invoke(client, state) {
-        const isInTestMode = state.isInTestMode;
-        const isInPersonalMode = state.isInPersonalMode;
+    async invoke() {
 
         // log we are odoing this
         console.log("effectPresetsReady");
@@ -71,9 +72,9 @@ class BotEvent {
                 const preset = presetFunc();
 
                 const command = new NodeAPIPresetAudio(presetFunc, preset);
-                if (state.nodeApiPresets[command.name])
+                if (this.state.nodeApiPresets[command.name])
                     throw new Error(`Node api audio preset name ${command.name} has been taken by existing Node api preset`);
-                state.nodeApiPresets[command.name] = command;
+                this.state.nodeApiPresets[command.name] = command;
             } catch (err) {
                 console.error('Failed to load', presetName, '\n', err.message);
                 errors += `\`\`${presetName}\`\` - ${err.message}\n`;
@@ -87,9 +88,9 @@ class BotEvent {
                 const preset = presetFunc();
 
                 const command = new NodeAPIPresetOverlay(presetFunc, preset);
-                if (state.nodeApiPresets[command.name])
+                if (this.state.nodeApiPresets[command.name])
                     throw new Error(`Node api overlay preset name ${command.name} has been taken by existing Node api preset`);
-                state.nodeApiPresets[command.name] = command;
+                this.state.nodeApiPresets[command.name] = command;
             } catch (err) {
                 console.error('Failed to load', presetName, '\n', err.message);
                 errors += `\`\`${presetName}\`\` - ${err.message}\n`;
@@ -98,7 +99,7 @@ class BotEvent {
         }
         
         // log when presets cant load
-        const mainChannel = await client.channels.cache.get(configuration.channels.botTestingChannel);
+        const mainChannel = await this.client.channels.fetch(configuration.channels.botTestingChannel);
         if (failed) {
             mainChannel.send(`Some presets failed to load.\n\n${errors}`.substring(0, 2000));
         }
