@@ -21,6 +21,7 @@ const configuration = {
         // These are the channels used in PenguinMod's server:
         // dont include things like bug reports or suggestions
         '1139749855913316474', // penguinbot-test
+        "1551460701044867172", // dedicated penguinbot test server
         '746156168560508953', // test thing
     ],
 
@@ -95,7 +96,7 @@ const configuration = {
         help: "746156168560508953",
         spaces: "746156168560508953",
         teamWanted: "746156168560508953",
-        spam: "",
+        spam: "1567458592020373535",
 
         // jg: funky channels
         // jg: The brainrot pun channel
@@ -112,6 +113,17 @@ const configuration = {
 
         // jg: where rob should talk in
         funkyRobChat: "1511217728361467947",
+    },
+    
+    // Servers used for different environments (production, testing)
+    servers: {
+        production: [
+            env.get("SERVER_ID"),
+        ],
+        testing: [
+            "1551457087274618990", // penguinbot testing
+            "746156168560508950", // older penguinbot testing
+        ],
     },
 
     permissions: {
@@ -173,20 +185,35 @@ const configuration = {
             '1445330994742951988', // dotun
         ],
 
+        // Role IDs considered event managers (for PenguinMod)
+        eventManagerRoles: [
+            "1361088428556419383", // Event Manager
+            "1559282557227376861", // Event Manager (testing)
+            "1033551639170273380", // Admin Permissions (PenguinMod)
+        ],
+
         // Channels checked for in the lockedToCommands property (excluding commands channel from above & threads within that channel)
         lockedToCommands: [
             // These are the channels allowed in PenguinMod's server:
-            '1038251459843723274', // commands pm
-            '1443403986357981274', // tuff vc
+            "1038251459843723274", // commands
+            "1174359501688803358", // dev-commands
+            "1485480777658400819", // staff-commands
+            '1139749855913316474', // penguinbot-test
+            "1203112896645832714", // penguinbot-logs
+            '1143305846227476511', // dev-github-logs
+            '1038251742439149661', // dev-chat
+            "1161202733269930075", // vip-chat
+            '1176024649390366780', // admin-chat
+            '1146290116583751681', // web-mod-chat
+            '1038252107846930513', // server-mod-chat
+            '1176024748300443698', // admin-furry-rp
+            '1126699478607470652', // mod-furry-rp
+            "1492317730232336465", // larp-as-a-bot
+            "1463077406146301963", // dev-dump
+            "1551460701044867172", // dedicated penguinbot test server: penguinbot
+            "1563121434903977996", // dedicated penguinbot test server: penguinbot-testing
             '746156168560508953', // epic test channel
             '1481769759371563277', // epit test
-            '1139749855913316474', // penguinbot-test
-            '1124133055012020296', // tuff vc
-            '1038236270079516682', // tuff vc
-            '1169802355861114901', // tuff vc
-            '1463077406146301963', // dev dump
-            '1174359501688803358', // dev commands
-            '1485480777658400819', // staff commands
         ],
 
         // On top of the permission check, who can use pm!eval (run custom code)
