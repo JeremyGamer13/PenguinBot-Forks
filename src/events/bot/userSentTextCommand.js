@@ -1,57 +1,37 @@
 const discord = require("discord.js");
-const CommandUtility = require("../../util/utility.js");
 
-const handleBotAutoResponse = require('../../resources/responses/index.js');
-const configuration = require("../../config");
-const env = require("../../util/env-util");
+const configuration = require("../../config.js");
 
-class BotEvent {
-    constructor(client) {
-        this.listener = "messageCreate";
+const env = require("../../util/env-util.js");
+const Utility = require("../../util/utility.js");
+const DiscordUtility = require("../../util/utility-discord.js");
+const CommandUtility = require("../../util/utility-command.js");
+const CommandRegistry = require("../../util/command-registry.js");
+const BotEventEmitter = require("../../util/bot-event-emitter.js");
+
+const BaseBotEvent = require("../../classes/base-bot-event.js");
+
+class BotEvent extends BaseBotEvent {
+    constructor() {
+        super();
+        this.listener = "userSentTextCommand";
         this.once = false;
 
-        this.client = client;
+        this.handler = BotEventEmitter;
     }
 
     /**
-     * @param {discord.Client} client 
-     * @param {*} state 
-     * @param {discord.Message} message 
-     * @returns 
+     * Runs when the event is invoked
+     * @param {import("discord.js").Message} message 
+     * @returns {Promise<any>}
      */
-    async invoke(client, state, message) {
-        // ignore bots
-        if (!message.author) return;
-        if (message.author.bot) return;
-        if (message.author.system) return;
-        if (message.system) return;
-
-        const prefix = state.prefix;
-
-        const isInTestMode = state.isInTestMode;
-        const isTestingInPublic = isInTestMode && !(env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guildId === "746156168560508950")
-
-        // ignore #spam
-        if (
-            message.channel.id === configuration.channels.spam
-            || (message.channel.parent && message.channel.parent.id === configuration.channels.spam)
-        ) return;
-    
-        // handle the case where they are not using a cmd but we can still do stuff
-        if (!message.content.startsWith(prefix)) {
-            // check for stuff we can reply to in a helpful way
-            if (env.getBool('RESPOND_TO_KEYWORDS') && !isTestingInPublic) {
-                handleBotAutoResponse(message);
-            }
-            return;
-        }
-    
-        // handle cmds because this is perhaps a command
+    async invoke(message) {
         // NOTE: Preserving whitespace characters like \n is important
+        const prefix = this.state.prefix;
         const messageSlice = message.content.slice(prefix.length);
         const indexOfFirstWhitespace = messageSlice.search(/\s/);
         const commandName = indexOfFirstWhitespace === -1 ? messageSlice : messageSlice.slice(0, indexOfFirstWhitespace);
-        const command = state.commands[commandName] || state.alias[commandName];
+        const command = CommandRegistry.commands.get(commandName) || CommandRegistry.alias.get(commandName);
         if (!command) {
             return message.reply({
                 content: `Command not found. Did you mean something else?\nUse \`${prefix}help\` to see a list of commands.`,
@@ -63,22 +43,24 @@ class BotEvent {
                 }
             });
         }
+        
+        // create the util for this cmmand, and see if we should block it
+        const util = new CommandUtility(command, message);
+        if (await util.handleCommandBlock()) return;
 
         // Only chop off the first whitespace character, then preserve all the rest
         const argumentsString = messageSlice.slice(commandName.length);
         const indexOfFirstNonWhitespace = argumentsString.search(/\S/);
         const textToSplit = (indexOfFirstNonWhitespace === -1 ? argumentsString : argumentsString.slice(indexOfFirstNonWhitespace));
         const split = textToSplit === "" ? [] : textToSplit.split(" ");
-        const isBlocked = CommandUtility.handleCommandBlock(command, message, split);
-        if (isBlocked) return;
 
         // some commands can allow number conversion
         const convertNums = command.attributes.numberConversion === true;
         const args = convertNums ? split.map(arg => isNaN(Number(arg)) ? String(arg) : Number(arg)) : split;
     
-        // use command now
         try {
-            await command.invoke(message, args, CommandUtility);
+            // use command now
+            await command.invoke(message, args, util);
         } catch (err) {
             console.error(err);
             message.reply({
