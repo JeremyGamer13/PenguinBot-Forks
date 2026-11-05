@@ -1,7 +1,12 @@
 const configuration = require("../../config");
 
-class Command {
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "togglemarkov";
         this.description = "Enable or disable the Markov model taking over for the Ollama model.";
         this.attributes = {
@@ -14,15 +19,15 @@ class Command {
 
     invoke(message, args, util) {
         if (!configuration.permissions.toggle.includes(message.author.id))
-            return message.reply("You don't have the permission to do this.");
+            return this.reject(message, "You don't have the permission to do this.", util);
 
         if (!args[0]) {
-            util.state.enabledMarkov = !util.state.enabledMarkov;
-            message.reply(`${util.state.enabledMarkov ? "im Really stupid now (markov)" : "im slightly less stupid now (ollama)"}`);
+            BotState.state.enabledMarkov = !BotState.state.enabledMarkov;
+            message.reply(`${BotState.state.enabledMarkov ? "im Really stupid now (markov)" : "im slightly less stupid now (ollama)"}`);
             return;
         }
-        util.state.enabledMarkov = String(args[0]).toLowerCase().trim() !== 'true';
-        message.reply(`${util.state.enabledMarkov ? "im Really stupid now (markov)" : "im slightly less stupid now (ollama)"}`);
+        BotState.state.enabledMarkov = String(args[0]).toLowerCase().trim() !== 'true';
+        message.reply(`${BotState.state.enabledMarkov ? "im Really stupid now (markov)" : "im slightly less stupid now (ollama)"}`);
     }
 }
 

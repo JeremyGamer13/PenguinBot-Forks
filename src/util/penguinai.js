@@ -8,11 +8,13 @@ const OllamaModels = require("./ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const env = require("./env-util.js");
+const Utility = require("./utility.js");
+const BotState = require("./bot-state.js");
 const tryCatch = require("./try-catch.js");
 const configuration = require("../config.js");
-const CommandUtility = require("./utility.js");
 const overfitting = require("./overfitting.js");
 const cleanResponse = require("./clean-response.js");
+const DiscordUtility = require("./utility-discord.js");
 const isMessageUnsafeForAgent = tryCatch(() => require('./ai-unsafe.js')) || (() => false);
 
 // things needed by markov model
@@ -55,12 +57,12 @@ class PenguinAI {
      * @returns {Promise<string>}
      */
     static _generate(options = {}) {
-        const canDo = CommandUtility.request("enabledAi");
+        const canDo = BotState.request("enabledAi");
         if (canDo === false) throw new Error("PenguinAI is disabled");
 
-        const usingMarkov = options.markov || !!CommandUtility.request("enabledMarkov");
+        const usingMarkov = options.markov || !!BotState.request("enabledMarkov");
         const promptIsUnsafe = options.safe === true ? false : isMessageUnsafeForAgent(options.prompt);
-        const promptAutomodded = options.automod !== false && !CommandUtility.automodAllows(options.prompt, true);
+        const promptAutomodded = options.automod !== false && !DiscordUtility.automodAllows(options.prompt, true);
         if (usingMarkov && options.system)
             throw new Error("Cannot use a system prompt when the markov model is in use");
         if (!usingMarkov && !env.getBool("OLLAMA_ENABLED"))
@@ -147,7 +149,7 @@ class PenguinAI {
                 }
 
                 // block it if the AI said something bad
-                const blockedWord = CommandUtility.automodAllows(generatedResponse, true, true);
+                const blockedWord = DiscordUtility.automodAllows(generatedResponse, true, true);
                 if (blockedWord) {
                     console.log(`tried to post automodded response from pmai`
                         + "\n" + `---\n${options.prompt}\n---`
@@ -271,7 +273,7 @@ class PenguinAI {
      * @returns {boolean}
      */
     static canListenIn(channelId) {
-        if (!CommandUtility.request('enabledAi')) return false;
+        if (!BotState.request('enabledAi')) return false;
         if (channelId === configuration.channels.spam) return false;
         if (channelId === configuration.channels.userReports) return false;
         if (channelId === configuration.channels.adminReports) return false;
@@ -289,7 +291,7 @@ class PenguinAI {
      * @returns {boolean}
      */
     static canSpeakIn(channelId) {
-        if (!CommandUtility.request('enabledAi')) return false;
+        if (!BotState.request('enabledAi')) return false;
         if (channelId === configuration.channels.spam) return false;
         if (channelId === configuration.channels.userReports) return false;
         if (channelId === configuration.channels.adminReports) return false;
@@ -302,8 +304,8 @@ class PenguinAI {
      * @returns {boolean}
      */
     static canListenTo(content) {
-        if (!CommandUtility.request('enabledAi')) return false;
-        return !isMessageUnsafeForAgent(content) && CommandUtility.automodAllows(content, true);
+        if (!BotState.request('enabledAi')) return false;
+        return !isMessageUnsafeForAgent(content) && DiscordUtility.automodAllows(content, true);
     }
 
     /**

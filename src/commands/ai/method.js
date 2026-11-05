@@ -1,7 +1,12 @@
 const discord = require("discord.js");
 
-class Command {
-    constructor(client) {
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "method";
         this.description = "Get the speech method of the bot (LLM or Markov).";
         this.attributes = {
@@ -9,14 +14,11 @@ class Command {
             permission: 0,
             lockedToCommands: true,
         };
-
-        /** @type {discord.Client} */
-        this.client = client;
     }
 
-    async invoke(message, _, util) {
+    async invoke(message) {
         message.reply({
-            content: util.state.enabledMarkov ? `Currently using **Markov chain**`
+            content: BotState.state.enabledMarkov ? `Currently using **Markov chain**`
                 : `Currently using **Ollama LLM**`,
         });
     }

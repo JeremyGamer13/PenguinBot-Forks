@@ -9,9 +9,8 @@ class Command extends BaseCommand {
         this.name = 'lua';
         this.description = 'Run sandboxed Lua code in Discord.';
         this.attributes = {
-            unlisted: false,
-            exclusive: true,
-            permission: 0,
+            unlisted: true,
+            permission: 3,
         };
 
         this.runners = new Set();

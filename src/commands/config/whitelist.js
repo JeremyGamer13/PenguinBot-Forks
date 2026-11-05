@@ -4,8 +4,11 @@ const SpeakingChannels = new Database('./databases/speaking-channels.json');
 
 const PenguinAI = require('../../util/penguinai.js');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "whitelist";
         this.description = "Enable or disable PenguinAI chatting in a channel.";
         this.descriptionLong = "Enable or disable PenguinAI listening & chatting in a channel."

@@ -1,7 +1,12 @@
 const configuration = require("../../config");
 
-class Command {
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "toggle";
         this.description = "Enable or disable the AI.";
         this.attributes = {
@@ -12,15 +17,15 @@ class Command {
 
     invoke(message, args, util) {
         if (!configuration.permissions.toggle.includes(message.author.id))
-            return message.reply("You don't have the permission to do this.");
+            return this.reject(message, "You don't have the permission to do this.", util);
 
         if (!args[0]) {
-            util.state.enabledAi = !util.state.enabledAi;
-            message.reply(`${util.state.enabledAi ? "hello" : ":("}`);
+            BotState.state.enabledAi = !BotState.state.enabledAi;
+            message.reply(`${BotState.state.enabledAi ? "hello" : ":("}`);
             return;
         }
-        util.state.enabledAi = String(args[0]).toLowerCase().trim() !== 'true';
-        message.reply(`${util.state.enabledAi ? "hello" : ":("}`);
+        BotState.state.enabledAi = String(args[0]).toLowerCase().trim() !== 'true';
+        message.reply(`${BotState.state.enabledAi ? "hello" : ":("}`);
     }
 }
 

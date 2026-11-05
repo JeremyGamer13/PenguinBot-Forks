@@ -1,21 +1,25 @@
 const discord = require("discord.js");
-const CommandUtility = require("../../util/utility.js");
 
 const configuration = require("../../config.js");
-const env = require("../../util/env-util.js");
 
 const Database = require('sync-json-database');
 const SpeakingChannels = new Database('./databases/speaking-channels.json');
 const WhitelistChannels = new Database('./databases/whitelist-channels.json');
 
+const env = require("../../util/env-util.js");
+const BotState = require("../../util/bot-state.js");
 const PenguinAI = require("../../util/penguinai.js");
+const BotEventEmitter = require("../../util/bot-event-emitter.js");
 
-class BotEvent {
-    constructor(client) {
-        this.listener = "messageCreate";
+const BaseBotEvent = require("../../classes/base-bot-event.js");
+
+class BotEvent extends BaseBotEvent {
+    constructor() {
+        super();
+        this.listener = "userSentMessage";
         this.once = false;
 
-        this.client = client;
+        this.handler = BotEventEmitter;
     }
 
     /**
@@ -43,27 +47,13 @@ class BotEvent {
     }
 
     /**
-     * @param {discord.Client} client 
-     * @param {*} state 
-     * @param {discord.Message} message 
-     * @returns 
+     * Runs when the event is invoked
+     * @param {import("discord.js").Message} message 
+     * @returns {Promise<any>}
      */
-    async invoke(client, state, message) {
+    async invoke(message) {
         // if ai disabled then dont
-        if (!state.enabledAi) return;
-        // ignore bots
-        if (!message.author) return;
-        if (message.author.bot) return;
-        if (message.author.system) return;
-        if (message.system) return;
-
-        const prefix = state.prefix;
-        const isInTestMode = state.isInTestMode;
-        const isTestingInPublic = isInTestMode && !(env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS") && message.guildId === "746156168560508950")
-
-        // ignore commands
-        if (message.content.startsWith(prefix)) return;
-
+        if (!BotState.state.enabledAi) return;
         // ignore disabled channels
         const channelId = message.channel.id;
         const parentId = !message.channel.parent ? channelId
@@ -75,14 +65,15 @@ class BotEvent {
         // see if we need to talk
         // TODO: See if interactions are disabled on this user
         const wasPrompted = PenguinAI.canSpeakIn(channelId)
-            || message.mentions.members.find((member) => member.id === client.user.id);
+            || message.mentions.members.find((member) => member.id === this.client.user.id);
         const history = PenguinAI.history.get(channelId) || [];
         try {
             if (!wasPrompted) return;
             try { await message.channel.sendTyping(); } catch { } // genuinely dont care if this fails
 
+            // TODO: We REALLY DESPERATELY need to make PenguinAI use chats and not oneshot generating like this
             const response = await PenguinAI.generate({
-                prompt: state.enabledMarkov || history.length <= 0 ? message.cleanContent : ""
+                prompt: BotState.state.enabledMarkov || history.length <= 0 ? message.cleanContent : ""
                     + "Some other people were talking about like,"
                     + "\n" + history.toReversed().join("\n")
                     + "\n"

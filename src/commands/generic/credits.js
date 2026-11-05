@@ -29,13 +29,18 @@ class Command extends BaseCommand {
         
         embed.setDescription('Thanks to all the contributors & help on the creation of PenguinBot!');
         embed.addFields({
-            name: 'Contributors',
+            name: 'PenguinAI forked from',
+            value: `PenguinBot`,
+            inline: false
+        }, {
+            name: 'PenguinBot Contributors',
             value: `JeremyGamer13, MubiLop, godslayerakp, jwklong, ianyourgod, enhancedrock,`
                 + " " + `anonygoose, FreshPenguin112, enderhacker, PuzzlingGGG, 10000000_fireflies`,
             inline: false
         }, {
-            name: 'PenguinMod',
-            value: `PenguinBot is developed and maintained by the developers of [PenguinMod](https://penguinmod.com/).`,
+            name: 'Non-affiliation',
+            value: `PenguinAI is not affiliated with the development of the PenguinAI/PenguinGPT extension, and does not use any cloud AI models.`
+                + " " + `It is a separate project built by JeremyGamer13 for comedic and satire use only. It is not an LLM for serious usage.`,
             inline: false
         });
 

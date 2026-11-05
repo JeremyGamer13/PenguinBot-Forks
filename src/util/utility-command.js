@@ -1,5 +1,8 @@
 const discord = require("discord.js");
 
+const Database = require('sync-json-database');
+const WhitelistChannels = new Database('./databases/whitelist-channels.json');
+
 const configuration = require("../config.js");
 
 const env = require("./env-util.js");
@@ -166,6 +169,7 @@ class CommandUtility {
         if (this.command.attributes.lockedToChannels
             || this.command.attributes.lockedToHelp
             || this.command.attributes.lockedToCommands
+            || this.command.attributes.lockedToPenguinAI
             || this.command.attributes.spaceOwner) {
             // NOTE: Users above perm 3 can bypass commands specifically locked to #commands
             // NOTE: insideUnlockedChannel is only really compatible with lockedToChannels and may be more/less restrictive than expected on other gates
@@ -192,6 +196,8 @@ class CommandUtility {
                 || configuration.permissions.lockedToCommands.includes(this.message.channel.id);
             const isBeingRanOutsideOfSpecificChannels = this.command.attributes.lockedToChannels
                 && !this.command.attributes.lockedToChannels.includes(this.message.channel.id);
+            const isPenguinAIChannel = configuration.permissions.lockedToPenguinAI.includes(this.message.channel.id);
+            const isWhitelistedChannel = WhitelistChannels.get(this.message.channel.id) === true;
             if (!allowedToBypass) {
                 if (isBeingRanOutsideOfSpecificChannels)
                     return await this._commandBlockReject(`This command can only be used in certain channels. See \`${BotState.request("prefix")}help ${this.command.name}\` for info.`);
@@ -200,6 +206,8 @@ class CommandUtility {
                 // NOTE: We dont care about restricting commands channels for servers other than our server
                 if (this.command.attributes.lockedToCommands && (insideMainServer && !isCommandsChannel))
                     return await this._commandBlockReject(`This command can only be used in the commands channel.`);
+                if (this.command.attributes.lockedToPenguinAI && !this.isFromExclusive() && userPermission < 3 && (insideMainServer && !isPenguinAIChannel && !isWhitelistedChannel))
+                    return await this._commandBlockReject(`This command can only be used in PenguinAI channels.`);
             }
         }
 

@@ -1,11 +1,14 @@
 const discord = require("discord.js");
 
-const PenguinAI = require("../../util/penguinai.js");
-
 const configuration = require("../../config.js");
 
-class Command {
+const PenguinAI = require("../../util/penguinai.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "markov";
         this.description = "Speak with PenguinAI with less intelligence";
         this.descriptionLong = "Speak with PenguinAI as a Markov model/chain"
