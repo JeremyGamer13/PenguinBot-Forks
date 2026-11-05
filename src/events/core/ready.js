@@ -12,7 +12,6 @@ const FormatTime = require("../../util/format-time.js");
 const HostUtility = require("../../util/utility-host.js");
 const CommandRegistry = require("../../util/command-registry.js");
 const BotEventEmitter = require("../../util/bot-event-emitter.js");
-const ReactionMessageUtil = require("../../util/reaction-msg-util.js");
 
 const BaseBotEvent = require("../../classes/base-bot-event.js");
 
