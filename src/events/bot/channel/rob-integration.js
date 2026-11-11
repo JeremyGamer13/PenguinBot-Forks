@@ -58,8 +58,9 @@ class BotEvent extends BaseBotEvent {
         setInterval(async () => {
             // we need to use .chat for tools
             // see how many times we want JSB to talk to Rob
+            const maxRobCalls = 30;
             const toolCallCount = 2 + Math.round(Math.random() * 5);
-            const lastRobMessages = await robChannel.messages.fetch({ limit: 6 });
+            const lastRobMessages = await robChannel.messages.fetch({ limit: 12 });
             lastRobMessages.reverse();
             // make the acutal calls
             console.log("Rob Integration: Talking to Rob now");
@@ -67,33 +68,38 @@ class BotEvent extends BaseBotEvent {
             const robContext = lastRobMessages
                 .map(message => `${message.author.id === this.client.user.id ? `${configuration.nameBotReference} (You)` : (message.author.id === robUserId ? "Rob" : message.author.username)}: ${(message.cleanContent.substring(0, 256) || "Ok Rob").replace(`<@${robUserId}>`, "").trim()}`)
                 .join("\n");
+
+            let robCallCount = 0;
+            let robFailCount = 0;
             await OllamaChat.chat({
                 ...OllamaModels.robChatter,
                 messages: [{
+                    // DISCLOSURE: system prompt & tool responses adjusted with ai (basically replacing ai prompters with ai atp)
                     role: "system",
                     content: `You are a Discord bot named ${configuration.nameBotReference}.`
-                        + "\n" + `You are intended to discuss with another bot, named Rob.`
-                        + "\n" + `You must talk with Rob using the \`${representationToolRob.function.name}\` tool. Create a structured JSON tool call to use it.`
-                        + "\n" + `All messaging will be processed strictly through the \`${representationToolRob.function.name}\` tool only. You must send proper JSON tool calls with your message.`
+                        + "\n" + `You are intended to have a natural conversation with another bot, named Rob.`
+                        + "\n" + `You must communicate with Rob using the \`${representationToolRob.function.name}\` tool. All messages to Rob must be sent through that tool; do not write messages to Rob as ordinary assistant text.`
                         + "\n"
                         + "\n" + `Rob is a green robot, with his caricature being the Bugdroid Android robot.`
                         + "\n" + `Rob is a conversational Discord bot created by Dogo6647.`
-                        + "\n" + `Rob is very casual and relaxed. You can choose to ask them casual, relaxed questions, or deep, thoughtful questions. Either type is fine.`
-                        + "\n" + `You can also choose to discuss banter or give your opinion on existing topics instead.`
-                        + "\n" + `You may use any other tools provided to you as a topic starter if the conversation seems dry.`
+                        + "\n" + `Rob is very casual and relaxed. You can discuss casual or deep topics, banter, or give your opinion on existing topics.`
+                        + "\n" + `Speak to Rob as if he were another user. Ask questions, respond to what he says, share thoughts, and let the conversation develop naturally.`
+                        + "\n" + `You have access to other tools that can provide information or context when genuinely useful. Use your judgment; you do not need to use them, and should not use them just to find something to talk about.`
                         + "\n"
-                        + "\n" + `Speak to Rob as if they were another user. You are allowed to ask questions, get context, mention topics, and speak casually.`
                         + "\n" + `If Rob seems to be putting the conversation aside, you may choose to wait a bit by pausing your responses using the \`${representationToolPause.function.name}\` tool.`
+                        + "\n" + `The requested number of Rob interactions is a minimum target, not a maximum. Reach it when possible, then continue only while the conversation remains interesting or has somewhere meaningful to go.`
+                        + "\n" + `When the conversation becomes stale or Rob is clearly wrapping up, conclude naturally with a final message instead of abruptly stopping or forcing another topic.`
+                        + "\n" + `There is a hard limit of ${maxRobCalls} attempted Rob interactions for this session. Follow any countdown notice returned by the tool and wrap up within the remaining interactions. Never try to bypass the limit.`
                 }, {
                     role: "user",
                     content: `--- START OF CONTEXT ---`
-                        + "\n" + `The last 6 messages in the chat so far have said:`
+                        + "\n" + `The last 12 messages in the chat so far have said:`
                         + "\n" + robContext
                         + "\n" + `--- END OF CONTEXT ---`
                         + "\n"
                         + "\n" + `Now I want you to continue the conversation by talking to Rob.`
-                        + "\n" + `Please use the \`${representationToolRob.function.name}\` tool at least ${toolCallCount} separate times.`
-                        + "\n" + `Talk to him about any topic.`,
+                        + "\n" + `Please use the \`${representationToolRob.function.name}\` tool at least ${toolCallCount} separate times, unless Rob is unavailable or the conversation clearly cannot continue.`
+                        + "\n" + `Talk about any topic that feels natural.`,
                 }],
             }, async (chunk) => {
                 // log the thinking & content buffers
@@ -107,10 +113,21 @@ class BotEvent extends BaseBotEvent {
                 const tools = [];
                 for (const call of chunk.message.tool_calls) {
                     switch (call.function.name) {
-                        case representationToolRob.function.name:
+                        case representationToolRob.function.name: {
+                            if (robCallCount >= maxRobCalls) {
+                                tools.push({
+                                    role: "tool",
+                                    tool_name: representationToolRob.function.name,
+                                    content: `The hard limit of ${maxRobCalls} Rob interactions has been reached. No more messages can be sent to Rob. End the conversation now; do not call this tool again.`,
+                                });
+                                break;
+                            }
+
+                            robCallCount++;
                             console.log("Rob Integration: Talking to rob about", call.function.arguments);
 
-                            const robContent = await ToolMockRob.handle(robChannel, call);
+                            // we call the tool for real now
+                            const robContent = await ToolMockRob.handle(call, robChannel, robCallCount, maxRobCalls);
                             console.log("Rob Integration: ToolMockRob:", robContent);
                             tools.push({
                                 role: "tool",
@@ -118,10 +135,12 @@ class BotEvent extends BaseBotEvent {
                                 content: robContent,
                             });
                             break;
+                        }
                     }
                 }
                 return tools;
             });
+
             // stdout stuff
             console.log("\n");
             console.log("-----------------------------------");

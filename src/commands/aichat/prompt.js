@@ -73,14 +73,14 @@ class Command {
                                 tools.push({
                                     role: "tool",
                                     tool_name: "react",
-                                    content: await ToolMockReact.handle(message, call),
+                                    content: await ToolMockReact.handle(call, message),
                                 });
                                 break;
                             case "tell-rob":
                                 tools.push({
                                     role: "tool",
                                     tool_name: "tell-rob",
-                                    content: await ToolMockRob.handle(message.channel, call),
+                                    content: await ToolMockRob.handle(call, message.channel),
                                 });
                                 break;
                         }
