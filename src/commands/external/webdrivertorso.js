@@ -14,7 +14,7 @@ const FFmpegUtil = require("../../util/ffmpeg-util.js");
 
 const BaseCommand = require("../../classes/base-command.js");
 
-// TODO: Eventually move this command to PenguinBot
+// TODO: Eventually pull this command from PenguinBot
 class Command extends BaseCommand {
     constructor() {
         super();
