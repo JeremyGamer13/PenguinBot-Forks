@@ -1,20 +1,8 @@
-const VLCMediaPlayer = require("./vlc-media-player");
-const env = require("./env-util");
+const env = require("./env-util.js");
+const VLCMediaPlayer = require("./vlc-media-player.js");
 
 class VLCPoller {
-    /** @param {import("discord.js").Client} client  */
-    static initialize(client, statusText) {
-        if (!env.getBool("VLC_MEDIA_ENABLED")) return;
-
-        this.currentStatusText = statusText;
-        setInterval(async () => {
-            await this.doPoll();
-        }, 5000);
-        setInterval(async () => {
-            this.setStatus(client, statusText);
-        }, 20000);
-    }
-
+    /** @type {string} */
     static currentStatusText = "this will never be the status text haha";
 
     /** @type {string?} */

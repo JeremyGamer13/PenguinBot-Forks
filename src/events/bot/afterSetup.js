@@ -23,17 +23,6 @@ class BotEvent extends BaseBotEvent {
      * @returns {Promise<any>}
      */
     async invoke() {
-        // set our status
-        const statusText = this.isInTestMode ? configuration.status.testing
-            : (this.isInPersonalMode ? configuration.status.personal : configuration.status.normal);
-        this.client.user.setPresence({
-            status: "online",
-            activities: [{
-                name: envFill(statusText),
-                type: "PLAYING"
-            }]
-        });
-
         // Log to discord with one big message containing all the last runtime's information (incase pm!restart) and any loading errors
         const mainChannel = await this.client.channels.fetch(configuration.channels.botTestingChannel);
         const mainDiscordLog = [];
