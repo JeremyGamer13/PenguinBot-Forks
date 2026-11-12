@@ -1,16 +1,17 @@
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "pingme";
         this.description = "It’s demonstrating a desire for responsiveness... even when it’s demonstrably pointless.";
         this.attributes = {
             unlisted: false,
             permission: 0,
         };
-        
-        this.client = client;
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply(`<@${this.client.user.id}>`);
     }
 }

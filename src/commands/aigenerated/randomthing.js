@@ -1,5 +1,8 @@
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "randomthing";
         this.description = "It will randomly select a random, utterly pointless thing.";
         this.attributes = {
@@ -8,7 +11,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         const items = [
             "Flicker",
             "Rust",

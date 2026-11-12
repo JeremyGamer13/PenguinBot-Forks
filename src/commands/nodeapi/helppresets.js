@@ -4,11 +4,15 @@ const path = require("path");
 const discord = require("discord.js");
 
 const env = require("../../util/env-util.js");
+const BotState = require("../../util/bot-state.js");
 const stateFill = require("../../util/state-fill.js");
-const OptionType = require('../../util/optiontype');
+const OptionType = require('../../util/optiontype.js');
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "helppresets";
         this.description = "Lists all usable overlay & audio commands for Discord Screenshare/Streaming";
         this.descriptionLong = "Lists all usable overlay & audio commands for Discord Screenshare/Streaming"
@@ -21,8 +25,6 @@ class Command {
         };
 
         this.alias = ["presetcommands", "presetcmds", "presethelp"];
-
-        this.client = client;
     }
 
     getCommandIcon(command) {
@@ -34,7 +36,7 @@ class Command {
         return "❓";
     }
     async handleSendingList(message, args, util) {
-        const commands = util.request('nodeApiPresets');
+        const commands = BotState.request('nodeApiPresets');
         const embed = new discord.MessageEmbed();
         embed.setColor("#ff8800");
         embed.setTitle("Preset List");
@@ -119,9 +121,9 @@ class Command {
             return await this.handleSendingList(message, args, util);
 
         // we are displaying a command
-        const prefix = util.request("prefixPresets");
-        const commandPrefix = util.request("prefix");
-        const commands = util.request('nodeApiPresets');
+        const prefix = BotState.request("prefixPresets");
+        const commandPrefix = util.prefix;
+        const commands = BotState.request('nodeApiPresets');
 
         const embed = new discord.MessageEmbed();
         embed.setColor("#ff8800");

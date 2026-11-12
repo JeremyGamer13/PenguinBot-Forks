@@ -4,11 +4,15 @@ const path = require("path");
 const discord = require("discord.js");
 const { createCanvas, loadImage } = require('canvas');
 
+const BotState = require("../../../util/bot-state.js");
 const TempFolder = require('../../../util/temp-folder');
 const RemoveBackground = require('../../../util/remove-background');
 
-class Command {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "removebg";
         this.description = "Removes the background on an image.";
         this.descriptionLong = "Removes the background on an image."
@@ -21,7 +25,7 @@ class Command {
     }
 
     async handle(message, args, util) {
-        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        const [imageBuffer] = await util.getInputImagesForCommand();
         if (!imageBuffer) return;
         
         // actually start doing stuff
@@ -54,7 +58,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

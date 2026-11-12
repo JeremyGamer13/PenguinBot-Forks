@@ -2,8 +2,11 @@ const discord = require("discord.js");
 
 const SearXNG = require("../../util/searxng.js");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "search";
         this.description = "admin only search for testing";
         this.attributes = {

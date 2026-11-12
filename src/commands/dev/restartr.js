@@ -1,5 +1,8 @@
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "restartr";
         this.description = "Literally not useful at all";
         this.attributes = {
@@ -15,7 +18,7 @@ class Command {
         });
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply(`haha spelt it wrong idiot`);
     }
 }

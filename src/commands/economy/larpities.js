@@ -4,8 +4,11 @@ const DatabaseCurrencyLarp = new Database('./databases/currency-larp.json');
 const env = require("../../util/env-util.js");
 const EconomyJSB = require("../../util/economy-jsb.js");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "larpities";
         this.description = "See hhow many larpities you have";
         this.descriptionLong = "See how many larpities (currency) you have"
@@ -20,7 +23,7 @@ class Command {
         this.alias = ["larpatm"];
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         const info = DatabaseCurrencyLarp.get(message.author.id) || EconomyJSB.createInfoLarp();
         message.reply({
             content: `🤖🤖 Larp ATM⚡you have ${info.amount || 0} ${EconomyJSB.emojiLarp}`

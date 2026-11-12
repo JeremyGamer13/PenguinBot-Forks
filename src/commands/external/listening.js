@@ -1,8 +1,11 @@
-const VLCMediaPlayer = require('../../util/vlc-media-player');
 const VLCPoller = require('../../util/vlc-poller');
+const VLCMediaPlayer = require('../../util/vlc-media-player');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "listening";
         this.description = "what the hell is Jeremy listening to";
         this.attributes = {
@@ -11,7 +14,7 @@ class Command {
         };
     }
 
-    async invoke(message) {
+    async invoke(message, args, util) {
         const currentSong = VLCPoller.currentSong;
         if (!currentSong) return message.reply("Nothing is playing right now.");
         message.reply({

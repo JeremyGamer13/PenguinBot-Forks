@@ -5,11 +5,15 @@ const discord = require("discord.js");
 
 const Canvas = require('canvas');
 
-const ObjectDetection = require('../../../util/object-detection');
+const BotState = require("../../../util/bot-state.js");
 const TempFolder = require('../../../util/temp-folder');
+const ObjectDetection = require('../../../util/object-detection');
 
-class Command {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "eyes";
         this.description = "Adds the eye emoji onto the eyes in the image given.";
         this.attributes = {
@@ -22,7 +26,7 @@ class Command {
     }
 
     async handle(message, args, util) {
-        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        const [imageBuffer] = await util.getInputImagesForCommand();
         if (!imageBuffer) return;
         
         // actually start doing stuff
@@ -100,7 +104,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

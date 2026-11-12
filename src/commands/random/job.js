@@ -1,5 +1,8 @@
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "job";
         this.description = "get a job spongebob";
         this.attributes = {
@@ -10,7 +13,7 @@ class Command {
         this.alias = ["furryroleplay"];
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply("<https://www.gov.uk/find-a-job>");
     }
 }

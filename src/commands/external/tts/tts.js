@@ -1,8 +1,12 @@
 const discord = require("discord.js");
+
 const TTS = require("../../../util/tts");
 
-class Command {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "tts";
         this.description = "google text too specahj";
         this.attributes = {

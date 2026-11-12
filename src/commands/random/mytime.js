@@ -1,3 +1,5 @@
+const BaseCommand = require("../../classes/base-command.js");
+
 const timeMountainTime = () => {
     const now = new Date();
     const options = {
@@ -11,8 +13,9 @@ const timeMountainTime = () => {
     return new Intl.DateTimeFormat('en-US', options).format(now);
 };
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "mytime";
         this.description = "see jeremy gamer 13 time";
         this.attributes = {
@@ -21,7 +24,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         const currentTime = timeMountainTime();
         message.reply({
             content: `it is currently **${currentTime}** in JeremyGamer13's time`,

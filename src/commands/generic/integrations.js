@@ -1,10 +1,15 @@
 const discord = require("discord.js");
 
-const env = require('../../util/env-util');
 const configuration = require("../../config.js");
 
-class Command {
+const env = require('../../util/env-util');
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "integrations";
         this.description = "View all enabled integrations on the bot.";
         this.attributes = {
@@ -120,8 +125,8 @@ class Command {
         const deviceLabel = env.get("DEVICE_LABEL");
         embed.setFooter({
             text: `${deviceLabel}: (`
-                + `${util.request("isInPersonalMode") ? "personal" : "public"}`
-                + `, ` + `${util.request("isInTestMode") ? "testing" : "production"}`
+                + `${BotState.request("isInPersonalMode") ? "personal" : "public"}`
+                + `, ` + `${BotState.request("isInTestMode") ? "testing" : "production"}`
                 + ")"
         });
 

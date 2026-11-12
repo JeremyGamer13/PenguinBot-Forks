@@ -6,8 +6,11 @@ const DatabaseCurrencyChronos = new Database('./databases/currency-chronos.json'
 const env = require("../../util/env-util.js");
 const EconomyJSB = require("../../util/economy-jsb.js");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "chronos";
         this.description = `View the amount of Chronos ${EconomyJSB.emojiChronos} you own.`;
         this.descriptionLong = `View the amount of Chronos ${EconomyJSB.emojiChronos} you own.`
@@ -23,7 +26,7 @@ class Command {
         this.alias = ["chronosatm"];
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         const info = DatabaseCurrencyChronos.get(message.author.id) || EconomyJSB.createInfoChronos();
 
         const embed = new discord.MessageEmbed();

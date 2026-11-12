@@ -2,8 +2,11 @@ const Ollama = require("ollama-chatting");
 const OllamaModels = require("../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "reframe";
         this.description = "That's not just growth — that's development. ✨";
         this.attributes = {

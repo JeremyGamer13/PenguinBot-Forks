@@ -6,13 +6,18 @@ const discord = require("discord.js");
 const Canvas = require('canvas');
 const cssColor = require("@asamuzakjp/css-color");
 
+const BotState = require("../../../util/bot-state.js");
 const resizePng = require("../../../util/resize-png.js");
 const TempFolder = require('../../../util/temp-folder.js');
+const DiscordUtility = require("../../../util/utility-discord.js");
 const ObjectDetection = require('../../../util/object-detection.js');
 const getProminentColor = require("../../../util/get-prominent-color.js");
 
-class Command {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "overwrite";
         this.description = "Writes your text over the text in the image given.";
         this.attributes = {
@@ -25,10 +30,10 @@ class Command {
     async handle(message, args, util) {
         const overwrittenText = args.join(" ").trim();
         if (overwrittenText.length <= 0) return message.reply("you need to type shit to write on there");
-        if (util.getPermissionLevel(message) < 4 && !util.automodAllows(overwrittenText, true))
+        if (util.getPermissionLevel(message) < 4 && !DiscordUtility.automodAllows(overwrittenText, true))
             return message.reply("Stop that right now");
 
-        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        const [imageBuffer] = await util.getInputImagesForCommand();
         if (!imageBuffer) return;
         
         // actually start doing stuff
@@ -243,7 +248,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

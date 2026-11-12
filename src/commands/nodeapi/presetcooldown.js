@@ -1,5 +1,10 @@
-class Command {
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "presetcooldown";
         this.description = "the overlay audio shits Cooldown.";
         this.attributes = {
@@ -11,11 +16,11 @@ class Command {
 
     invoke(message, args, util) {
         if (typeof args[0] !== "number") {
-            message.reply(`nodeApiPresetCooldown = ${util.state.nodeApiPresetCooldown}`);
+            message.reply(`nodeApiPresetCooldown = ${BotState.state.nodeApiPresetCooldown}`);
             return;
         }
-        util.state.nodeApiPresetCooldown = Number(args[0]);
-        message.reply(`nodeApiPresetCooldown = ${util.state.nodeApiPresetCooldown}`);
+        BotState.state.nodeApiPresetCooldown = Number(args[0]);
+        message.reply(`nodeApiPresetCooldown = ${BotState.state.nodeApiPresetCooldown}`);
     }
 }
 

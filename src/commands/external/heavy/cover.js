@@ -1,19 +1,25 @@
 const fs = require("fs");
 const path = require("path");
-const discord = require("discord.js");
 const childProcess = require("child_process");
+
+const discord = require("discord.js");
 
 const RVC = require('../../../util/rvc');
 const RVCModels = require('../../../util/rvc-models');
 
 const env = require("../../../util/env-util");
 const Demucs = require('../../../util/demucs');
+const BotState = require("../../../util/bot-state.js");
 const FFmpegUtil = require('../../../util/ffmpeg-util');
 const TempFolder = require('../../../util/temp-folder');
+const DiscordUtility = require("../../../util/utility-discord.js");
 const downloadAttachments = require('../../../util/download-attachments');
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "cover";
         this.description = "AI voice will redub the audio";
         this.descriptionLong = "AI voice will redub the audio"
@@ -31,9 +37,6 @@ class Command {
             jgAiCoverCommand: true,
             permission: 0,
         };
-
-        this.client = client;
-
         this.example = [
             { text: "{{prefix}}cover" },
             { text: "{{prefix}}cover low" },
@@ -123,7 +126,7 @@ class Command {
         // get attachements
         const attachment = message.attachments.first();
         if (!attachment) throw new Error("Add an Audio to cover");
-        const endingType = util.getAttachmentType(attachment);
+        const endingType = DiscordUtility.getAttachmentType(attachment);
         if (!FFmpegUtil.isCompatibleAudio(endingType)) throw new Error('Please use a valid audio format.');
         // check atachemtn size
         if (attachment.size > 8 * 1e+6) throw new Error("Files must be below 8 MB.");
@@ -146,7 +149,7 @@ class Command {
             if (length > 5 * 60) return replyMessage.edit("Files must be within 5 minutes long OR you can buy me an NVIDIA RTX 4090 🎉");
 
             // see if we need approval or if we cant even use this model right now
-            if (voiceModel.usage === RVCModels.USAGE_PERSONAL && !util.request("isInPersonalMode"))
+            if (voiceModel.usage === RVCModels.USAGE_PERSONAL && !BotState.request("isInPersonalMode"))
                 throw new Error("RVC Model unavailable outside of personal");
 
             const canCheckTestServers = env.getBool("CHECK_FOR_DEFAULT_TEST_SERVERS");
@@ -220,7 +223,7 @@ class Command {
     }
     async invoke(message, args, util) {
         if (!env.getBool("RVC_ENABLED")) throw new Error("RVC is disabled on this system");
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

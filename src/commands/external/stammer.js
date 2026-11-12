@@ -7,10 +7,14 @@ const Stammer = require('../../util/stammer');
 const getFileSize = require('../../util/file-size');
 const FFmpegUtil = require('../../util/ffmpeg-util');
 const TempFolder = require('../../util/temp-folder');
+const DiscordUtility = require("../../util/utility-discord.js");
 const downloadAttachments = require('../../util/download-attachments');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "stammer";
         this.description = "Make a video using another video";
         this.descriptionLong = "Splices and retimes the first clip to sound as close as possible to the second clip."
@@ -30,8 +34,8 @@ class Command {
         const attachment2 = message.attachments.last();
         if (!attachment1) throw new Error("Add an video or audio to take the frames/source from");
         if (!attachment2) throw new Error("Add an video or audio to sync the video/audio to");
-        const endingTypeRaw1 = util.getAttachmentType(attachment1);
-        const endingTypeRaw2 = util.getAttachmentType(attachment2);
+        const endingTypeRaw1 = DiscordUtility.getAttachmentType(attachment1);
+        const endingTypeRaw2 = DiscordUtility.getAttachmentType(attachment2);
         if (!FFmpegUtil.isCompatibleVideo(endingTypeRaw1) && !FFmpegUtil.isCompatibleAudio(endingTypeRaw1))
             throw new Error('Please use a valid video or audio format. (video 1)');
         if (!FFmpegUtil.isCompatibleVideo(endingTypeRaw2) && !FFmpegUtil.isCompatibleAudio(endingTypeRaw2))

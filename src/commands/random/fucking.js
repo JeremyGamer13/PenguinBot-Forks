@@ -1,7 +1,10 @@
 const discord = require("discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "fucking";
         this.description = "evil evil evil sahur";
         this.attributes = {
@@ -10,7 +13,7 @@ class Command {
         };
     }
 
-    invoke(message, args) {
+    invoke(message, args, util) {
         const wording = args.join(" ");
         if (wording !== "kill EVERYONE here") return;
         message.reply("Ok");

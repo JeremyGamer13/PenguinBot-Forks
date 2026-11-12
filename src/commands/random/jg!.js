@@ -1,5 +1,8 @@
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "jg!";
         this.description = "stop that boy";
         this.attributes = {
@@ -10,7 +13,7 @@ class Command {
         this.triggers = 0;
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         this.triggers += 1;
         if (this.triggers !== 5) return;
         message.reply("can you Shut the fuck up 😇");

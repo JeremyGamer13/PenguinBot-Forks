@@ -1,5 +1,8 @@
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "bombtutorial";
         this.description = "How to die 🎉";
         this.attributes = {
@@ -8,7 +11,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply("<https://en.wikipedia.org/wiki/The_Making_of_the_Atomic_Bomb>");
     }
 }

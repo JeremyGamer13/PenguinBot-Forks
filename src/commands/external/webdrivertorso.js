@@ -12,9 +12,12 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
 
+const BaseCommand = require("../../classes/base-command.js");
+
 // TODO: Eventually move this command to PenguinBot
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "webdrivertorso";
         this.description = `Creates a Webdriver Torso-like video [(see inspiration)](https://www.youtube.com/@realwebdrivertorso/videos)`;
         this.attributes = {

@@ -4,8 +4,11 @@ const DatabaseCurrencyLarp = new Database('./databases/currency-larp.json');
 const env = require("../../util/env-util.js");
 const EconomyJSB = require("../../util/economy-jsb.js");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "larp";
         this.description = "get larpities";
         this.attributes = {
@@ -17,7 +20,7 @@ class Command {
         this.alias = ["larpcollect"];
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         const userId = message.author.id;
         if (!DatabaseCurrencyLarp.has(userId))
             DatabaseCurrencyLarp.setLocal(userId, EconomyJSB.createInfoLarp())

@@ -10,9 +10,14 @@ const { Canvas, FontLibrary } = require("skia-canvas");
 
 const env = require("../util/env-util.js");
 const tryCatch = require("../util/try-catch.js");
+const BotState = require("../util/bot-state.js");
+const DiscordUtility = require("../util/utility-discord.js");
 
-class Command {
+const BaseCommand = require("../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "sekaisticker";
         this.description = "Caption a sticker of a Project SEKAI chibi.";
         this.attributes = {
@@ -75,7 +80,7 @@ class Command {
         if (message.attachments.first()) {
             // use the helper if they added an attachment (otherwise the helper will use customs
             // when we dont want to, like if we were replying to other users)
-            [customBuffer] = await util.getInputImagesForCommand(message);
+            [customBuffer] = await util.getInputImagesForCommand();
             if (!customBuffer) return;
         }
 
@@ -94,7 +99,7 @@ class Command {
 
         // vaildate the text
         const textToSay = `${args.join(" ")}`;
-        if (!util.request("isInPersonalMode") && util.getPermissionLevel(message) < 4 && !util.automodAllows(textToSay, true))
+        if (!BotState.request("isInPersonalMode") && util.getPermissionLevel(message) < 4 && !DiscordUtility.automodAllows(textToSay, true))
             return message.reply("I can't render that caption. Enter something else.");
 
         // load everything we need to render this stickker

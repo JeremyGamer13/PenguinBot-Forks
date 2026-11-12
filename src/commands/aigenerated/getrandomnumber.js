@@ -1,5 +1,8 @@
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "getrandomnumber";
         this.description = "😂 Please, please, *please* don’t be such a drama queen.";
         this.attributes = {
@@ -8,7 +11,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         return message.reply(`${Math.random()}`);
     }
 }

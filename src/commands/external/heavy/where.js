@@ -2,12 +2,17 @@ const fs = require("fs");
 const path = require("path");
 
 const discord = require("discord.js");
-const ObjectDetection = require('../../../util/object-detection.js');
-const TempFolder = require('../../../util/temp-folder.js');
 const { createCanvas, loadImage } = require('canvas');
 
-class Command {
+const BotState = require("../../../util/bot-state.js");
+const TempFolder = require('../../../util/temp-folder.js');
+const ObjectDetection = require('../../../util/object-detection.js');
+
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "where";
         this.description = "Shows where items are in an image.";
         this.attributes = {
@@ -25,7 +30,7 @@ class Command {
     }
 
     async handle(message, args, util) {
-        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        const [imageBuffer] = await util.getInputImagesForCommand();
         if (!imageBuffer) return;
         const realArgs = args.join(" ").split(",").map(argument => argument.trim()).filter(argument => !!argument);
         if (!realArgs[0]) return message.reply("What the fuck do you want me to look for");
@@ -105,7 +110,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         try {

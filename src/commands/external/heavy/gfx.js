@@ -11,15 +11,21 @@ const OllamaModels = require("../../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const configuration = require("../../../config.js");
+
+const BotState = require("../../../util/bot-state.js");
 const TempFolder = require('../../../util/temp-folder.js');
+const DiscordUtility = require("../../../util/utility-discord.js");
+const jsonParseLoose = require('../../../util/json-parse-loose.js');
 const ObjectDetection = require('../../../util/object-detection.js');
 const RemoveBackground = require('../../../util/remove-background.js');
 
-const jsonParseLoose = require('../../../util/json-parse-loose.js');
+const BaseCommand = require("../../../classes/base-command.js");
+
 const SchemaGFXContext = require("../../../resources/schemas/gfx-context.json");
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "gfx";
         this.description = "adds fire greaphics and stuff around an image with a caption if you want";
         this.descriptionLong = "adds fire greaphics and stuff around an image with a caption if you want"
@@ -148,8 +154,8 @@ class Command {
     // TODO: this command is supposed to make like the mr. balls cat image or wowie zowie young sheldon with laser eyees
     async handle(message, args, util) {
         const caption = args.join(" ").trim();
-        if (!util.automodAllows(caption, true)) return message.reply("No");
-        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        if (!DiscordUtility.automodAllows(caption, true)) return message.reply("No");
+        const [imageBuffer] = await util.getInputImagesForCommand();
         if (!imageBuffer) return;
 
         // actually start doing stuff
@@ -236,7 +242,7 @@ class Command {
     }
     async invoke(message, args, util) {
         if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

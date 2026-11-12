@@ -3,8 +3,11 @@ const discord = require("discord.js");
 const env = require("../../util/env-util");
 const fetchNodeApi = require("../../util/fetch-nodeapi")
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "ytdlp";
         this.description = "youtube to mp3 free online converter";
         this.attributes = {

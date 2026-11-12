@@ -1,9 +1,12 @@
 const FormatTime = require("../../util/format-time.js");
 
-const activeTimestamp = 1819999990000;
+const BaseCommand = require("../../classes/base-command.js");
 
-class Command {
+const activeTimestamp = 1849999990000;
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "deltarune";
         this.description = "The Night before Deltarune Tomorrow";
         this.attributes = {
@@ -12,7 +15,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         const currentTime = Date.now();
         const difference = activeTimestamp - currentTime;
         message.reply({

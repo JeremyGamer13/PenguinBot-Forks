@@ -6,12 +6,16 @@ const PSOLA = require("../../util/psola.js");
 const env = require("../../util/env-util.js");
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
+const DiscordUtility = require("../../util/utility-discord.js");
 const downloadAttachments = require('../../util/download-attachments.js');
+
+const BaseCommand = require("../../classes/base-command.js");
 
 const keyFrequency = require("../../resources/key-frequency.json");
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "pitchcorrect";
         this.description = "Pitch-correct a sample to a key/frequency";
         this.attributes = {
@@ -34,7 +38,7 @@ class Command {
         // get attachements
         const attachment = message.attachments.first();
         if (!attachment) throw new Error("Add an  audio");
-        const endingType = util.getAttachmentType(attachment);
+        const endingType = DiscordUtility.getAttachmentType(attachment);
         if (!FFmpegUtil.isCompatibleAudio(endingType)) throw new Error('Please use a valid audio format.');
         // check atachemtn size
         if (attachment.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");

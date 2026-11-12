@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 
+const BaseCommand = require("../../classes/base-command.js");
+
 function generatePointlessRandomSeries(length = 100) {
     const series = [];
 
@@ -19,8 +21,9 @@ function generatePointlessRandomSeries(length = 100) {
     return series;
 }
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "blorp";
         this.description = "This command attempts to generate a surprisingly complex and utterly pointless series of random numbers. It’s guaranteed to waste your time.";
         this.attributes = {
@@ -30,7 +33,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply({
             content: JSON.stringify(generatePointlessRandomSeries(50)).substring(0, 200),
             allowedMentions: {

@@ -3,18 +3,22 @@ const path = require("path");
 const nodeUtil = require("util");
 const childProcess = require("child_process");
 
-const execPromise = nodeUtil.promisify(childProcess.exec);
-
 const discord = require("discord.js");
 
 const TTS = require("../../util/tts.js");
+const BotState = require("../../util/bot-state.js");
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
+const DiscordUtility = require("../../util/utility-discord.js");
 
+const BaseCommand = require("../../classes/base-command.js");
+
+const execPromise = nodeUtil.promisify(childProcess.exec);
 const RobertLoggiaSentences = require("../../resources/robert-loggia.json");
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "robertloggia";
         this.description = `Certainly. That's Robert Loggia. R, as in 'Robert Loggia.'`;
         this.descriptionLong = `Recreates a video of the Robert Loggia cutaway gag from Family Guy, using a user's name.`
@@ -43,7 +47,7 @@ class Command {
      */
     async handle(message, args, util) {
         const customText = args.join(" ");
-        if (customText && !util.request("isInPersonalMode") && util.getPermissionLevel(message) < 4 && !util.automodAllows(customText, true))
+        if (customText && !BotState.request("isInPersonalMode") && util.getPermissionLevel(message) < 4 && !DiscordUtility.automodAllows(customText, true))
             return message.reply("Enter something else.");
 
         const mentionedUser = message.mentions && message.mentions.members && message.mentions.members.size ? message.mentions.members.first() : null;
@@ -52,7 +56,7 @@ class Command {
         /** @type {string} */
         const targetName = targetUser ? (targetUser.displayName || targetUser.username) : customText;
 
-        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        const [imageBuffer] = await util.getInputImagesForCommand();
         if (!imageBuffer) return;
         
         // get the response

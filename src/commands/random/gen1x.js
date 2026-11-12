@@ -1,5 +1,8 @@
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "gen1x";
         this.description = "The the c";
         this.attributes = {
@@ -10,7 +13,7 @@ class Command {
         this.alias = ["g1nx"];
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply("Bro thought");
     }
 }

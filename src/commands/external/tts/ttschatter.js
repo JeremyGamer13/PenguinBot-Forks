@@ -1,17 +1,23 @@
 const fs = require("fs");
 const path = require("path");
-const discord = require("discord.js");
 const childProcess = require("child_process");
+
+const discord = require("discord.js");
 
 const Chatterbox = require("../../../util/chatterbox");
 const ChatterboxConditionals = require("../../../util/chatterbox-conditionals");
 
 const env = require("../../../util/env-util");
+const BotState = require("../../../util/bot-state.js");
 const FFmpegUtil = require('../../../util/ffmpeg-util');
 const TempFolder = require('../../../util/temp-folder');
+const DiscordUtility = require("../../../util/utility-discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "ttschatter";
         this.description = "AI voice will Text to speech (ai chatterbox)";
         this.descriptionLong = "AI voice will Text to speech (ai chatterbox)"
@@ -29,9 +35,6 @@ class Command {
             jgAiCoverCommand: true,
             permission: 0,
         };
-
-        this.client = client;
-
         this.alias = ["ctts", "ttsc", "chattertts",                       "cspeak", "speakc", "chatterspeak", "speakchatter"];
         this.example = [
             { text: "{{prefix}}ttschatter Hello it's me" },
@@ -44,7 +47,7 @@ class Command {
         const ttsText = args.join(" ");
         if (ttsText.length <= 0) return message.reply("Fuck do you want me to do");
         if (ttsText.length > env.getNumber("CHATTERBOX_MAX_LENGTH")) return message.reply("Shut the fuck up");
-        if (!util.automodAllows(ttsText, true)) return message.reply("No");
+        if (!DiscordUtility.automodAllows(ttsText, true)) return message.reply("No");
 
         // actually start doing stuff
         const startTime = Date.now();
@@ -54,7 +57,7 @@ class Command {
         await temporaryFolder.createAndDestroy(async (tempDir) => {
             // see if we need approval or if we cant even use this model right now
             const conditionalsVoice = ChatterboxConditionals.default;
-            if (conditionalsVoice.usage === ChatterboxConditionals.USAGE_PERSONAL && !util.request("isInPersonalMode"))
+            if (conditionalsVoice.usage === ChatterboxConditionals.USAGE_PERSONAL && !BotState.request("isInPersonalMode"))
                 throw new Error("Conditionals unavailable outside of personal");
 
             let replyMessage = null;
@@ -85,7 +88,7 @@ class Command {
                 if (updatedMessagePromise) return;
                 if (currentChunk % 2 !== 0) return; // skip odd chunks
                 
-                let displayText = util.automodAllows(currentText, true) ? `\`${currentText}\`` : "*(cannot show this segment out of context)*";
+                let displayText = DiscordUtility.automodAllows(currentText, true) ? `\`${currentText}\`` : "*(cannot show this segment out of context)*";
                 updatedMessagePromise = replyMessage.edit(`(${currentChunk + 1}/${chunkCount}) Currently saying: \`${currentTag}\`; ${displayText}`);
                 await updatedMessagePromise;
                 updatedMessagePromise = null;
@@ -120,7 +123,7 @@ class Command {
     }
     async invoke(message, args, util) {
         if (!env.getBool("CHATTERBOX_ENABLED")) throw new Error("Chatterbox is disabled on this system");
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         try {

@@ -1,3 +1,5 @@
+const BaseCommand = require("../../classes/base-command.js");
+
 // NOTE: this is not accurate at ALL gng
 const getDay365 = () => {
     const date = new Date();
@@ -375,8 +377,9 @@ const items = [
     "Majestic Castles Stand",
 ];
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "isapaime27ae32222";
         this.description = "its self explanatory";
         this.attributes = {
@@ -385,7 +388,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         const day = getDay365();
         const index = day % items.length;
         const item = items[index];
