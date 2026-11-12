@@ -63,4 +63,3 @@ src/resources/**/__pycache__
 desktop.ini
 nohup.out
 .DS_Store
-src/util/aprilfools.js
