@@ -1,6 +1,8 @@
 const Database = require('sync-json-database');
 const VLCTrackerDatabase = new Database('./databases/vlc-tracker.json', { indented: true });
 
+const VLCMediaPlayer = require('./vlc-media-player');
+
 class VLCTracker {
     /**
      * @typedef {object} VLCTrackedSong
@@ -109,7 +111,7 @@ class VLCTracker {
     /**
      * @private returns sorted entries
      */
-    static async _getSortedEntries() {
+    static async _getSortedEntries(ignoreBlocked = false) {
         // DISCLOSURE: ai was used for this
         const entries = this.getSongs()
             .map(song => ({
@@ -118,6 +120,7 @@ class VLCTracker {
                 duration: song.duration ?? 0,
                 appearances: song.appearances ?? 0
             }))
+            .filter(song => VLCMediaPlayer.isAllowedName(song.fileName) || ignoreBlocked)
             .sort((a, b) => {
                 // Higher playtime first.
                 // Filename provides deterministic ordering for ties.

@@ -24,6 +24,16 @@ class VLCMediaPlayer {
         return true;
     }
     /**
+     * Determines if a song name is allowed to display on bot status.
+     * @param {string} name 
+     * @returns {boolean}
+     */
+    static isAllowedName(name) {
+        if (!name) return false;
+        if (vlcBlockedTerms.find(term => ` ${name.toLowerCase()} `.includes(term.toLowerCase()))) return false;
+        return true;
+    }
+    /**
      * Cleans up a file name for display (very subjective cleanup)
      * @param {string} name 
      * @returns {string}

@@ -20,6 +20,8 @@ class Command extends BaseCommand {
             unlisted: false,
             permission: 0,
         };
+
+        this.alias = ["listeningto", "vlclistening", "vlc"];
     }
 
     async invoke(message, args, util) {
@@ -27,10 +29,14 @@ class Command extends BaseCommand {
         if (!fileName || !VLCMediaPlayer.isAllowed(VLCPoller.uri))
             return message.reply("Nothing is playing right now.");
 
+        const cleanedName = VLCMediaPlayer.cleanUpName(fileName);
+        const potentialYouTubeIdMatch = fileName.match(/\[([a-zA-Z0-9_-]{11})\]/);
+        const titleMentionMarkdown = potentialYouTubeIdMatch ? `[**${cleanedName}**](<https://youtu.be/${potentialYouTubeIdMatch[1]}>)` : `**${cleanedName}**`;
+
         const clockDisplay = `${clockSeconds(VLCPoller.time)}/${clockSeconds(VLCPoller.duration)}`;
         const progressBar = ProgressBar("blue", 10, (VLCPoller.time / VLCPoller.duration) * 100);
         message.reply({
-            content: `Currently ${!VLCPoller.isPaused ? "playing" : "paused on"} **${VLCMediaPlayer.cleanUpName(fileName)}**`
+            content: `Currently ${!VLCPoller.isPaused ? "playing" : "paused on"} ${titleMentionMarkdown}`
                 + "\n" + `${!VLCPoller.isPaused ? "🎶" : "⏸️"} \`${clockDisplay}\` - ${progressBar}`,
             allowedMentions: {
                 parse: [],
