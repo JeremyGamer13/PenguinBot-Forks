@@ -1,6 +1,8 @@
 const Fuse = require("fuse.js");
 const discord = require('discord.js');
 
+const env = require("../../util/env-util.js");
+const BotState = require("../../util/bot-state.js");
 const VLCPoller = require('../../util/vlc-poller.js');
 const VLCTracker = require('../../util/vlc-tracker.js');
 const FormatTime = require("../../util/format-time.js");
@@ -148,6 +150,11 @@ class Command extends BaseCommand {
     }
 
     async invoke(message, args, util) {
+        if (!(env.getBool("VLC_MEDIA_ENABLED") && env.getBool("VLC_MEDIA_TRACKER")))
+            return this.reject(message, "The VLC media player tracker is disabled right now");
+        if (!env.getBool("VLC_MEDIA_TRACKER_PUBLIC") && !BotState.state.isInPersonalMode && message.author.id !== env.get("OWNER"))
+            return this.reject(message, "Only the owner can view the VLC media player tracker");
+
         const songQuery = args.join(" ").trim();
         if (songQuery) {
             // NOTE: Right now this doesnt cause performance issues but it might in the future
