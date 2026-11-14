@@ -87,49 +87,49 @@ class VLCTracker {
         return song;
     }
 
-    // TODO: Reuse the event Xp leaderboard display code to instead make like a leaderboard of songs by playTime
     /**
      * @private returns sorted entries
      */
     static async _getSortedEntries() {
         // DISCLOSURE: ai was used for this
-        const entries = EventXPDatabase
-            .array()
-            .map(({ key, value }) => ({
-                userId: key,
-                username: value.username,
-                xp: value.xp ?? 0,
-                level: this.xpToLevel(value.xp ?? 0)
+        const entries = this.getSongs()
+            .map(song => ({
+                fileName: song.fileName,
+                playTime: song.playTime ?? 0,
+                duration: song.duration ?? 0,
+                appearances: song.appearances ?? 0
             }))
             .sort((a, b) => {
-                // Higher XP first.
-                // User ID provides deterministic ordering for ties.
-                if (b.xp !== a.xp)
-                    return b.xp - a.xp;
-                return a.userId.localeCompare(b.userId);
+                // Higher playtime first.
+                // Filename provides deterministic ordering for ties.
+                if (b.playTime !== a.playTime)
+                    return b.playTime - a.playTime;
+                return a.fileName.localeCompare(b.fileName);
             })
             .map((entry, i) => ({
                 // return rank here for use in displaying user's rank elsewhere
                 rank: i + 1,
                 ...entry,
             }));
+
         return entries;
     }
+
     /**
-     * Get a paginated XP leaderboard.
+     * Get a paginated song playtime leaderboard.
      * @param {number} page
-     * @param {number} pageSize Number of users per page (default: 10)
+     * @param {number} pageSize Number of songs per page (default: 10)
      * @returns {Promise<{
      *   page:number,
      *   pageSize:number,
-     *   totalUsers:number,
+     *   totalSongs:number,
      *   totalPages:number,
      *   entries:Array<{
      *     rank:number,
-     *     userId:string,
-     *     username:string,
-     *     xp:number,
-     *     level:number
+     *     fileName:string,
+     *     playTime:number,
+     *     duration:number,
+     *     appearances:number
      *   }>
      * }>}
      */
@@ -141,9 +141,10 @@ class VLCTracker {
             throw new Error('pageSize must be a positive integer');
 
         const entries = (await this._getSortedEntries())
-            .filter(entry => entry.xp > 0);
-        const totalUsers = entries.length;
-        const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize));
+            .filter(entry => entry.playTime > 0);
+
+        const totalSongs = entries.length;
+        const totalPages = Math.max(1, Math.ceil(totalSongs / pageSize));
         const start = page * pageSize;
         const pagedEntries = entries
             .slice(start, start + pageSize);
@@ -151,7 +152,7 @@ class VLCTracker {
         return {
             page,
             pageSize,
-            totalUsers,
+            totalSongs,
             totalPages,
             entries: pagedEntries
         };
