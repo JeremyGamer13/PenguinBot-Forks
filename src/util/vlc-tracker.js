@@ -4,29 +4,29 @@ const VLCTrackerDatabase = new Database('./databases/vlc-tracker.json', { indent
 class VLCTracker {
     /**
      * @typedef {object} VLCTrackedSong
-     * @property {string} name Formatted name of the song. Due to the nature of local file playlists, this can change at any time.
+     * @property {string} fileName File name of the song. Due to the nature of local file playlists, this can change at any time.
      * @property {number} playTime Total seconds played
      * @property {number} duration Seconds length of the song
      * @property {number} appearances How many times the song has appeared (ie, how many times it played at some point, even if the song wasn't played all the way through)
      */
     /** @private @returns {VLCTrackedSong} */
-    static _makeSong(name) {
+    static _makeSong(fileName) {
         return {
-            name: name,
+            fileName: fileName,
             playTime: 0,
             duration: 0,
             appearances: 0,
         };
     }
     /** @private @returns {VLCTrackedSong} WILL BE MUTABLE (you can edit props on it & save the DB) */
-    static _findOrMake(name) {
+    static _findOrMake(fileName) {
         const songs = this.getSongs();
-        const song = songs.find(song => song.name === name);
+        const song = songs.find(song => song.fileName === fileName);
         if (song)
             return song;
         
         // make a new song and return it
-        const newSong = this._makeSong(name);
+        const newSong = this._makeSong(fileName);
         songs.push(newSong);
 
         VLCTrackerDatabase.setLocal("songs", songs);
@@ -42,23 +42,23 @@ class VLCTracker {
     }
     /**
      * Gets a song's database record, if it exists.
-     * @param {string} name
+     * @param {string} fileName
      * @returns {VLCTrackedSong | null}
      */
-    static getSong(name) {
-        return this.getSongs().find(song => song.name === name) ?? null;
+    static getSong(fileName) {
+        return this.getSongs().find(song => song.fileName === fileName) ?? null;
     }
     /**
      * Set a song's info, like duration or appearance count.
      * Only specified props are updated.
-     * @param {string} name
+     * @param {string} fileName
      * @param {{ playTime:number?, duration:number?, appearances:number? }} newInfo
      */
-    static setSong(name, newInfo = {}) {
-        if (!name)
-            throw new Error("Invalid song name");
+    static setSong(fileName, newInfo = {}) {
+        if (!fileName)
+            throw new Error("Invalid song fileName");
 
-        const song = this._findOrMake(name);
+        const song = this._findOrMake(fileName);
         if (Object.hasOwn(newInfo, "playTime"))
             song.playTime = newInfo.playTime;
         if (Object.hasOwn(newInfo, "duration"))
@@ -70,17 +70,17 @@ class VLCTracker {
 
     /**
      * Adds playback time to a song, creating its record if necessary.
-     * @param {string} name
+     * @param {string} fileName
      * @param {number} seconds
      * @returns {VLCTrackedSong}
      */
-    static addPlayTime(name, seconds) {
-        if (!name)
-            throw new Error("Invalid song name");
+    static addPlayTime(fileName, seconds) {
+        if (!fileName)
+            throw new Error("Invalid song fileName");
         if (!Number.isFinite(seconds) || seconds <= 0)
             throw new Error("seconds must be a positive number");
 
-        const song = this._findOrMake(name);
+        const song = this._findOrMake(fileName);
         song.playTime += seconds;
 
         VLCTrackerDatabase.set("songs", this.getSongs());
