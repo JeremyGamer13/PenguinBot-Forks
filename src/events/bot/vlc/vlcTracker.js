@@ -47,7 +47,10 @@ class BotEvent extends BaseBotEvent {
             }
 
             this.lastSongPlayed = isSongLoaded ? VLCPoller.fileName : "";
-        }, 1000);
+        }, 1000);// Periodically save accumulated song statistics to disk.
+        setInterval(() => {
+            VLCTracker.commit();
+        }, 30000);
     }
 }
 

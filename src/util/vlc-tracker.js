@@ -9,6 +9,9 @@ class VLCTracker {
      * @property {number} duration Seconds length of the song
      * @property {number} appearances How many times the song has appeared (ie, how many times it played at some point, even if the song wasn't played all the way through)
      */
+    /** @private @type {boolean} */
+    static _isDirty = false;
+
     /** @private @returns {VLCTrackedSong} */
     static _makeSong(fileName) {
         return {
@@ -24,11 +27,12 @@ class VLCTracker {
         const song = songs.find(song => song.fileName === fileName);
         if (song)
             return song;
-        
+
         // make a new song and return it
         const newSong = this._makeSong(fileName);
         songs.push(newSong);
 
+        this._isDirty = true;
         VLCTrackerDatabase.setLocal("songs", songs);
         return newSong;
     }
@@ -51,6 +55,8 @@ class VLCTracker {
     /**
      * Set a song's info, like duration or appearance count.
      * Only specified props are updated.
+     * 
+     * Use `commit()` at some point after making changes.
      * @param {string} fileName
      * @param {{ playTime:number?, duration:number?, appearances:number? }} newInfo
      */
@@ -65,11 +71,14 @@ class VLCTracker {
             song.duration = newInfo.duration;
         if (Object.hasOwn(newInfo, "appearances"))
             song.appearances = newInfo.appearances;
-        VLCTrackerDatabase.set("songs", this.getSongs());
+        this._isDirty = true;
+        VLCTrackerDatabase.setLocal("songs", this.getSongs());
     }
 
     /**
      * Adds playback time to a song, creating its record if necessary.
+     * 
+     * Use `commit()` at some point after making changes.
      * @param {string} fileName
      * @param {number} seconds
      * @returns {VLCTrackedSong}
@@ -83,8 +92,18 @@ class VLCTracker {
         const song = this._findOrMake(fileName);
         song.playTime += seconds;
 
-        VLCTrackerDatabase.set("songs", this.getSongs());
+        this._isDirty = true;
+        VLCTrackerDatabase.setLocal("songs", this.getSongs());
         return song;
+    }
+
+    /**
+     * Commit data to the database file.
+     */
+    static commit() {
+        if (this._isDirty)
+            VLCTrackerDatabase.saveDataToFile();
+        this._isDirty = false;
     }
 
     /**

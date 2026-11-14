@@ -2,6 +2,7 @@ const Database = require('sync-json-database');
 const LastState = new Database('./databases/last-state.json', { indented: true });
 
 const BotState = require("./bot-state.js");
+const VLCTracker = require("./vlc-tracker.js");
 
 /**
  * Utilities related to the bot host / process
@@ -134,6 +135,9 @@ class HostUtility {
                 BotState.client.destroy();
             if (BotState.server)
                 BotState.server.close();
+            // jg: save VLCTracker db before closing
+            if (env.getBool("VLC_MEDIA_ENABLED") && env.getBool("VLC_MEDIA_TRACKER"))
+                VLCTracker.commit();
         } catch (err) {
             console.warn("Graceful close failed;", err);
         }
