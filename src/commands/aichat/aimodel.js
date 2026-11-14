@@ -1,11 +1,14 @@
-const tryCatch = require("../../util/try-catch");
 const configuration = require("../../config");
 
-const OllamaModels = require("../../util/ollama-models");
+const tryCatch = require("../../util/try-catch");
 const OllamaTools = require("../../util/ollama-tools");
+const OllamaModels = require("../../util/ollama-models");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "aimodel";
         this.description = "tyea";
         this.attributes = {

@@ -3,11 +3,15 @@ const OllamaModels = require("../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const configuration = require("../../config");
+
 const makePng = require('../../util/make-png');
 const isCompatibleImage = require('../../util/compatible-images');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "scan";
         this.description = "Scan imagie";
         this.descriptionLong = "Scans the attached image with AI and returns the text"
@@ -23,7 +27,7 @@ class Command {
     async invoke(message, args, util) {
         if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
 
-        const [imageBuffer] = await util.getInputImagesForCommand(message);
+        const [imageBuffer] = await util.getInputImagesForCommand();
         if (!imageBuffer) return;
 
         // get the response

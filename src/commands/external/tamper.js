@@ -6,10 +6,14 @@ const env = require("../../util/env-util");
 const getFileSize = require('../../util/file-size');
 const FFmpegUtil = require('../../util/ffmpeg-util');
 const TempFolder = require('../../util/temp-folder');
+const DiscordUtility = require("../../util/utility-discord.js");
 const downloadAttachments = require('../../util/download-attachments');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "tamper";
         this.description = "Corrupt a video or audio file a certain amount";
         this.attributes = {
@@ -31,7 +35,7 @@ class Command {
         // get attachements
         const attachment = message.attachments.first();
         if (!attachment) throw new Error("Add an Video or audio");
-        const endingType = util.getAttachmentType(attachment);
+        const endingType = DiscordUtility.getAttachmentType(attachment);
         if (!FFmpegUtil.isCompatibleVideo(endingType) && !FFmpegUtil.isCompatibleAudio(endingType)) throw new Error('Please use a valid video or audio format.');
         // check atachemtn size
         if (attachment.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");

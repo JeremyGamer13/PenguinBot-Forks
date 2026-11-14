@@ -1,5 +1,10 @@
-class Command {
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "togglee";
         this.description = "Enable or disable the External shits.";
         this.attributes = {
@@ -10,12 +15,12 @@ class Command {
 
     invoke(message, args, util) {
         if (!args[0]) {
-            util.state.heavyExternalStuff = !util.state.heavyExternalStuff;
-            message.reply(`heavyExternalStuff = ${util.state.heavyExternalStuff}`);
+            BotState.state.heavyExternalStuff = !BotState.state.heavyExternalStuff;
+            message.reply(`heavyExternalStuff = ${BotState.state.heavyExternalStuff}`);
             return;
         }
-        util.state.heavyExternalStuff = String(args[0]).toLowerCase().trim() !== 'true';
-        message.reply(`heavyExternalStuff = ${util.state.heavyExternalStuff}`);
+        BotState.state.heavyExternalStuff = String(args[0]).toLowerCase().trim() !== 'true';
+        message.reply(`heavyExternalStuff = ${BotState.state.heavyExternalStuff}`);
     }
 }
 

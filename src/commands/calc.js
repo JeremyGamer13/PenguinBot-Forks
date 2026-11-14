@@ -1,8 +1,10 @@
-const { mathEvaluateThread } = require("../util/math-evaluate.js");
 const OptionType = require('../util/optiontype');
+const BaseCommand = require("../classes/base-command.js");
+const { mathEvaluateThread } = require("../util/math-evaluate.js");
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "calc";
         this.description = "Evaluate a mathematical expression.";
         this.attributes = {
@@ -19,9 +21,10 @@ class Command {
         };
     }
 
-    convertSlashCommand(interaction) {
+    convertSlashCommand(interaction, util) {
         const text = `${interaction.options.getString('expression')}`;
-        return [interaction, text.split(' ')];
+        interaction.author = interaction.member.user;
+        return [interaction, text.split(' '), util];
     }
 
     async invoke(message, args) {

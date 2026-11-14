@@ -1,9 +1,12 @@
 const childProcess = require("child_process");
 
 const env = require("../../util/env-util");
+const BotState = require("../../util/bot-state.js");
+const BaseCommand = require("../../classes/base-command.js");
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "push";
         this.description = "Push to branch";
         this.attributes = {
@@ -12,8 +15,8 @@ class Command {
         };
     }
 
-    async invoke(message, args, util) {
-        if (util.request('preventRuntimeChanges')) return message.reply('Variable `PREVENT_UPDATES` is set to true on this host.');
+    async invoke(message, args) {
+        if (BotState.request('preventRuntimeChanges')) return message.reply('Variable `PREVENT_UPDATES` is set to true on this host.');
         if (env.getBool("DISABLE_GIT")) return message.reply('Variable `DISABLE_GIT` is set to true on this host.');
         if (env.getBool("DISABLE_GIT_WRITE")) return message.reply('Variable `DISABLE_GIT_WRITE` is set to true on this host.');
         

@@ -1,5 +1,10 @@
-class Command {
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "toggleo";
         this.description = "Enable or disable the overlay shits.";
         this.attributes = {
@@ -12,12 +17,12 @@ class Command {
 
     invoke(message, args, util) {
         if (!args[0]) {
-            util.state.nodeApiOverlays = !util.state.nodeApiOverlays;
-            message.reply(`nodeApiOverlays = ${util.state.nodeApiOverlays}`);
+            BotState.state.nodeApiOverlays = !BotState.state.nodeApiOverlays;
+            message.reply(`nodeApiOverlays = ${BotState.state.nodeApiOverlays}`);
             return;
         }
-        util.state.nodeApiOverlays = String(args[0]).toLowerCase().trim() !== 'true';
-        message.reply(`nodeApiOverlays = ${util.state.nodeApiOverlays}`);
+        BotState.state.nodeApiOverlays = String(args[0]).toLowerCase().trim() !== 'true';
+        message.reply(`nodeApiOverlays = ${BotState.state.nodeApiOverlays}`);
     }
 }
 

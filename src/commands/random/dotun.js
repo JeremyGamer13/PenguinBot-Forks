@@ -1,5 +1,8 @@
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "dotun";
         this.description = "Oh yea";
         this.attributes = {
@@ -8,7 +11,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply("https://cdn.discordapp.com/attachments/1038238583686967428/1556413132887425035/tiktok_sienalabri_7691417178150636831-ezgif.com-video-to-gif-converter.gif?backend=b2");
     }
 }

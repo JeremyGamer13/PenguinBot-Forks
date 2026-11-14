@@ -1,16 +1,17 @@
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "addme";
         this.description = "Okay – because why would we *not* want to add another channel? It’s just… logical.";
         this.attributes = {
             unlisted: false,
             permission: 0,
         };
-
-        this.client = client;
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         return message.reply(`Sent!`);
     }
 }

@@ -1,20 +1,16 @@
 const OllamaModels = require("../../util/ollama-models");
-const tryCatch = require("../../util/try-catch");
 
+const delay = require("../../util/delay.js");
+const tryCatch = require("../../util/try-catch");
 const AISharedChat = require("../../util/ai-chat");
 const ToolMockReact = require("../../util/ollamaTool/interface/react.js");
 const ToolMockRob = require("../../util/ollamaTool/interface/tell-rob.js");
 
-const delay = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, ms);
-    });
-};
+const BaseCommand = require("../../classes/base-command.js");
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "prompt";
         this.description = "tyea";
         this.attributes = {
@@ -73,14 +69,14 @@ class Command {
                                 tools.push({
                                     role: "tool",
                                     tool_name: "react",
-                                    content: await ToolMockReact.handle(message, call),
+                                    content: await ToolMockReact.handle(call, message),
                                 });
                                 break;
                             case "tell-rob":
                                 tools.push({
                                     role: "tool",
                                     tool_name: "tell-rob",
-                                    content: await ToolMockRob.handle(message.channel, call),
+                                    content: await ToolMockRob.handle(call, message.channel),
                                 });
                                 break;
                         }

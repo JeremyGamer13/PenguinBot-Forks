@@ -1,10 +1,12 @@
-const StammerImage = require("../../util/stammer-image");
-
 const makePng = require('../../util/make-png');
+const StammerImage = require("../../util/stammer-image");
 const isCompatibleImage = require('../../util/compatible-images');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "stammerimage";
         this.description = "remap the colors from first to second";
         this.descriptionLong = "remap the colors from the first image to second image."
@@ -19,7 +21,7 @@ class Command {
     }
 
     async invoke(message, args, util) {
-        const [buffer1, buffer2] = await util.getInputImagesForCommand(message, 2);
+        const [buffer1, buffer2] = await util.getInputImagesForCommand(2);
         if (!buffer1) return;
         if (!buffer2) return message.reply("Add a valid image to cover the colors onto");
 

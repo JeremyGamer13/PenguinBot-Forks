@@ -20,10 +20,10 @@ class ToolMockReact {
     }
 
     /**
-     * @param {import('discord.js').Message} message 
      * @param {import("ollama").ToolCall} call 
+     * @param {import('discord.js').Message} message 
      */
-    static async handle(message, call) {
+    static async handle(call, message) {
         try {
             await message.react(call.function.arguments.emoji);
             return `Reacted with the specified emoji.`;

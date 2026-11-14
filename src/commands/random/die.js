@@ -1,7 +1,10 @@
 const discord = require("discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "die";
         this.description = "this is so evil";
         this.attributes = {
@@ -10,7 +13,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.react("😨");
     }
 }

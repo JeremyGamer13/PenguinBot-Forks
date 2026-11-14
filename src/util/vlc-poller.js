@@ -1,71 +1,73 @@
-const VLCMediaPlayer = require("./vlc-media-player");
-const env = require("./env-util");
+const env = require("./env-util.js");
+const VLCMediaPlayer = require("./vlc-media-player.js");
 
 class VLCPoller {
-    /** @param {import("discord.js").Client} client  */
-    static initialize(client, statusText) {
-        if (!env.getBool("VLC_MEDIA_ENABLED")) return;
+    /**
+     * Whether or not audio is paused.
+     * @type {boolean}
+     */
+    static isPaused = false;
 
-        this.currentStatusText = statusText;
-        setInterval(async () => {
-            await this.doPoll();
-        }, 5000);
-        setInterval(async () => {
-            this.setStatus(client, statusText);
-        }, 20000);
-    }
+    /**
+     * If set, the currently playing song's file name.
+     * @type {string?}
+     */
+    static fileName = null;
+    /**
+     * If set, the currently playing song's URI.
+     * @type {string?}
+     */
+    static uri = null;
+    /**
+     * If set, the currently playing song's duration in seconds.
+     * @type {number?}
+     */
+    static duration = null;
+    /**
+     * If set, the currently playing song's playback time in seconds.
+     * @type {number?}
+     */
+    static time = null;
 
-    static currentStatusText = "this will never be the status text haha";
-
-    /** @type {string?} */
-    static currentSong = null;
-
-    static setStatus(client, defaultText) {
-        // make the new text
-        let newText = defaultText;
-        const currentSong = this.currentSong;
-        if (currentSong) {
-            newText = `🎶 ${VLCMediaPlayer.cleanUpName(this.currentSong)}`.substring(0, 128);
-        }
-
-        // compare to previous
-        if (this.currentStatusText === newText) return;
-        this.currentStatusText = newText;
-
-        console.log("updating status on discorrd", newText);
-        client.user.setPresence({
-            status: "online",
-            activities: [{
-                name: newText,
-                type: !currentSong ? "PLAYING" : "LISTENING"
-            }]
-        });
-    }
-    static async doPoll() {
+    /** @private */
+    static async _iterate() {
         try {
             // this 100% will go offsync at some point, but do getFileName first
             // so we show the older song if we swapped immediately after, since we likely checked it already
             const fileName = await VLCMediaPlayer.client.getFileName();
             const playlist = await VLCMediaPlayer.client.getPlaylist();
+            const isPaused = await VLCMediaPlayer.client.isPaused();
+            const time = await VLCMediaPlayer.client.getTime();
             const currentSong = playlist.find(song => song.isCurrent);
-            if (!currentSong) {
-                VLCPoller.currentSong = null;
-                return null;
-            }
+            if (!currentSong)
+                throw new Error("Closed");
 
-            const isAllowed = VLCMediaPlayer.isUriAllowedSongToDisplay(currentSong.uri);
-            if (!isAllowed) {
-                VLCPoller.currentSong = null;
-                return null;
-            }
-
-            VLCPoller.currentSong = fileName;
-            return currentSong;
+            VLCPoller.isPaused = isPaused;
+            VLCPoller.fileName = fileName;
+            VLCPoller.uri = currentSong.uri;
+            VLCPoller.duration = currentSong.duration;
+            VLCPoller.time = time;
         } catch {
             // we just assume this is VLC being closed
-            VLCPoller.currentSong = null;
-            return null;
+            VLCPoller.isPaused = false;
+            VLCPoller.fileName = null;
+            VLCPoller.uri = null;
+            VLCPoller.duration = null;
+            VLCPoller.time = null;
         }
+    }
+
+    /**
+     * Starts polling VLC for info constantly.
+     * Should only run once ever.
+     */
+    static initialize() {
+        const poll = async () => {
+            await this._iterate();
+            setTimeout(poll, 500);
+        };
+        
+        poll();
     }
 }
 

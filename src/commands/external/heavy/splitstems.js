@@ -4,12 +4,17 @@ const childProcess = require("child_process");
 
 const env = require("../../../util/env-util");
 const Demucs = require('../../../util/demucs');
+const BotState = require("../../../util/bot-state.js");
 const FFmpegUtil = require('../../../util/ffmpeg-util');
 const TempFolder = require('../../../util/temp-folder');
+const DiscordUtility = require("../../../util/utility-discord.js");
 const downloadAttachments = require('../../../util/download-attachments');
 
-class Command {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "splitstems";
         this.description = "Split an audio file to 6 musical stems";
         this.descriptionLong = "Split an audio file into stems, like musicaudio files"
@@ -38,7 +43,7 @@ class Command {
         // get attachements
         const attachment = message.attachments.first();
         if (!attachment) throw new Error("Add an Audio to split");
-        const endingType = util.getAttachmentType(attachment);
+        const endingType = DiscordUtility.getAttachmentType(attachment);
         if (!FFmpegUtil.isCompatibleAudio(endingType)) throw new Error('Please use a valid audio format.');
         // check atachemtn size
         if (attachment.size > 15 * 1e+6) throw new Error("Files must be below 15 MB.");
@@ -135,7 +140,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

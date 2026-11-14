@@ -156,7 +156,7 @@ class SantaList {
      * @param {{ nice:boolean, santaResponse:string }} value 
      */
     static async postValue(user, value) {
-        const webhookUrl = env.get("SANTA_LIST_WEBHOOK");
+        const webhookUrl = env.get("SANTA_LIST_SANTA_WEBHOOK");
         await fetch(webhookUrl, {
             headers: { "Content-Type": "application/json" },
             method: "POST",
@@ -184,7 +184,7 @@ class SantaList {
      * @param {{ nice:boolean, grinchResponse:string }} value 
      */
     static async postValueStolen(user, value) {
-        const webhookUrl = env.get("SANTA_WISHLIST_WEBHOOK");
+        const webhookUrl = env.get("SANTA_LIST_GRINCH_WEBHOOK");
         await fetch(webhookUrl, {
             headers: { "Content-Type": "application/json" },
             method: "POST",

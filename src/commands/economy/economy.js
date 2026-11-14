@@ -4,8 +4,11 @@ const DatabaseCurrencyLarp = new Database('./databases/currency-larp.json');
 const env = require("../../util/env-util.js");
 const EconomyJSB = require("../../util/economy-jsb.js");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "economy";
         this.description = "View information about the economy";
         this.descriptionLong = "View information about the economy"
@@ -23,7 +26,7 @@ class Command {
         };
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         message.reply({
             content: `🤖🤖⚡calculated informations`
                 + "\n" + "-" + " " + `**currencies**: ${EconomyJSB.emojiLarp}`

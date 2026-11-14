@@ -2,10 +2,14 @@ const configuration = require("../../config");
 
 const drawSBPic = require('../../util/sbpic');
 const jsonParseLoose = require("../../util/json-parse-loose.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
 const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json');
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "sbpic";
         this.description = "render sbpic json (stream bot pictures used by jg!draw)";
         this.attributes = {

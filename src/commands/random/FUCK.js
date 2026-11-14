@@ -1,7 +1,10 @@
 const discord = require("discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "FUCK";
         this.description = "aah!";
         this.attributes = {
@@ -10,7 +13,7 @@ class Command {
         };
     }
 
-    invoke(message, args) {
+    invoke(message, args, util) {
         if (args.length !== 1) return;
 
         const word = args[0].toLowerCase();

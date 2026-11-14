@@ -1,10 +1,12 @@
-const OllamaModels = require("../../util/ollama-models");
 const tryCatch = require("../../util/try-catch");
-
 const AISharedChat = require("../../util/ai-chat");
+const OllamaModels = require("../../util/ollama-models");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "aichat";
         this.description = "tyea";
         this.attributes = {

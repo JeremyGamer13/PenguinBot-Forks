@@ -5,13 +5,18 @@ const childProcess = require("child_process");
 const env = require("../../../util/env-util");
 const Demucs = require('../../../util/demucs');
 const Stammer = require('../../../util/stammer');
+const BotState = require("../../../util/bot-state.js");
 const getFileSize = require('../../../util/file-size');
 const FFmpegUtil = require('../../../util/ffmpeg-util');
 const TempFolder = require('../../../util/temp-folder');
+const DiscordUtility = require("../../../util/utility-discord.js");
 const downloadAttachments = require('../../../util/download-attachments');
 
-class Command {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "stammercover";
         this.description = "Lalala my epic YTPmv but its REALLY BAD and SUCKS";
         this.descriptionLong = "Acts like {{prefix}}stammer, but only runs on the Vocal track of the 2nd clip."
@@ -32,8 +37,8 @@ class Command {
         const attachment2 = message.attachments.last();
         if (!attachment1) throw new Error("Add an video or audio to take the frames/source from");
         if (!attachment2) throw new Error("Add an video or audio to cover the voice of");
-        const endingTypeRaw1 = util.getAttachmentType(attachment1);
-        const endingTypeRaw2 = util.getAttachmentType(attachment2);
+        const endingTypeRaw1 = DiscordUtility.getAttachmentType(attachment1);
+        const endingTypeRaw2 = DiscordUtility.getAttachmentType(attachment2);
         if (!FFmpegUtil.isCompatibleVideo(endingTypeRaw1) && !FFmpegUtil.isCompatibleAudio(endingTypeRaw1))
             throw new Error('Please use a valid video or audio format. (video 1)');
         if (!FFmpegUtil.isCompatibleVideo(endingTypeRaw2) && !FFmpegUtil.isCompatibleAudio(endingTypeRaw2))
@@ -122,7 +127,7 @@ class Command {
         });
     }
     async invoke(message, args, util) {
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

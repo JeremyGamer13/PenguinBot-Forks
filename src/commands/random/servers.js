@@ -1,7 +1,10 @@
 const discord = require("discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "servers";
         this.description = "See what servers the bot is in. Intended for private, single-server bots (like Jeremy Stream Bot)";
         this.attributes = {
@@ -12,10 +15,9 @@ class Command {
         /**
          * @type {discord.Client}
          */
-        this.client = client;
     }
 
-    async invoke(message) {
+    async invoke(message, args, util) {
         const guildList = this.client.guilds.cache.map(guild => `- **${guild.name}** (${guild.id})`);
         message.reply({
             content: `Currently in **${this.client.guilds.cache.size}** server(s)`

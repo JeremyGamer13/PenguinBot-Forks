@@ -1,11 +1,16 @@
 const discord = require("discord.js");
+
 const Ollama = require("ollama-chatting");
 const OllamaModels = require("../../util/ollama-models.js");
 
 const SearXNG = require("../../util/searxng.js");
+const DiscordUtility = require("../../util/utility-discord.js");
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "searchai";
         this.description = "Im so evil and im also Google AI Overview... so i didnt even need to say im evil";
         this.descriptionLong = "Search something on the internet and get AI overview."
@@ -28,7 +33,7 @@ class Command {
     async invoke(message, args, util) {
         const searchQuery = args.join(" ").trim();
         if (searchQuery.length <= 0) return message.reply("Hey dipshit i cant search for nothing");
-        if (util.getPermissionLevel(message) < 4 && !util.automodAllows(searchQuery, true))
+        if (util.getPermissionLevel(message) < 4 && !DiscordUtility.automodAllows(searchQuery, true))
             return message.reply("thats Illegal");
         
         // start asking chattus geepitus get the response

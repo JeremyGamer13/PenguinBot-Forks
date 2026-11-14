@@ -1,5 +1,10 @@
-class Command {
+const BotState = require("../../util/bot-state.js");
+
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "togglea";
         this.description = "Enable or disable the audio shits.";
         this.attributes = {
@@ -10,12 +15,12 @@ class Command {
 
     invoke(message, args, util) {
         if (!args[0]) {
-            util.state.nodeApiAudios = !util.state.nodeApiAudios;
-            message.reply(`nodeApiAudios = ${util.state.nodeApiAudios}`);
+            BotState.state.nodeApiAudios = !BotState.state.nodeApiAudios;
+            message.reply(`nodeApiAudios = ${BotState.state.nodeApiAudios}`);
             return;
         }
-        util.state.nodeApiAudios = String(args[0]).toLowerCase().trim() !== 'true';
-        message.reply(`nodeApiAudios = ${util.state.nodeApiAudios}`);
+        BotState.state.nodeApiAudios = String(args[0]).toLowerCase().trim() !== 'true';
+        message.reply(`nodeApiAudios = ${BotState.state.nodeApiAudios}`);
     }
 }
 

@@ -5,11 +5,14 @@ const OllamaModels = require("../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const configuration = require("../../config");
-const makePng = require('../../util/make-png');
-const jsonParseLoose = require("../../util/json-parse-loose.js");
-const isCompatibleImage = require('../../util/compatible-images');
 
-const drawSBPic = require('../../util/sbpic');
+const drawSBPic = require('../../util/sbpic.js');
+const makePng = require('../../util/make-png.js');
+const jsonParseLoose = require("../../util/json-parse-loose.js");
+const isCompatibleImage = require('../../util/compatible-images.js');
+
+const BaseCommand = require("../../classes/base-command.js");
+
 const SchemaSBPicGeneration = require('../../resources/schemas/sbpic-gen.json');
 
 const attemptRender = async (jsonString) => {
@@ -24,8 +27,9 @@ const attemptRender = async (jsonString) => {
     }
 };
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "drawfridge";
         this.description = "the Ai can draw fridge type pictures trust";
         this.descriptionLong = "Tells an ai to draw a picture based on a description"
@@ -55,7 +59,7 @@ class Command {
         if (attachment) {
             if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
 
-            const [imageInput] = await util.getInputImagesForCommand(message);
+            const [imageInput] = await util.getInputImagesForCommand();
             if (!imageInput) return;
             imageBuffer = imageInput;
         }

@@ -5,9 +5,12 @@ const OllamaModels = require("../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
 const configuration = require("../../config");
+
 const makePng = require('../../util/make-png');
 const svgRepair = require('../../util/svg-repair.js');
 const isCompatibleImage = require('../../util/compatible-images');
+
+const BaseCommand = require("../../classes/base-command.js");
 
 const attemptRender = async (svgString) => {
     try {
@@ -28,8 +31,9 @@ const attemptRender = async (svgString) => {
     }
 };
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "drawsvg";
         this.description = "Muahahah im PROBLEMATIC MEDIA and i support AI IMAGERY MUAHAHHA 😈😈😈😈😈😈";
         this.descriptionLong = "Tells an ai to draw a picture based on a description"
@@ -58,7 +62,7 @@ class Command {
         if (attachment) {
             if (!configuration.funkyCapabilities.ollamaImageProcessingViable) throw new Error("Cannot process images through Ollama on this system");
 
-            const [imageInput] = await util.getInputImagesForCommand(message);
+            const [imageInput] = await util.getInputImagesForCommand();
             if (!imageInput) return;
             imageBuffer = imageInput;
         }

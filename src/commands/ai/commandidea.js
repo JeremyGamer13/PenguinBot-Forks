@@ -2,8 +2,11 @@ const Ollama = require("ollama-chatting");
 const OllamaModels = require("../../util/ollama-models.js");
 const OllamaChat = new Ollama({ host: OllamaModels.url });
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "commandidea";
         this.description = "I Need an idea for a command";
         this.descriptionLong = "it generates a useless command idea with ....ai 😱";

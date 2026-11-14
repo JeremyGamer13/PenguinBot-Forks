@@ -1,19 +1,22 @@
 const nodeUtil = require('node:util');
 
-const configuration = require("../../config");
+const configuration = require("../../config.js");
+
+const env = require("../../util/env-util.js");
 const tryCatch = require('../../util/try-catch');
+const OptionType = require("../../util/optiontype.js");
+const BaseCommand = require("../../classes/base-command.js");
 const evalEnvironment = tryCatch(() => require("../../util/eval-environment")) || eval;
 
-class Command {
-    constructor(client) {
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "eval";
         this.description = "admin";
         this.attributes = {
             unlisted: true,
             permission: 3,
         };
-
-        this.client = client;
     }
 
     reject(message) {
@@ -23,6 +26,8 @@ class Command {
     }
 
     async invoke(message, args, util) {
+        if (env.getBool("DISABLE_ARBITRARY_OS_LEVEL_CODE"))
+            return message.reply("Variable `DISABLE_ARBITRARY_OS_LEVEL_CODE` is set to true on this host.");
         if (!configuration.permissions.eval.includes(message.author.id))
             return this.reject(message);
 
@@ -33,7 +38,8 @@ class Command {
         console.log('\n');
 
         try {
-            const result = await eval(javascript);
+            const evalFunc = evalEnvironment.bind(this);
+            const result = await evalFunc(javascript, { message, args, util, javascript });
             const display = typeof result === "object" && result ? `ansi\n${nodeUtil.inspect(result, { showHidden: true, colors: true }).slice(0, 1989)}` : result;
             message.reply({
                 content: `\`\`\`${display}\`\`\``.substring(0, 2000),

@@ -1,18 +1,24 @@
 const fs = require("fs");
 const path = require("path");
-const discord = require("discord.js");
 const childProcess = require("child_process");
+
+const discord = require("discord.js");
 
 const RVC = require('../../../util/rvc');
 const RVCModels = require('../../../util/rvc-models');
 
 const TTS = require('../../../util/tts');
 const env = require("../../../util/env-util");
+const BotState = require("../../../util/bot-state.js");
 const FFmpegUtil = require('../../../util/ffmpeg-util');
 const TempFolder = require('../../../util/temp-folder');
+const DiscordUtility = require("../../../util/utility-discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "ttsrvc";
         this.description = "RVC over  Text to speech (ai cover of tts)";
         this.descriptionLong = "RVC over  Text to speech (ai cover of tts)"
@@ -22,16 +28,13 @@ class Command {
             jgAiCoverCommand: true,
             permission: 0,
         };
-
-        this.client = client;
-
         this.alias = ["rtts", "ttsr", "rvctts",                       "rspeak", "speakr", "rvcspeak", "speakrvc"];
     }
 
     async handle(message, args, util) {
         const ttsText = args.join(" ");
         if (ttsText.length > 1024) return message.reply("Thats Way too much");
-        if (!util.automodAllows(ttsText, true)) return message.reply("No");
+        if (!DiscordUtility.automodAllows(ttsText, true)) return message.reply("No");
         const ttsBuffer = await TTS.speak(ttsText, "balabolka", "en", "Microsoft David Desktop");
 
         // actually start doing stuff
@@ -46,7 +49,7 @@ class Command {
 
             // see if we need approval or if we cant even use this model right now
             const voiceModel = RVCModels.default;
-            if (voiceModel.usage === RVCModels.USAGE_PERSONAL && !util.request("isInPersonalMode"))
+            if (voiceModel.usage === RVCModels.USAGE_PERSONAL && !BotState.request("isInPersonalMode"))
                 throw new Error("RVC Model unavailable outside of personal");
 
             let replyMessage = null;
@@ -87,7 +90,7 @@ class Command {
     }
     async invoke(message, args, util) {
         if (!env.getBool("RVC_ENABLED")) throw new Error("RVC is disabled on this system");
-        const canDo = util.request("heavyExternalStuff");
+        const canDo = BotState.request("heavyExternalStuff");
         if (!canDo) return message.reply("disabled (im probably playing a game)");
 
         await this.handle(message, args, util);

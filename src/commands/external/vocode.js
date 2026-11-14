@@ -6,10 +6,14 @@ const PSOLA = require("../../util/psola.js");
 const env = require("../../util/env-util.js");
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
+const DiscordUtility = require("../../util/utility-discord.js");
 const downloadAttachments = require('../../util/download-attachments.js');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "vocode";
         this.description = "Transfer pitch from a sample to another";
         this.descriptionLong = "Transfer pitch from a sample to another"
@@ -30,8 +34,8 @@ class Command {
         const attachment2 = message.attachments.last();
         if (!attachment1) throw new Error("Add an audio to use as base");
         if (!attachment2) throw new Error("Add an audio to grab pitch from");
-        const endingTypeRaw1 = util.getAttachmentType(attachment1);
-        const endingTypeRaw2 = util.getAttachmentType(attachment2);
+        const endingTypeRaw1 = DiscordUtility.getAttachmentType(attachment1);
+        const endingTypeRaw2 = DiscordUtility.getAttachmentType(attachment2);
         if (!FFmpegUtil.isCompatibleAudio(endingTypeRaw1))
             throw new Error('Please use a valid audio format. (video 1)');
         if (!FFmpegUtil.isCompatibleAudio(endingTypeRaw2))

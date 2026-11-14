@@ -1,7 +1,10 @@
 const discord = require("discord.js");
 
-class Command {
-    constructor(client) {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
+    constructor() {
+        super();
         this.name = "credits";
         this.description = "View creation credits for PenguinBot.";
         this.attributes = {
@@ -9,8 +12,14 @@ class Command {
             permission: 0,
             lockedToCommands: true,
         };
+        this.slash = {
+            options: []
+        };
+    }
 
-        this.client = client;
+    convertSlashCommand(interaction, util) {
+        interaction.author = interaction.member.user;
+        return [interaction, [], util];
     }
 
     async invoke(message) {
@@ -24,25 +33,19 @@ class Command {
             value: `PenguinBot`,
             inline: false
         }, {
-            name: 'Created by',
-            value: `JeremyGamer13`,
+            name: 'PenguinBot Contributors',
+            value: `JeremyGamer13, MubiLop, godslayerakp, jwklong, ianyourgod, enhancedrock,`
+                + " " + `anonygoose, FreshPenguin112, enderhacker, PuzzlingGGG, 10000000_fireflies`,
             inline: false
         }, {
-            name: 'With extra commands & framework additions by',
-            value: `MubiLop\\*`,
+            name: 'Non-affiliation',
+            value: `Jeremy Stream Bot is not officially affiliated with [PenguinMod](https://penguinmod.com/). Jeremy Stream Bot just uses the PenguinBot project as a base.`,
             inline: false
-        }, {
-            name: 'Extra Help on commands or systems',
-            value: `godslayerakp, jwklong, ianyourgod, enhancedrock`,
-            inline: false
-        });
-
-        embed.setFooter({
-            text: `* = No longer a developer`
         });
 
         message.reply({
-            embeds: [embed]
+            embeds: [embed],
+            ephemeral: true,
         });
     }
 }

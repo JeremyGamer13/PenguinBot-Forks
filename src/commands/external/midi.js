@@ -11,10 +11,14 @@ const env = require("../../util/env-util.js");
 const Polyphone = require("../../util/polyphone.js");
 const TempFolder = require('../../util/temp-folder.js');
 const FFmpegUtil = require("../../util/ffmpeg-util.js");
+const DiscordUtility = require("../../util/utility-discord.js");
 const downloadAttachments = require('../../util/download-attachments.js');
 
-class Command {
+const BaseCommand = require("../../classes/base-command.js");
+
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "midi";
         this.description = "Play a MIDI file";
         this.descriptionLong = "Play a MIDI (.mid/.midi) file."
@@ -36,8 +40,8 @@ class Command {
         const attachment = message.attachments.first();
         const attachmentSample = message.attachments.size > 1 ? message.attachments.last() : null;
         if (!attachment) throw new Error("Add an  midi");
-        const endingType = util.getAttachmentType(attachment);
-        const endingTypeSample = util.getAttachmentType(attachmentSample);
+        const endingType = DiscordUtility.getAttachmentType(attachment);
+        const endingTypeSample = DiscordUtility.getAttachmentType(attachmentSample);
         if (!["midi", "x-midi", "sp-midi"].includes(endingType)) throw new Error('The first file should be a valid MIDI file.');
         if (attachmentSample && !FFmpegUtil.isCompatibleAudio(endingTypeSample)) throw new Error('Please use a valid audio format when using a sample.');
         // // check atachemtn size

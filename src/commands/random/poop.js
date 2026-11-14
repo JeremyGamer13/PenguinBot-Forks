@@ -2,10 +2,14 @@ const Database = require('sync-json-database');
 const PoopDatabase = new Database('./databases/poop-database.json');
 
 const tryCatch = require('../../util/try-catch.js');
+
+const BaseCommand = require("../../classes/base-command.js");
+
 const getSpecialMessage = tryCatch(() => require('../../resources/poop-messages.js')) || (() => null);
 
-class Command {
+class Command extends BaseCommand {
     constructor() {
+        super();
         this.name = "poop";
         this.description = "hahahaja <:glee:1505817436895707288>";
         this.attributes = {
@@ -20,7 +24,7 @@ class Command {
         return specialMessage || `haahnhaha ${counter} <:glee:1505817436895707288>`;
     }
 
-    invoke(message) {
+    invoke(message, args, util) {
         // update
         PoopDatabase.updateLocal("counter", (num) => {
             return Math.max(0, Number(num || 0)) + 1;
