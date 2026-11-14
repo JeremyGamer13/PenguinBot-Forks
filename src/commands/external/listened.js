@@ -86,7 +86,7 @@ class Command extends BaseCommand {
 
             const songList = songPage.entries.map(song => `**${song.rank}.** ${VLCMediaPlayer.cleanUpName(song.fileName)}`);
             embed.setDescription(songList.join('\n') || "Nothing to show here!");
-            embed.setFooter({ text: `Page ${page + 1} - ${maxPages}` });
+            embed.setFooter({ text: `Page ${page + 1} - ${maxPages} | ${songPage.totalSongs} played so far` });
 
             buttonRow = [
                 new discord.MessageActionRow().addComponents([
