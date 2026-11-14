@@ -50,7 +50,7 @@ class BotEvent extends BaseBotEvent {
         }, 1000);// Periodically save accumulated song statistics to disk.
         setInterval(() => {
             VLCTracker.commit();
-        }, 30000);
+        }, 5 * 60 * 1000);
     }
 }
 
