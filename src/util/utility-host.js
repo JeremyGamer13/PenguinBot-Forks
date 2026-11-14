@@ -1,6 +1,7 @@
 const Database = require('sync-json-database');
 const LastState = new Database('./databases/last-state.json', { indented: true });
 
+const env = require('./env-util.js');
 const BotState = require("./bot-state.js");
 const VLCTracker = require("./vlc-tracker.js");
 
